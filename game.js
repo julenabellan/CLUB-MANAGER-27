@@ -41,7 +41,7 @@ ${sv?`<div class="pn"><b>Partida guardada:</b> ${sv.mgr} · ${sv.T[sv.me].n} · 
  $('#go').onclick=()=>{newGame($('#mg').value.trim()||'Míster',s.t);enter()};if(sv)$('#co').onclick=()=>{G=sv;enter()}}
 function enter(){$('#st').style.display='none';$('#ap').style.display='block';render();if(G.pend)season()}
 function render(){const me=G.T[G.me],p=Math.round(G.conf);$('#hc').textContent=me.n;$('#hs').textContent=`${LGN[me.lg]} · Temporada ${G.season} · Jornada ${Math.min(G.week+1,NW)}/${NW} · Directiva ${p}%`;
- $('#bs').textContent='Simular partido';
+ $('#bs').textContent='Jugar partido';
  $('#nv').innerHTML=[['home','Inicio'],['cal','Calendario'],['tab','Clasificación'],['sq','Plantilla'],['obj','Objetivos']].map(([k,l])=>`<button data-k="${k}" class="${S.tab==k?'on':''}">${l}</button>`).join('');
  document.querySelectorAll('#nv button').forEach(b=>b.onclick=()=>{S.tab=b.dataset.k;render()});
  $('#mn').innerHTML=V[S.tab]();bind()}
@@ -62,6 +62,6 @@ function bind(){document.querySelectorAll('.seg button').forEach(b=>b.onclick=()
 function modal(h){$('#mdc').innerHTML=h+'<p style="margin:16px 0 0"><button class="p" id="ok">Continuar</button></p>';$('#md').style.display='flex';$('#ok').onclick=()=>{$('#md').style.display='none';if(G.pend){G.pend=0;save()}}}
 function season(){const s=G.sum;modal(`<h2>Fin de temporada ${s.season}</h2><p>Campeón de ${LGN[1]}: <b>${s.champ}</b></p><p>Tu equipo terminó <b>${s.pos}º</b> en ${LGN[s.lg]} y cumplió <b>${s.met}/${s.tot}</b> objetivos.</p><p class="sm">Ascienden: ${s.pro.join(', ')}<br>Descienden: ${s.rel.join(', ')}</p>${s.sc?`<p class="sm">Pichichi de tu liga: ${s.sc[0]} (${s.sc[1]}), ${s.sc[2]} goles</p>`:''}${s.fired?'<p class="ko"><b>La directiva te ha despedido.</b> Empieza una nueva partida.</p>':'<p class="sm mu">Los jugadores han envejecido un año y la nueva temporada está lista.</p>'}`);
  if(s.fired)$('#ok').onclick=()=>{try{localStorage.removeItem(KEY)}catch(e){}location.reload()}}
-$('#bs').onclick=()=>{const m=simWeek();render();if(G.pend)season();else if(m)modal(`<h3>Jornada ${m.r[0]+1}</h3><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b>${nm(m.r[2])}</b>${sc(m.r[4],m.r[5])}<b style="text-align:right">${nm(m.r[3])}</b></div><p class="sm mu">${m.sc.map(s=>`${s[1]} ${s[2]}'`).join(' · ')||'Sin goles'}</p>`)};
+$('#bs').onclick=()=>{const m=simWeek(),fin=()=>{render();if(G.pend)season()};if(m)liveMatch(m,fin);else fin()};
 $('#b5').onclick=()=>{for(let i=0;i<5;i++){simWeek();if(G.pend)break}render();if(G.pend)season()};
 renderStart();

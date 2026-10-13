@@ -38,3 +38,25 @@ nav button.on{color:var(--tx);border-bottom-color:var(--ac)}
 .ok{color:var(--ok)}.ko{color:var(--bad)}
 #md{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:16px;z-index:9}
 #md>div{background:var(--pn);border-radius:10px;max-width:480px;width:100%;max-height:85vh;overflow:auto;padding:20px}
+/* partido en directo */
+#lv{position:fixed;inset:0;z-index:20;background:var(--bg);overflow:auto;animation:lvin .35s ease-out}
+@keyframes lvin{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:none}}
+.lvc{max-width:820px;margin:0 auto;padding:14px}
+.lvh{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;font:700 clamp(18px,4vw,28px) 'Barlow Condensed',sans-serif}
+.lvh b:last-child{text-align:right}.lvh .sc{font-size:clamp(40px,9vw,64px)}
+.lvt{display:flex;align-items:center;gap:10px;margin:6px 0 10px}.lvt span{font:700 22px 'Barlow Condensed',sans-serif;min-width:44px}.lvt .bar{flex:1}
+.lvw{position:relative;border-radius:10px;overflow:hidden;border:2px solid var(--ln);box-shadow:0 8px 24px rgba(0,0,0,.25)}
+#lvp{display:block;width:100%;height:auto}
+.gs1{fill:#2f8f4e}.gs2{fill:#37a058}.gl *{fill:none;stroke:#ffffffb0;stroke-width:.3}.gp{fill:#fff6}
+.pj{stroke:#fff;stroke-width:.35}
+#lvb{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;background:rgba(0,0,0,.35);transition:opacity .25s}
+#lvb.on{opacity:1}
+.gb{text-align:center;color:#fff;animation:pop .5s cubic-bezier(.2,1.6,.4,1)}
+.gb span{display:block;font:700 clamp(44px,12vw,96px)/1 'Barlow Condensed',sans-serif;text-shadow:0 4px 18px #000a}
+.gb.gm span{color:var(--hi)}.gb small{font-size:clamp(15px,3vw,22px);font-weight:600}
+@keyframes pop{from{transform:scale(.3) rotate(-6deg);opacity:0}to{transform:none;opacity:1}}
+.lvst{display:flex;justify-content:space-between;align-items:center;margin:10px 4px 0;font:700 20px 'Barlow Condensed',sans-serif}
+#lvf{height:150px;overflow:auto;margin-top:8px;background:var(--pn);border:1px solid var(--ln);border-radius:8px;padding:6px 12px}
+.lf{margin:5px 0;font-size:14px;animation:lvin .3s}.lf b:first-child{color:var(--mu);margin-right:4px}.lf.g{color:var(--ok);font-weight:600}.lf.h{color:var(--mu)}
+.lvct{display:flex;gap:8px;margin-top:12px;justify-content:center;flex-wrap:wrap}.lvct button.on{background:var(--ac);color:var(--ac2);border-color:var(--ac)}
+@media(prefers-reduced-motion:reduce){#lv,.gb,.lf{animation:none}}
