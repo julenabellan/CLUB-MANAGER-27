@@ -52,7 +52,7 @@ const q=s=>o.querySelector(s),feed=q('#lvf');
 let min=0,sp=1,pause=0,pz=0,sc=[0,0],sh=[0,0],co=[0,0],fo=[0,0],yc=[0,0],ei=0,last=performance.now(),half=0,fin=0,subs=0,tac='e';const gl=[[],[]];
 const hold=x=>x/(sp>10?40:1);
 /* se ven las 5 últimas acciones; las anteriores quedan debajo y se ven deslizando */
-const fit=()=>{const k=[...feed.children].slice(0,MAXV);if(!k.length)return;const cs=getComputedStyle(feed),g=parseFloat(cs.rowGap)||0,p=(parseFloat(cs.paddingTop)||0)+(parseFloat(cs.paddingBottom)||0);feed.style.height=Math.ceil(k.reduce((s,e)=>s+e.offsetHeight,0)+g*(k.length-1)+p)+'px';q('#lvh').style.display=feed.children.length>MAXV?'':'none'};
+const fit=()=>{q('#lvh').style.display=feed.scrollHeight>feed.clientHeight+2?'':'none'};
 const say=(min,s,t,c)=>{const d=document.createElement('div');d.className='lm l'+s+' '+(c||'');d.innerHTML=`${s<2?cr(ids[s],22):''}<div><small>${min}'</small><span>${t}</span></div>`;const top=feed.scrollTop,h0=feed.scrollHeight;feed.prepend(d);if(top>4)feed.scrollTop=top+feed.scrollHeight-h0;if(!fin)fit()};
 const rsz=()=>{if(!fin)fit()};window.addEventListener('resize',rsz);
 o.querySelectorAll('.lvct button[data-v]').forEach(b=>b.onclick=()=>{sp=+b.dataset.v;o.querySelectorAll('.lvct button[data-v]').forEach(x=>x.classList.toggle('on',x==b))});

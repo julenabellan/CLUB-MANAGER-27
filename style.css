@@ -369,3 +369,20 @@ header.top #hs{padding-left:20px;border-left:2px solid rgba(255,255,255,.28);lin
  .hpl{padding:6px 0 2px}
  .hpl #bs{padding:7px 26px;font-size:17px;min-width:190px}
 }
+
+/* ===== v8: tabla sin recuadro, botón en Inicio, cabecera móvil a todo el ancho, feed hasta los botones ===== */
+.z1,.z2,.z3{box-shadow:none!important}
+.nxb{display:flex;justify-content:center;margin-top:14px}
+.nxb #bs{min-width:220px;padding:10px 34px;font-size:20px}
+#lvf{flex:1 1 auto;height:auto!important;transition:none}
+@media(max-width:640px){
+ header.top .w{padding:8px 12px 0}
+ .hdl{width:100%;justify-content:space-between;gap:10px}
+ #hc{font-size:22px!important;gap:8px}
+ #hc .cr{width:42px;height:42px}
+ header.top #hs{margin-left:auto;padding-left:0;border-left:0;flex-direction:row-reverse;text-align:right;gap:8px}
+ #hs .lgl{height:44px}
+ #hs .hln{font-size:15px}
+ #hs span{font-size:12px}
+ .nxb #bs{width:100%;min-width:0}
+}
