@@ -340,12 +340,11 @@ header.top #hs{padding-left:20px;border-left:2px solid rgba(255,255,255,.28);lin
 .plt td{border-bottom-color:color-mix(in srgb,var(--ac) 30%,rgba(255,255,255,.2))}
 .plt tbody tr:nth-child(even) td{background:rgba(255,255,255,.04)}
 .plt td.ppo{font-weight:700;letter-spacing:.06em}
-.plt td.ppo.P{color:#ffc928;background:rgba(255,201,40,.12)}
-.plt td.ppo.D{color:#5fb0ff;background:rgba(31,143,255,.14)}
-.plt td.ppo.M{color:#2ee59d;background:rgba(46,229,157,.12)}
-.plt td.ppo.F{color:#ff6b78;background:rgba(255,45,61,.14)}
+.plt td.ppo.P{color:#ffc928}
+.plt td.ppo.D{color:#5fb0ff}
+.plt td.ppo.M{color:#2ee59d}
+.plt td.ppo.F{color:#ff6b78}
 .plt tbody tr:hover td{background:rgba(255,255,255,.09)}
-.plt tbody tr:hover td.ppo.P{background:rgba(255,201,40,.2)}.plt tbody tr:hover td.ppo.D{background:rgba(31,143,255,.22)}.plt tbody tr:hover td.ppo.M{background:rgba(46,229,157,.2)}.plt tbody tr:hover td.ppo.F{background:rgba(255,45,61,.22)}
 @media(max-width:640px){
  header.top .w{padding:8px 10px 0}
  header .r{flex-wrap:nowrap;gap:8px}
@@ -360,4 +359,13 @@ header.top #hs{padding-left:20px;border-left:2px solid rgba(255,255,255,.28);lin
  #bs{padding:6px 10px;font-size:15px;flex:none}
  nav{padding:2px 0 8px;gap:6px}
  nav button{padding:6px 14px;font-size:15px}
+}
+
+/* ===== v7: cabecera en tres filas: club + liga / botón jugar centrado / menús ===== */
+.hpl{display:flex;justify-content:center;padding:8px 0 4px}
+.hpl #bs{padding:8px 34px;min-width:200px}
+.hdl{padding-top:2px}
+@media(max-width:640px){
+ .hpl{padding:6px 0 2px}
+ .hpl #bs{padding:7px 26px;font-size:17px;min-width:190px}
 }
