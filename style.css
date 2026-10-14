@@ -378,7 +378,16 @@ header.top #hs{padding-left:20px;border-left:2px solid rgba(255,255,255,.28);lin
 .k-tac{background:radial-gradient(circle at 80% 20%,color-mix(in srgb,var(--ac) 45%,transparent),transparent 60%),var(--pn2)}
 
 /* ===== v8: cabecera móvil a ancho completo, botón en Próximo partido, tácticas visuales ===== */
-.pb{width:100%;margin-top:14px;padding:13px 16px;font-size:22px}
+/* próximo partido */
+.nx{background:radial-gradient(420px 200px at 50% 0,color-mix(in srgb,var(--ac) 30%,transparent),transparent),linear-gradient(160deg,var(--pn2),var(--pn))}
+.nxh{display:flex;align-items:center;gap:10px}.nxh h3{margin:0}.nxh span{margin-left:auto}
+.nxv{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:6px;margin:6px 0 2px}
+.nxt{display:flex;flex-direction:column;align-items:center;text-align:center;gap:3px;min-width:0}
+.nxt .cr{width:clamp(72px,24vw,104px);height:clamp(72px,24vw,104px)}
+.nxt b{font:700 clamp(17px,4.8vw,24px)/1.05 'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.03em}
+.nxt .fm{margin:2px 0}
+.nxm{display:flex;flex-direction:column;align-items:center;gap:2px}.nxm .cn{font-size:clamp(30px,8vw,44px);line-height:1;color:var(--ac);text-shadow:0 0 18px color-mix(in srgb,var(--ac) 60%,transparent)}.nxm small{color:var(--mu);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+.nxb{width:100%;margin-top:12px;padding:13px 16px;font-size:22px}
 @media(max-width:640px){
  header.top .w{padding:10px 12px 0}
  .hdl{width:100%;justify-content:space-between;flex-wrap:nowrap;gap:12px}
@@ -419,3 +428,6 @@ body.tcm #mn>*{animation:none}
 .xt{font-style:normal;font-size:11px;font-weight:700;padding:1px 8px;border-radius:999px;background:color-mix(in srgb,var(--ok) 25%,transparent);color:var(--ok);flex:none}
 .xt.w{background:rgba(255,255,255,.08);color:var(--mu)}
 .fmn{font:700 22px 'Barlow Condensed',sans-serif;min-width:62px}.spi{font-size:22px;width:44px;text-align:center;flex:none}
+
+.tcs .fit{font-style:normal;font-size:11px;font-weight:700;padding:1px 8px;border-radius:999px;margin-top:2px;background:rgba(255,255,255,.08);color:var(--mu)}
+.tcs .fit.good{background:color-mix(in srgb,var(--ok) 25%,transparent);color:var(--ok)}.tcs .fit.bad{background:color-mix(in srgb,var(--bad) 25%,transparent);color:var(--bad)}
