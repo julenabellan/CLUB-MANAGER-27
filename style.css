@@ -331,3 +331,33 @@ header.top #hs{padding-left:20px;border-left:2px solid rgba(255,255,255,.28);lin
 .cm button{background:none;border:0;padding:2px 8px;margin:2px 0 0 -8px;color:var(--mu);border-radius:999px;font-size:13px;display:inline-flex;gap:6px;align-items:center}
 .cm button:hover{background:rgba(255,255,255,.09)}
 .cm button.on{color:#ff4d6d}
+
+/* ===== v6: cabecera móvil compacta, tabla con color, avatares sin letra ===== */
+.av.br i{display:none}.av.br.nf i{display:block}
+.ptb{background:linear-gradient(165deg,color-mix(in srgb,var(--ac) 16%,#0b1222),rgba(6,10,20,.88));border-left-color:var(--ac)}
+.plt th{background:color-mix(in srgb,var(--ac) 24%,transparent);border-bottom-color:var(--ac)}
+.plt th:first-child{border-radius:6px 0 0 0}.plt th:last-child{border-radius:0 6px 0 0}
+.plt td{border-bottom-color:color-mix(in srgb,var(--ac) 30%,rgba(255,255,255,.2))}
+.plt tbody tr:nth-child(even) td{background:rgba(255,255,255,.04)}
+.plt td.ppo{font-weight:700;letter-spacing:.06em}
+.plt td.ppo.P{color:#ffc928;background:rgba(255,201,40,.12)}
+.plt td.ppo.D{color:#5fb0ff;background:rgba(31,143,255,.14)}
+.plt td.ppo.M{color:#2ee59d;background:rgba(46,229,157,.12)}
+.plt td.ppo.F{color:#ff6b78;background:rgba(255,45,61,.14)}
+.plt tbody tr:hover td{background:rgba(255,255,255,.09)}
+.plt tbody tr:hover td.ppo.P{background:rgba(255,201,40,.2)}.plt tbody tr:hover td.ppo.D{background:rgba(31,143,255,.22)}.plt tbody tr:hover td.ppo.M{background:rgba(46,229,157,.2)}.plt tbody tr:hover td.ppo.F{background:rgba(255,45,61,.22)}
+@media(max-width:640px){
+ header.top .w{padding:8px 10px 0}
+ header .r{flex-wrap:nowrap;gap:8px}
+ .hdl{flex-wrap:nowrap;gap:8px;flex:1 1 auto;min-width:0}
+ #hc{font-size:19px!important;gap:6px;min-width:0;flex:0 1 auto}
+ #hc .cr{width:30px;height:30px}
+ #hc span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ header.top #hs{padding-left:8px;border-left:2px solid rgba(255,255,255,.28);gap:6px;min-height:0;min-width:0;flex:0 1 auto}
+ #hs .lgl{height:30px}
+ #hs .hln{font-size:14px}
+ #hs span{font-size:11px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+ #bs{padding:6px 10px;font-size:15px;flex:none}
+ nav{padding:2px 0 8px;gap:6px}
+ nav button{padding:6px 14px;font-size:15px}
+}

@@ -59,35 +59,36 @@ const PER=[
    l:['Cabeza alta, equipo. Mañana más fuertes. Yo no me voy a ningún lado 💔','Hoy duele, pero {m} sabe lo que hace. Confianza total.'],
    l3:['Nos ha tocado sufrir, pero seguimos aquí. ¡Esta camiseta no se abandona! 💔','Un mal día lo tiene cualquiera. ¡Arriba {c}! #{t}']},
   r:['Ya tengo la bufanda lista para el próximo partido 🧣 #{t}','Si me veis llorar en la grada es de emoción. #{t}','Otro día más soñando con ver al {c} campeón 🏆']},
- {n:'Kevin Memes',h:'KevinMemes_xD',img:'CARA3.png',role:'tonto',
-  rs:{w3:['{s}. No sé qué ha pasado pero me he puesto a bailar con el perro 🕺'],w:['¡Ganamos! He celebrado tanto que se me ha caído la pizza 🍕'],e:['Empate. Como mi relación con el gimnasio: ni sí ni no.'],l:['Hemos perdido y encima se me ha roto la cafetera. Hoy no es mi día ☕'],l3:['{s}. Voy a hacerme un bocata y a olvidarlo todo 🥪']},
-  r:['Pregunta seria: si un portero para un penalti, ¿es de la oposición o del gobierno? 🤔','Hoy he visto una nube con forma de balón y no he dicho nada.','Me he comido 4 bocatas viendo el partido. ¿Eso cuenta como deporte? 💪','Mi gato vio un gol y se fue a su cama. Fue lo más inteligente del día.','Si el balón fuera cuadrado, el fútbol sería un juego de mesa.','Ayer soñé que fichaba por el {c}. Hoy el míster me ha dicho que no.']},
- {n:'Manolo del Bar',h:'ManoloDelBar',img:'CARA4.png',role:'hater',
-  rs:{w3:['Goleada ante {rv}... eso en mis tiempos se hacía con diez jugadores y una bota.'],
-   w:['Ganar, ganar... pero el once de {m} es un disparate, que lo sepáis.'],
-   e:['El empate lo veía venir desde el café de las diez. {m} no sabe de fútbol.'],
-   l:['{s}. Lo dije en el bar esta mañana: con ese once no se le gana ni a las canicas.','{m}, vete a casa a descansar, que lo necesitas.'],
-   l3:['HOY SÍ QUE ME VOY DEL BAR. {s}. Que llamen a mi sobrino, que juega al FIFA 🎮','Esto lo arreglo yo con una pizarra y un cortado.']},
-  r:['En mis tiempos no hacía falta tanto vídeo ni tanta tontería.','Por diez euros arreglo la defensa del {c}. Mensaje privado.','Dicen que el fútbol moderno es otra cosa. Será otra cosa, pero el cortado sigue igual.']},
- {n:'Sergio Grada Norte',h:'SergioGradaNorte',img:'CARA5.png',role:'fan',
-  rs:{w3:['¡¡¡GOLEADA!!! {s} 🔥🔥 Mañana en el curro no hay quien me quite la sonrisa. #{t}','{rv}, esto os pasa por venir al {c} 😎 #{t}'],
-   w:['¡Victoria! Esta grada no deja de cantar nunca 🎶 #{t}','Los tres puntos son nuestros, {m}. ¡Seguimos! 💪'],
-   e:['Empate, pero el equipo lo ha dado todo. La afición, con vosotros.','No ha sido el día, pero el próximo se vuelve a la carga. #{t}'],
-   l:['Caer duele, pero el {c} se levanta siempre. Nos vemos en la grada 💚','Yo aplaudo igual. Con victoria y con derrota, el {c} es mi vida.'],
-   l3:['Mal día. Muy mal día. Pero mi bufanda sigue puesta y mi apoyo, también. #{t}','{s}... bueno, a ver el lado bueno. Mañana saldrá el sol, supongo.']},
-  r:['Cuenta atrás para el próximo partido. Ya tengo las pipas listas 🌻 #{t}','Hay amores que matan. El mío por el {c} me da la vida ❤️','Mi abuelo ya era del {c}. Mi nieto también lo será. #{t}']},
+ {n:'AbueloFutbol',h:'AbueloFutbol',img:'CARA3.png',role:'tonto',
+  rs:{w3:['{s}. Esto no lo vi ni en el 82. Y mira que yo estuve en el 82.'],w:['Ganamos, nieto. Ganamos. Pásame las gafas, que quiero ver la tabla.'],e:['Empate. En mis tiempos también se empataba, pero con más bigote.'],l:['Hemos perdido. Me voy a por un cafelito, que esto no se arregla con nada.'],l3:['{s}. Me voy a dormir la siesta y mañana lo hablamos.']},
+  r:['En mis tiempos los balones pesaban como ladrillos y nadie se quejaba.','Hoy he vuelto a perder las gafas. Estaban en la frente. Igual que el defensa de ayer.','Mi nieto dice que hay "tácticas". Yo solo conozco dos: meter gol y no meterse uno.','Le he dicho al camarero que el {c} gana la liga. Me ha dado un cortado de consolación.','He ido al campo con el transistor por si acaso. Por si acaso, lo que sea.','Antes se jugaba a las cuatro y se cenaba a las nueve. Ahora no sé ni a qué hora es el partido.']},
+ {n:'Maldini14',h:'Maldini14',img:'CARA4.png',role:'fan',
+  rs:{w3:['¡¡Qué exhibición!! {s}. Así se defiende y así se ataca 🔥 #{t}','{m}, esto es fútbol de otro planeta. #{t}'],
+   w:['Tres puntos y la defensa ordenada. Eso es fútbol, amigos 💪 #{t}','Victoria. Lo bonito es ganar, pero lo importante es no encajar 🧱'],
+   e:['Un punto. Ojalá la defensa hubiera estado más fina, pero seguimos.','No se ha ganado, pero el equipo ha peleado cada balón. #{t}'],
+   l:['Toca aprender. Hay que cerrar atrás y volver con fuerza 💔','Partido cruel, pero {m} tiene mi confianza. #{t}'],
+   l3:['Hoy ha costado. Pero la afición del {c} no se rinde nunca. #{t}','{s}. A analizar los errores y a mejorar, que para eso estamos.']},
+  r:['Un buen central vale más que tres delanteros. Lo digo yo, que soy del {c} 🧱','Viendo vídeos de tácticas a las 3 de la mañana. Normal. #{t}','Cuando el {c} defiende bien, da gusto verlo. Más claro, imposible.','El 14 siempre en el corazón. Y el {c}, también ❤️']},
+ {n:'Sergio',h:'SergioTodoMal',img:'CARA5.png',role:'hater',
+  rs:{w3:['{s}. Mucho gol, pero el {rv} ha puesto un equipo de cartón. Y el {c} tampoco es para tirar cohetes.'],
+   w:['Ganar, ganar... El {c} y el {rv} dan igual, todos son malísimos.'],
+   e:['Empate. Normal: los dos equipos son igual de malos.'],
+   l:['{s}. El {c} perdiendo y el {rv} ganando: no sé quién me da más pena.'],
+   l3:['{s}. Qué asco de fútbol. Y qué asco de todos los clubes, ya puestos.']},
+  r:['El {x} es el club más sobrevalorado de esta liga. Y no, no hay debate.','Todos los clubes son iguales: mucho escudo y poco fútbol. Empezando por el {x}.','Hoy me he levantado odiando al {x} y al {y}. Por si acaso, mañana también.','Que alguien me explique qué le ve la gente al {x}. En serio.','Mi lista de clubes que me caen mal: el {x}, el {y} y todos los demás.']},
  {n:'Lore',h:'Lore_random',img:'CARA6.png',role:'tonto',
   rs:{w3:['Hoy hemos metido un montón de goles. No sé quién ha marcado, pero ha sido bonito 🥳'],w:['¡Ganamos! Mi tío ha gritado tanto que ha asustado al vecino 😂'],e:['Empate. Eso significa que nadie ha perdido, ¿no? Pues perfecto 😌'],l:['Perdimos. Pero las patatas del estadio estaban buenísimas 🍟'],l3:['{s}. Me han dicho que no sonría. Intento no sonreír 🫠']},
   r:['No sé de fútbol, pero ese del número 9 tiene buena pinta 👀','He ido al estadio solo por las patatas. 10/10 🍟','¿Alguien me explica por qué ese señor de negro pita tanto?','Me han dicho que el míster es {m}. ¿Es el de la corbata? Pues me cae bien.','Mi madre cree que el VAR es una marca de detergente.','Hoy el partido, mañana la vida. Pero primero el café ☕']}];
-const perV=c=>{const me=G.T[G.me];return{c:me.n,m:G.mgr,ms:fslug(G.mgr),t:fslug(me.n),s:c?c.s:'',rv:c?c.rv:''}};
+const perV=c=>{const me=G.T[G.me],tn=G.T.map(t=>t.n),x=fpk(tn),y=fpk(tn.filter(n=>n!=x));return{c:me.n,m:G.mgr,ms:fslug(G.mgr),t:fslug(me.n),s:c?c.s:'',rv:c?c.rv:'',x,y}};
 function perPost(i,k,V,my){const P=PER[i],pl=k&&P.rs[k]&&P.rs[k].length?P.rs[k]:P.r;let x=fpk(pl);Object.keys(V).forEach(q=>{x=x.split('{'+q+'}').join(V[q])});return fdAdd(null,x,{k:'per',c:'fan',per:i,my:my,m:.06})}
 const perGrp=r=>PER.map((p,i)=>i).filter(i=>PER[i].role==r);
 function fdPersonas(c){const V=perV(c),k=!c?null:c.d>=3?'w3':c.d>0?'w':c.d==0?'e':c.d<=-3?'l3':'l',neg=c&&c.d<0,pos=c&&c.d>0;
  if(c){if(Math.random()<(neg?.8:c.d==0?.55:.4))perPost(fpk(perGrp('hater')),k,V,1);if(Math.random()<(neg?.4:pos?.8:.5))perPost(fpk(perGrp('fan')),k,V,1)}
- if(Math.random()<.65)perPost(fpk(perGrp('tonto')),Math.random()<.35?k:null,V,0)}
+ if(Math.random()<.65)perPost(fpk(perGrp('tonto')),Math.random()<.35?k:null,V,0);
+ if(Math.random()<.5)perPost(4,null,V,0)}
 /* ---------- comentarios (respuestas) con like + tweets destacados ---------- */
 const fdTop=p=>p.tp||p.lk>=4000;
-const fdAvP=P=>`<span class="av br per"><i>${fesc(P.n[0])}</i><img src="img/${P.img}" alt="" onerror="this.remove()"></span>`;
+const fdAvP=P=>`<span class="av br per"><i>${fesc(P.n[0])}</i><img src="img/${P.img}" alt="" onerror="this.parentNode.classList.add('nf');this.remove()"></span>`;
 const REP={fan:['¡Así se habla! 👏','Esto es el {c}, señores. Que nadie lo olvide.','Yo estoy con vosotros hasta el final ❤️','Qué grande. Sin discusión.','Ahí, ahí. Seguimos. 💪'],
  hater:['Ya, ya... y luego pasa lo que pasa.','Eso lo dices tú. Los números no mienten, {m}.','Sobrevalorado. Lo digo desde hace meses.','Y yo soy el rey de España 🙄','Tanto bombo para tan poco.'],
  tonto:['Yo vine solo a ver si había pizza 🍕','Primera vez que entro aquí y ya me he perdido.','¿Esto cuenta para la quiniela?','Mi perro ha leído esto y ha ladrado. Ahí lo dejo.','Like por si acaso 👍']};
@@ -193,10 +194,10 @@ function fdInit(){if(G.fans==null)G.fans=60;if(G.seen==null)G.seen=0;if(!G.feed)
 
 /* ---------- pintado ---------- */
 const fdList=f=>{const a=G.feed.slice().reverse();return f=='all'?a:f=='my'?a.filter(p=>p.my):a.filter(p=>p.c==f)};
-const fdAv=a=>`<span class="av br${a.img.startsWith('LOGO')?' lg':''}"><i>${fesc(a.n[0])}</i><img src="img/${encodeURIComponent(a.img)}" alt="" onerror="this.remove()"></span>`;
+const fdAv=a=>`<span class="av br${a.img.startsWith('LOGO')?' lg':''}"><i>${fesc(a.n[0])}</i><img src="img/${encodeURIComponent(a.img)}" alt="" onerror="this.parentNode.classList.add('nf');this.remove()"></span>`;
 const VF='<svg class="vf" viewBox="0 0 24 24" aria-label="Cuenta verificada"><circle cx="12" cy="12" r="11"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 function fdAcc(p){if(p.a){const a=ACC[p.a];return{n:a.n,h:a.h,v:1,av:fdAv(a)}}
- if(p.per!=null&&PER[p.per]){const P=PER[p.per];return{n:P.n,h:P.h,v:0,av:`<span class="av br per"><i>${fesc(P.n[0])}</i><img src="img/${P.img}" alt="" onerror="this.remove()"></span>`}}
+ if(p.per!=null&&PER[p.per]){const P=PER[p.per];return{n:P.n,h:P.h,v:0,av:`<span class="av br per"><i>${fesc(P.n[0])}</i><img src="img/${P.img}" alt="" onerror="this.parentNode.classList.add('nf');this.remove()"></span>`}}
  if(p.k=='club'){const t=G.T[p.cr];return{n:t.n,h:fslug(t.n),v:1,av:`<span class="av cl">${crest(p.cr,34)}</span>`}}
  return{n:p.fn,h:p.fh,v:0,av:`<span class="av cl fn">${crest(p.cr,34)}</span>`}}
 function fdEmb(c){if(!c)return'';
