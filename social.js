@@ -1,6 +1,6 @@
 /* ===== Redes sociales del universo Superstar (estilo X / Twitter) =====
    Cada jornada se generan publicaciones de prensa, datos, mercado, ligas, clubes y aficionados.
-   Imágenes esperadas en /img: MARCA.png, JORGE.png, OPTA.png, TRANSFER.png, FD.png, LOGO 1A.png, LOGO 2A.png */
+   Imágenes esperadas en /img: MARCA.png, JORGE.png, OPTA.png, TRANSFER.png, FD.png, SKY.png, LOGO 1A.png, LOGO 2A.png */
 const ACC={
  marca:{n:'MARCA',h:'marca',img:'MARCA.png',m:1.6,f:'4,8 M',c:'prensa'},
  jorge:{n:'Jorge de la Mata Oficial',h:'JorgedelaMata',img:'JORGE.png',m:1.9,f:'12,3 M',c:'fich'},
@@ -8,8 +8,9 @@ const ACC={
  tm:{n:'Transfermarkt',h:'TransfermarktES',img:'TRANSFER.png',m:.7,f:'1,6 M',c:'datos'},
  l1:{n:'Liga Superstar One',h:'SuperstarOne',img:'LOGO 1A.png',m:1.1,f:'3,4 M',c:'prensa'},
  l2:{n:'Liga Superstar 2',h:'Superstar2',img:'LOGO 2A.png',m:.6,f:'890 K',c:'prensa'},
- fd:{n:'FD SPORTS',h:'FDSports',img:'FD.png',m:1.5,f:'7,8 M',c:'fd'}};
-const FF=[['all','Todo'],['my','Mi club'],['prensa','Noticias'],['fich','Fichajes'],['datos','Datos'],['fd','FD Sports'],['club','Clubes'],['fan','Afición']];
+ fd:{n:'FD SPORTS',h:'FDSports',img:'FD.png',m:1.5,f:'7,8 M',c:'fd'},
+ sky:{n:'Sky Sports',h:'SkySports',img:'SKY.png',m:1.7,f:'9,4 M',c:'sky'}};
+const FF=[['all','Todo'],['my','Mi club'],['prensa','Noticias'],['fich','Fichajes'],['datos','Datos'],['fd','FD Sports'],['sky','Sky Sports'],['club','Clubes'],['fan','Afición']];
 let FW=0,FT=540;
 const fesc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),
  fslug=s=>String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9]+/g,''),
@@ -145,7 +146,7 @@ function fdPred(w,l,LN,lht){const tb=tab(l),N=NWL[l],pj=Math.max(...tb.map(t=>t.
  const so=tb.map(t=>str(t).o),av=so.reduce((s,v)=>s+v,0)/so.length,
   pr=tb.map((t,i)=>({t,x:t.pts+rem*((t.pts+6*fdC(1.35+(so[i]-av)/16,.5,2.5))/(t.pj+6))})).sort((a,b)=>b.x-a.x),
   tau=2+.7*Math.sqrt(rem),e=pr.map(q=>Math.exp((q.x-pr[0].x)/tau)),sm=e.reduce((s,v)=>s+v,0),pc=e.map(v=>Math.round(100*v/sm)),mi=pr.findIndex(q=>q.t.id==G.me),me=G.T[G.me];
- fdAdd('fd',`🔮 PREDICCIÓN | Tras ${pj} jornadas, ${pr[0].t.n} tiene un ${pc[0]}% de ganar la ${LN}. ${me.n} acabaría ${mi+1}º con ${Math.round(pr[mi].x)} puntos.\n#Predicción #${lht}`,{my:1,card:{t:'pr',pj,n:N,r:pr.slice(0,5).map((q,i)=>[q.t.id,Math.round(q.x),pc[i]]),zl:l==1?'Zona de descenso (previsión)':'Ascenso directo (previsión)',z:(l==1?pr.slice(-REL):pr.slice(0,PRO)).map(q=>q.t.id),me:[mi+1,Math.round(pr[mi].x)]}})}
+ fdAdd('sky',`🔮 PREDICCIÓN | Tras ${pj} jornadas, ${pr[0].t.n} tiene un ${pc[0]}% de ganar la ${LN}. ${me.n} acabaría ${mi+1}º con ${Math.round(pr[mi].x)} puntos.\n#Predicción #${lht}`,{my:1,card:{t:'pr',pj,n:N,r:pr.slice(0,5).map((q,i)=>[q.t.id,Math.round(q.x),pc[i]]),zl:l==1?'Zona de descenso (previsión)':'Ascenso directo (previsión)',z:(l==1?pr.slice(-REL):pr.slice(0,PRO)).map(q=>q.t.id),me:[mi+1,Math.round(pr[mi].x)]}})}
 function fdDuel(w,l,LN){const sc=x=>(x.p.g|0)*2.5+x.p.ovr*.4,fw=fpool(l).filter(x=>x.p.pos=='F').sort((a,b)=>sc(b)-sc(a));if(fw.length<2)return;
  const a=fw[0];let b=fw[1];const mine=fw.find(x=>x.t.id==G.me&&x!==a);if(mine&&Math.random()<.4)b=mine;
  const o=x=>({n:x.p.n,cr:x.t.id,age:x.p.age,ovr:Math.round(x.p.ovr),g:x.p.g|0,a:x.p.a|0,v:+mval(x.p).toFixed(1)}),A=o(a),B=o(b),k=['ovr','g','a','v'],wa=k.filter(q=>A[q]>B[q]).length,wb=k.filter(q=>B[q]>A[q]).length;
@@ -163,8 +164,8 @@ function fdRecUpd(w,l,LN,lht){const R0=fdRecBase(l),tb=tab(l),rs=G.res.filter(r=
  let bs=null;tb.forEach(t=>{const n=fdSk(t.id,'v');if(n>R0.rv.v&&(!bs||n>bs.n))bs={id:t.id,n}});if(bs){R0.rv={v:bs.n,n:T(bs.id).n,cr:bs.id,s:G.season};brk.push('rv')}
  if(!brk.length||(R0.lps==G.season&&w-R0.lpw<4))return;R0.lps=G.season;R0.lpw=w;const k=brk[0],x=R0[k],
   tx={pg:`${x.n} ya suma ${x.v} goles en una temporada: récord histórico de la ${LN}.`,tp:`${x.n} alcanza ${x.v} puntos: nadie había sumado tanto en la ${LN}.`,gl:`${x.d} entre ${x.n}: la mayor goleada de la historia de la ${LN}.`,rv:`${x.n} encadena ${x.v} victorias seguidas: récord absoluto de la ${LN}.`}[k];
- fdAdd('fd',`🏅 NUEVO RÉCORD | ${tx}\n#Récord #${lht}`,{big:1,my:x.cr==G.me,card:{t:'rc',h:'NUEVO RÉCORD',s:LN,r:fdRows(R0,brk)}})}
-function fdRecBook(l,LN,lht){fdAdd('fd',`📚 LIBRO DE RÉCORDS | Estas son las marcas históricas de la ${LN}. ¿Quién las batirá?\n#Récords #${lht}`,{card:{t:'rc',h:'RÉCORDS HISTÓRICOS',s:LN,r:fdRows(fdRecBase(l))}})}
+ fdAdd('sky',`🏅 NUEVO RÉCORD | ${tx}\n#Récord #${lht}`,{big:1,my:x.cr==G.me,card:{t:'rc',h:'NUEVO RÉCORD',s:LN,r:fdRows(R0,brk)}})}
+function fdRecBook(l,LN,lht){fdAdd('sky',`📚 LIBRO DE RÉCORDS | Estas son las marcas históricas de la ${LN}. ¿Quién las batirá?\n#Récords #${lht}`,{card:{t:'rc',h:'RÉCORDS HISTÓRICOS',s:LN,r:fdRows(fdRecBase(l))}})}
 function fdFD(w,l,rs){const LN=LGN[l],lht=fslug(LN),N=NWL[l],run=f=>{try{f()}catch(e){console.error(e)}};
  run(()=>fdIdeal(w,l,rs,LN));
  if(w>=3&&(w+1)%5==0&&w<N-1)run(()=>fdPred(w,l,LN,lht));
@@ -262,7 +263,7 @@ function fdInit(){if(G.fans==null)G.fans=60;if(G.seen==null)G.seen=0;if(!G.feed)
 
 /* ---------- pintado ---------- */
 const fdList=f=>{const a=G.feed.slice().reverse();return f=='all'?a:f=='my'?a.filter(p=>p.my):a.filter(p=>p.c==f)};
-const fdAv=a=>`<span class="av br${/^(LOGO|FD)/.test(a.img)?' lg':''}"><i>${fesc(a.n[0])}</i><img src="img/${encodeURIComponent(a.img)}" alt="" onerror="this.parentNode.classList.add('nf');this.remove()"></span>`;
+const fdAv=a=>`<span class="av br${/^(LOGO|FD|SKY)/.test(a.img)?' lg':''}"><i>${fesc(a.n[0])}</i><img src="img/${encodeURIComponent(a.img)}" alt="" onerror="this.parentNode.classList.add('nf');this.remove()"></span>`;
 const VF='<svg class="vf" viewBox="0 0 24 24" aria-label="Cuenta verificada"><circle cx="12" cy="12" r="11"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 function fdAcc(p){if(p.a){const a=ACC[p.a];return{n:a.n,h:a.h,v:1,av:fdAv(a)}}
  if(p.per!=null&&PER[p.per]){const P=PER[p.per];return{n:P.n,h:P.h,v:0,av:`<span class="av br per"><i>${fesc(P.n[0])}</i><img src="img/${P.img}" alt="" onerror="this.parentNode.classList.add('nf');this.remove()"></span>`}}
