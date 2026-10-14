@@ -1,14 +1,15 @@
 /* ===== Redes sociales del universo Superstar (estilo X / Twitter) =====
    Cada jornada se generan publicaciones de prensa, datos, mercado, ligas, clubes y aficionados.
-   Imágenes esperadas en /img: MARCA.png, JORGE.png, OPTA.png, TRANSFER.png, LOGO 1A.png, LOGO 2A.png */
+   Imágenes esperadas en /img: MARCA.png, JORGE.png, OPTA.png, TRANSFER.png, FD.png, LOGO 1A.png, LOGO 2A.png */
 const ACC={
  marca:{n:'MARCA',h:'marca',img:'MARCA.png',m:1.6,f:'4,8 M',c:'prensa'},
  jorge:{n:'Jorge de la Mata Oficial',h:'JorgedelaMata',img:'JORGE.png',m:1.9,f:'12,3 M',c:'fich'},
  opta:{n:'Opta',h:'OptaSuperstar',img:'OPTA.png',m:.8,f:'2,1 M',c:'datos'},
  tm:{n:'Transfermarkt',h:'TransfermarktES',img:'TRANSFER.png',m:.7,f:'1,6 M',c:'datos'},
  l1:{n:'Liga Superstar One',h:'SuperstarOne',img:'LOGO 1A.png',m:1.1,f:'3,4 M',c:'prensa'},
- l2:{n:'Liga Superstar 2',h:'Superstar2',img:'LOGO 2A.png',m:.6,f:'890 K',c:'prensa'}};
-const FF=[['all','Todo'],['my','Mi club'],['prensa','Noticias'],['fich','Fichajes'],['datos','Datos'],['club','Clubes'],['fan','Afición']];
+ l2:{n:'Liga Superstar 2',h:'Superstar2',img:'LOGO 2A.png',m:.6,f:'890 K',c:'prensa'},
+ fd:{n:'FD SPORTS',h:'FDSports',img:'FD.png',m:1.5,f:'7,8 M',c:'fd'}};
+const FF=[['all','Todo'],['my','Mi club'],['prensa','Noticias'],['fich','Fichajes'],['datos','Datos'],['fd','FD Sports'],['club','Clubes'],['fan','Afición']];
 let FW=0,FT=540;
 const fesc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),
  fslug=s=>String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9]+/g,''),
@@ -129,6 +130,50 @@ function fdRumor(l){const me=G.T[G.me],pl=fpool(Math.random()<.25?(l==1?2:1):l).
  fdAdd('jorge',fpk(RUM)(x.p,x.t,d,fmv(mval(x.p))),{card:fdVal(x.p,x.t,Math.round(R(-4,12)))})}
 const fdRes=(h,a,hg,ag)=>`<div class="rc"><span class="tn">${crest(h,22)}<small>${nm(h)}</small></span><b>${hg} - ${ag}</b><span class="tn r"><small>${nm(a)}</small>${crest(a,22)}</span></div>`;
 
+/* ---------- FD SPORTS (estilo 433): once ideal, predicciones, cara a cara, promesas y récords ---------- */
+const fdC=(v,a,b)=>Math.max(a,Math.min(b,v)),fdUk=(t,i)=>t.id+':'+i,fdLn=n=>String(n).split(' ').slice(1).join(' ')||n,
+ FRK={pg:'Goles en una temporada',tp:'Puntos en una temporada',gl:'Mayor goleada',rv:'Racha de victorias'};
+function fdIdeal(w,l,rs,LN){const sn=G.fdg||{},cd=[];
+ G.T.filter(t=>t.lg==l).forEach(t=>{const r=rs.find(x=>x[2]==t.id||x[3]==t.id);if(!r||!t.lu)return;const h=r[2]==t.id,d=h?r[4]-r[5]:r[5]-r[4],cs=(h?r[5]:r[4])==0;
+  t.lu.forEach(i=>{const p=t.pl[i];if(!p)return;const s=sn[fdUk(t,i)]||[p.g|0,p.a|0],g=p.g|0,a=p.a|0,dg=g>=s[0]?g-s[0]:g,da=a>=s[1]?a-s[1]:a,
+   rt=fdC(6.1+(p.ovr-68)*.025+dg*.95+da*.5+(d>0?.35:d<0?-.25:0)+((p.pos=='D'||p.pos=='P')&&cs?.55:0)+R(-.25,.35),5.5,9.9);cd.push({p,t,rt,dg,da})})});
+ G.fdg=G.fdg||{};G.T.filter(t=>t.lg==l).forEach(t=>t.pl.forEach((p,i)=>G.fdg[fdUk(t,i)]=[p.g|0,p.a|0]));
+ const pk=(q,n)=>cd.filter(x=>x.p.pos==q).sort((a,b)=>b.rt-a.rt).slice(0,n),xi=[...pk('F',3),...pk('M',3),...pk('D',4),...pk('P',1)];
+ if(xi.length<11)return;const mv=xi.slice().sort((a,b)=>b.rt-a.rt)[0];
+ fdAdd('fd',`⭐ ONCE IDEAL | Así queda el equipo de la jornada ${w+1} en la ${LN}. MVP: ${mv.p.n} (${mv.t.n}) con un ${mv.rt.toFixed(1).replace('.',',')}.\n#J${w+1} #OnceIdeal`,{top:1,my:xi.some(x=>x.t.id==G.me),card:{t:'xi',h:'ONCE IDEAL',s:`Jornada ${w+1} · ${LN}`,r:xi.map(x=>[x.p.pos,x.p.n,x.t.id,+x.rt.toFixed(1),x.dg,x.da,x===mv?1:0])}})}
+function fdPred(w,l,LN,lht){const tb=tab(l),N=NWL[l],pj=Math.max(...tb.map(t=>t.pj)),rem=N-pj;if(rem<1)return;
+ const so=tb.map(t=>str(t).o),av=so.reduce((s,v)=>s+v,0)/so.length,
+  pr=tb.map((t,i)=>({t,x:t.pts+rem*((t.pts+6*fdC(1.35+(so[i]-av)/16,.5,2.5))/(t.pj+6))})).sort((a,b)=>b.x-a.x),
+  tau=2+.7*Math.sqrt(rem),e=pr.map(q=>Math.exp((q.x-pr[0].x)/tau)),sm=e.reduce((s,v)=>s+v,0),pc=e.map(v=>Math.round(100*v/sm)),mi=pr.findIndex(q=>q.t.id==G.me),me=G.T[G.me];
+ fdAdd('fd',`🔮 PREDICCIÓN | Tras ${pj} jornadas, ${pr[0].t.n} tiene un ${pc[0]}% de ganar la ${LN}. ${me.n} acabaría ${mi+1}º con ${Math.round(pr[mi].x)} puntos.\n#Predicción #${lht}`,{my:1,card:{t:'pr',pj,n:N,r:pr.slice(0,5).map((q,i)=>[q.t.id,Math.round(q.x),pc[i]]),zl:l==1?'Zona de descenso (previsión)':'Ascenso directo (previsión)',z:(l==1?pr.slice(-REL):pr.slice(0,PRO)).map(q=>q.t.id),me:[mi+1,Math.round(pr[mi].x)]}})}
+function fdDuel(w,l,LN){const sc=x=>(x.p.g|0)*2.5+x.p.ovr*.4,fw=fpool(l).filter(x=>x.p.pos=='F').sort((a,b)=>sc(b)-sc(a));if(fw.length<2)return;
+ const a=fw[0];let b=fw[1];const mine=fw.find(x=>x.t.id==G.me&&x!==a);if(mine&&Math.random()<.4)b=mine;
+ const o=x=>({n:x.p.n,cr:x.t.id,age:x.p.age,ovr:Math.round(x.p.ovr),g:x.p.g|0,a:x.p.a|0,v:+mval(x.p).toFixed(1)}),A=o(a),B=o(b),k=['ovr','g','a','v'],wa=k.filter(q=>A[q]>B[q]).length,wb=k.filter(q=>B[q]>A[q]).length;
+ fdAdd('fd',`⚔️ CARA A CARA | ${a.p.n} (${a.t.n}) vs ${b.p.n} (${b.t.n}): ¿quién es el delantero del momento? ${wa==wb?'Duelo igualado.':(wa>wb?a.p.n:b.p.n)+' manda en '+Math.max(wa,wb)+' de 4 apartados.'}\n#Delanteros #J${w+1}`,{my:a.t.id==G.me||b.t.id==G.me,card:{t:'cp',a:A,b:B}})}
+function fdYoung(w,l,LN){let pl=fpool(l).filter(x=>x.p.age<=21);if(pl.length<5)pl=fpool(l).filter(x=>x.p.age<=23);pl=pl.sort((a,b)=>(b.p.pot+b.p.ovr*.6)-(a.p.pot+a.p.ovr*.6)).slice(0,5);if(pl.length<3)return;const x=pl[0];
+ fdAdd('fd',`🌱 JÓVENES PROMESAS | Los talentos que mandan en la ${LN}. Ojo a ${x.p.n} (${x.t.n}): ${x.p.age} años y potencial ${Math.round(x.p.pot)}.\n#Cantera #FuturasEstrellas`,{my:pl.some(q=>q.t.id==G.me),card:{t:'yr',h:'JÓVENES PROMESAS',s:LN,r:pl.map(q=>[q.t.id,q.p.n,q.p.pos,q.p.age,Math.round(q.p.ovr),Math.round(q.p.pot)])}})}
+/* récords históricos de la liga (se guardan en la partida; arrancan con marcas de archivo y se baten con el tiempo) */
+function fdRecBase(l){G.rec=G.rec||{};const n='Archivo de la liga';return G.rec[l]||(G.rec[l]=l==1?{pg:{v:30,n:'Rafa Montero',s:0},tp:{v:86,n:'Campeón histórico',s:0},gl:{v:7,d:'7-0',n,s:0},rv:{v:11,n,s:0}}:{pg:{v:32,n:'Rafa Montero',s:0},tp:{v:98,n:'Campeón histórico',s:0},gl:{v:7,d:'7-0',n,s:0},rv:{v:12,n,s:0}})}
+const fdRows=(R0,brk)=>Object.keys(FRK).map(k=>({k:FRK[k],v:k=='gl'?R0.gl.d:R0[k].v,n:R0[k].n,cr:R0[k].cr,s:R0[k].s?'Temporada '+R0[k].s:'Histórico',nw:(brk||[]).includes(k)?1:0}));
+function fdRecUpd(w,l,LN,lht){const R0=fdRecBase(l),tb=tab(l),rs=G.res.filter(r=>r[1]==l),brk=[],T=i=>G.T[i];
+ const sp=fpool(l).sort((a,b)=>(b.p.g|0)-(a.p.g|0))[0];if(sp&&(sp.p.g|0)>R0.pg.v){R0.pg={v:sp.p.g|0,n:sp.p.n+' ('+sp.t.n+')',cr:sp.t.id,s:G.season};brk.push('pg')}
+ if(tb[0].pts>R0.tp.v){R0.tp={v:tb[0].pts,n:tb[0].n,cr:tb[0].id,s:G.season};brk.push('tp')}
+ const bg=rs.slice().sort((a,b)=>Math.abs(b[4]-b[5])-Math.abs(a[4]-a[5]))[0];
+ if(bg&&Math.abs(bg[4]-bg[5])>R0.gl.v){R0.gl={v:Math.abs(bg[4]-bg[5]),d:Math.max(bg[4],bg[5])+'-'+Math.min(bg[4],bg[5]),n:T(bg[2]).n+' - '+T(bg[3]).n,cr:bg[4]>bg[5]?bg[2]:bg[3],s:G.season};brk.push('gl')}
+ let bs=null;tb.forEach(t=>{const n=fdSk(t.id,'v');if(n>R0.rv.v&&(!bs||n>bs.n))bs={id:t.id,n}});if(bs){R0.rv={v:bs.n,n:T(bs.id).n,cr:bs.id,s:G.season};brk.push('rv')}
+ if(!brk.length||(R0.lps==G.season&&w-R0.lpw<4))return;R0.lps=G.season;R0.lpw=w;const k=brk[0],x=R0[k],
+  tx={pg:`${x.n} ya suma ${x.v} goles en una temporada: récord histórico de la ${LN}.`,tp:`${x.n} alcanza ${x.v} puntos: nadie había sumado tanto en la ${LN}.`,gl:`${x.d} entre ${x.n}: la mayor goleada de la historia de la ${LN}.`,rv:`${x.n} encadena ${x.v} victorias seguidas: récord absoluto de la ${LN}.`}[k];
+ fdAdd('fd',`🏅 NUEVO RÉCORD | ${tx}\n#Récord #${lht}`,{big:1,my:x.cr==G.me,card:{t:'rc',h:'NUEVO RÉCORD',s:LN,r:fdRows(R0,brk)}})}
+function fdRecBook(l,LN,lht){fdAdd('fd',`📚 LIBRO DE RÉCORDS | Estas son las marcas históricas de la ${LN}. ¿Quién las batirá?\n#Récords #${lht}`,{card:{t:'rc',h:'RÉCORDS HISTÓRICOS',s:LN,r:fdRows(fdRecBase(l))}})}
+function fdFD(w,l,rs){const LN=LGN[l],lht=fslug(LN),N=NWL[l],run=f=>{try{f()}catch(e){console.error(e)}};
+ run(()=>fdIdeal(w,l,rs,LN));
+ if(w>=3&&(w+1)%5==0&&w<N-1)run(()=>fdPred(w,l,LN,lht));
+ if(w%6==2)run(()=>fdDuel(w,l,LN));
+ if(w%7==4)run(()=>fdYoung(w,l,LN));
+ run(()=>fdRecUpd(w,l,LN,lht));
+ if(w%12==11)run(()=>fdRecBook(l,LN,lht))}
+function fdSeasonFD(){const l=G.T[G.me].lg,LN=LGN[l],run=f=>{try{f()}catch(e){console.error(e)}};run(()=>fdYoung(-1,l,LN));run(()=>fdRecBook(l,LN,fslug(LN)))}
+
 /* ---------- publicaciones de cada jornada ---------- */
 function genFeed(w){
  const me=G.T[G.me],l=me.lg,T=i=>G.T[i],rs=G.res.filter(r=>r[0]==w&&r[1]==l),mr=G.res.find(r=>r[0]==w&&(r[2]==G.me||r[3]==G.me));
@@ -187,6 +232,7 @@ function genFeed(w){
  const ot=rs.filter(r=>r!==mr);if(ot.length&&Math.random()<.6){const r=fpk(ot),c=Math.random()<.5?r[2]:r[3];fdReact(c,r,2)}
  try{fdPersonas(mr?{s:sg(mr),rv:T(o).n,d}:null)}catch(e){console.error(e)}
  if(G.fans<30&&Math.random()<.4)fdFan(G.me,fpk(['Las gradas vacías no son casualidad. Necesitamos un proyecto, no excusas. #DirectivaOut','Cada vez somos menos en el estadio. Que alguien lo arregle ya.']),{my:1,v:3});
+ fdFD(w,l,rs);
  G.feed.sort((a,b)=>a.i-b.i);save()}
 
 /* ---------- arranque de temporada y fin de temporada ---------- */
@@ -210,12 +256,13 @@ function feedSeason(s){const me=G.T[G.me],slg=fslug(me.n),id=n=>{const t=G.T.fin
  fdClub(G.me,`🎬 Termina la temporada ${s.season}: ${s.pos}º en la ${LGN[s.lg]}. ${s.met}/${s.tot} objetivos cumplidos. Gracias por todo, afición. #${slg}`,{m:.8,big:1});
  if(s.fired)fdAdd('marca',`🚨 ÚLTIMA HORA | ${me.n} destituye a ${G.mgr}. La directiva pone fin a su etapa.`,{big:1,my:1});
  fdAdd('jorge',`🚨 Arranca el mercado de verano. Se esperan movimientos importantes en las dos ligas. #Mercado`);
+ fdSeasonFD();
  G.feed.sort((a,b)=>a.i-b.i);feedStart(0)}
 function fdInit(){if(G.fans==null)G.fans=60;if(G.seen==null)G.seen=0;if(!G.feed){G.feed=[];G.fs=0;feedStart(1)}}
 
 /* ---------- pintado ---------- */
 const fdList=f=>{const a=G.feed.slice().reverse();return f=='all'?a:f=='my'?a.filter(p=>p.my):a.filter(p=>p.c==f)};
-const fdAv=a=>`<span class="av br${a.img.startsWith('LOGO')?' lg':''}"><i>${fesc(a.n[0])}</i><img src="img/${encodeURIComponent(a.img)}" alt="" onerror="this.parentNode.classList.add('nf');this.remove()"></span>`;
+const fdAv=a=>`<span class="av br${/^(LOGO|FD)/.test(a.img)?' lg':''}"><i>${fesc(a.n[0])}</i><img src="img/${encodeURIComponent(a.img)}" alt="" onerror="this.parentNode.classList.add('nf');this.remove()"></span>`;
 const VF='<svg class="vf" viewBox="0 0 24 24" aria-label="Cuenta verificada"><circle cx="12" cy="12" r="11"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 function fdAcc(p){if(p.a){const a=ACC[p.a];return{n:a.n,h:a.h,v:1,av:fdAv(a)}}
  if(p.per!=null&&PER[p.per]){const P=PER[p.per];return{n:P.n,h:P.h,v:0,av:`<span class="av br per"><i>${fesc(P.n[0])}</i><img src="img/${P.img}" alt="" onerror="this.parentNode.classList.add('nf');this.remove()"></span>`}}
@@ -225,7 +272,15 @@ function fdEmb(c){if(!c)return'';
  if(c.t=='r')return `<div class="qc">${fdRes(c.h,c.a,c.hg,c.ag)}</div>`;
  if(c.t=='l')return `<div class="qc ql">${c.rows.map(r=>fdRes(...r)).join('')}</div>`;
  if(c.t=='s')return `<div class="qc qs">${c.cr!=null?crest(c.cr,34):''}<b class="bn">${fesc(c.n)}</b><span>${fesc(c.l)}</span></div>`;
- if(c.t=='v')return `<div class="qc qv">${crest(c.cr,34)}<div class="vi"><b>${fesc(c.pn)}</b><span class="mu sm">${PN[c.pos]} · ${fesc(G.T[c.cr].n)} · ${c.age} años</span></div><div class="vv"><b>${fesc(c.val)}</b><em class="${c.up>=0?'ok':'ko'}">${c.up>=0?'▲':'▼'} ${Math.abs(c.up)}%</em></div></div>`;return''}
+ if(c.t=='v')return `<div class="qc qv">${crest(c.cr,34)}<div class="vi"><b>${fesc(c.pn)}</b><span class="mu sm">${PN[c.pos]} · ${fesc(G.T[c.cr].n)} · ${c.age} años</span></div><div class="vv"><b>${fesc(c.val)}</b><em class="${c.up>=0?'ok':'ko'}">${c.up>=0?'▲':'▼'} ${Math.abs(c.up)}%</em></div></div>`; const fdPl=(r)=>['F','M','D','P'].map(q=>`<div class="fd-rw">${r.filter(x=>x[0]==q).map(x=>`<div class="fd-pl${x[6]?' mv':''}">${crest(x[2],26)}<b>${fesc(fdLn(x[1]))}</b><i>${x[3].toFixed(1).replace('.',',')}</i>${x[4]||x[5]?`<u>${x[4]?'⚽'+(x[4]>1?x[4]:''):''}${x[5]?'🅰'+(x[5]>1?x[5]:''):''}</u>`:''}</div>`).join('')}</div>`).join('');
+ const fdHd=c=>`<div class="fd-hd"><b>${fesc(c.h)}</b><span>${fesc(c.s)}</span></div>`;
+ if(c.t=='xi')return `<div class="qc fd-c">${fdHd(c)}<div class="fd-pit">${fdPl(c.r)}</div></div>`;
+ if(c.t=='pr')return `<div class="qc fd-c"><div class="fd-hd"><b>PREDICCIÓN FINAL</b><span>${c.pj}/${c.n} jornadas</span></div><div class="fd-bd">${c.r.map((x,i)=>`<div class="fd-pr"><span class="fd-n">${i+1}</span>${crest(x[0],24)}<b>${nm(x[0])}</b><span class="fd-bar"><i style="width:${Math.max(3,x[2])}%"></i></span><em>${x[2]}%</em><u>${x[1]} pts</u></div>`).join('')}<div class="fd-zn"><small>${c.zl}</small>${c.z.map(i=>`<span class="tn">${crest(i,20)}<small>${nm(i)}</small></span>`).join('')}</div>${c.me&&c.me[0]>5?`<div class="fd-zn"><small>Tu club</small><span>${c.me[0]}º · ${c.me[1]} pts</span></div>`:''}</div></div>`;
+ if(c.t=='cp'){const A=c.a,B=c.b,mx=(x,y)=>Math.max(x,y,1),row=(l,k,f)=>{const a=A[k],b=B[k],m=mx(a,b);return `<div class="fd-cr"><small>${l}</small><div class="fd-ln"><b class="${a>b?'w':''}">${f(a)}</b><span class="fd-t"><span class="h l"><i class="${a>b?'w':''}" style="width:${Math.round(100*a/m)}%"></i></span><span class="h"><i class="${b>a?'w':''}" style="width:${Math.round(100*b/m)}%"></i></span></span><b class="${b>a?'w':''}">${f(b)}</b></div></div>`},id=x=>x;
+  return `<div class="qc fd-c"><div class="fd-hd"><b>CARA A CARA</b><span>Delanteros</span></div><div class="fd-du"><div>${crest(A.cr,38)}<b>${fesc(A.n)}</b><small>${A.age} años</small></div><span class="vs">VS</span><div>${crest(B.cr,38)}<b>${fesc(B.n)}</b><small>${B.age} años</small></div></div><div class="fd-bd">${row('Media','ovr',id)}${row('Goles','g',id)}${row('Asistencias','a',id)}${row('Valor de mercado','v',fmv)}</div></div>`}
+ if(c.t=='yr')return `<div class="qc fd-c">${fdHd(c)}<div class="fd-bd">${c.r.map((x,i)=>`<div class="fd-yr"><span class="fd-n">${i+1}</span>${crest(x[0],26)}<div><b>${fesc(x[1])}</b><small>${PN[x[2]]} · ${x[3]} años</small></div><span class="pt">${x[4]} <em>→ ${x[5]}</em><i><u style="width:${fdC(x[5],0,100)}%"></u></i></span></div>`).join('')}</div></div>`;
+ if(c.t=='rc')return `<div class="qc fd-c">${fdHd(c)}<div class="fd-bd">${c.r.map(x=>`<div class="fd-rc${x.nw?' nw':''}"><span class="fd-v">${fesc(x.v)}</span><div><b>${fesc(x.k)}${x.nw?' <em>NUEVO</em>':''}</b><small>${x.cr!=null&&G.T[x.cr]?crest(x.cr,16):''}<span>${fesc(x.n)} · ${x.s}</span></small></div></div>`).join('')}</div></div>`;
+ return''}
 const fdTxt=s=>fesc(s).replace(/(#[\p{L}\p{N}_]+)/gu,'<span class="ht">$1</span>').replace(/\n/g,'<br>');
 function fdPost(p,seen){const a=fdAcc(p),wl=p.w==-1?'Pretemporada':p.w==-2?'Fin de temporada':'J'+(p.w+1);
  return `<article class="po${p.my?' my':''}${p.i>seen?' nw':''}" data-i="${p.i}">${a.av}<div class="pb"><div class="ph"><b>${fesc(a.n)}</b>${a.v?VF:''}<span class="hd">@${fesc(a.h)}</span><span class="dt">· ${wl} · ${p.tm}</span></div><div class="px">${fdTxt(p.tx)}</div>${fdEmb(p.card)}<div class="pf"><button class="a cmb" data-a="cm" title="Ver comentarios">💬 <b>${fN(p.rp)}</b></button><button class="a rt${p.rtd?' on':''}" data-a="rt">⟲ <b>${fN(p.rt)}</b></button><button class="a lk${p.lkd?' on':''}" data-a="lk">♥ <b>${fN(p.lk)}</b></button><span class="a">📈 <b>${fN(p.vw)}</b></span></div></div></article>`}
@@ -233,7 +288,7 @@ function feedHome(){const a=fdList('all').filter(fdTop).slice(0,6),seen=G.seen|0
  return `<section class="pn fdp"><div class="fdh"><h3><span class="live"></span>Destacados · Mundo Superstar</h3><button id="fall">Ver todo →</button></div>${a.map(p=>fdPost(p,seen)).join('')||'<p class="mu" style="padding:16px">Todavía no hay tweets destacados.</p>'}</section>`}
 function fdSide(){const me=G.T[G.me],l=me.lg,w=G.week,tb=tab(l),sp=fpool(l).sort((a,b)=>b.p.g-a.p.g)[0],
  hv=s=>{let x=7;for(const ch of s)x=(x*31+ch.charCodeAt(0))%99991;return 900+(x*(w+5))%47000},
- tr=[['#'+fslug(me.n),'Tu club'],['#J'+Math.min(w+1,NWL[l]),'Jornada en juego'],['#'+fslug(tb[0].n),'Líder de la liga'],sp&&sp.p.g>0?['#Pichichi',sp.p.n+' · '+sp.p.g+' goles']:null,['#Mercado','Rumores de fichajes'],['#'+fslug(LGN[l]),LGN[l]]].filter(Boolean),
+ tr=[['#'+fslug(me.n),'Tu club'],['#J'+Math.min(w+1,NWL[l]),'Jornada en juego'],['#'+fslug(tb[0].n),'Líder de la liga'],sp&&sp.p.g>0?['#Pichichi',sp.p.n+' · '+sp.p.g+' goles']:null,['#OnceIdeal','Equipo de la jornada'],['#Mercado','Rumores de fichajes'],['#'+fslug(LGN[l]),LGN[l]]].filter(Boolean),
  rows=tb.slice(0,5);if(!rows.some(t=>t.id==G.me))rows.push(me);
  return `<div class="pn"><h3>Tendencias</h3>${tr.map(([t,s])=>`<div class="tr"><span class="mu sm">${fesc(s)} · Tendencia</span><b>${fesc(t)}</b><span class="mu sm">${fN(hv(t))} publicaciones</span></div>`).join('')}</div>
  <div class="pn"><h3 class="lgt">${lgl(l,44)}<span>${LGN[l]}</span></h3><table class="mini">${rows.map(t=>`<tr class="${t.id==G.me?'me':''}"><td class="n">${tb.indexOf(t)+1}</td><td><span class="tn">${crest(t.id,20)}${t.n}</span></td><td class="n"><b>${t.pts}</b></td></tr>`).join('')}</table></div>
