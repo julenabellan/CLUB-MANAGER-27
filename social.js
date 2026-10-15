@@ -18,6 +18,9 @@ const FF=[['all','Todo'],['my','Mi club'],['prensa','Noticias'],['fich','Fichaje
 let FW=0,FT=540;
 /* Solo se muestran noticias de la jornada actual: la última jugada (G.week-1). Al empezar temporada (G.week==0) se ven fin de temporada (-2) y pretemporada (-1) */
 const fdCurW=()=>G.week>0?[G.week-1]:[-2,-1],fdCur=p=>fdCurW().includes(p.w);
+/* En 'Todo' solo sale la jornada actual; en filtros (Mi club, Noticias...) y perfiles se guardan también ~3 jornadas anteriores */
+const FKEEP=3;
+const fdRecW=()=>{const w=G.week,o=[];for(let i=w-1;i>=Math.max(0,w-1-FKEEP);i--)o.push(i);if(w-1-FKEEP<0)o.push(-1,-2);return o},fdRec=p=>fdRecW().includes(p.w);
 const fesc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),
  fslug=s=>String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9]+/g,''),
  fpk=a=>a[Math.floor(Math.random()*a.length)],
@@ -253,7 +256,7 @@ function genFeed(w){
  const me=G.T[G.me],l=me.lg,T=i=>G.T[i],rs=G.res.filter(r=>r[0]==w&&r[1]==l),mr=G.res.find(r=>r[0]==w&&(r[2]==G.me||r[3]==G.me));
  if(!rs.length)return;
  FW=w;FT=Math.floor(R(470,600));
- G.feed=(G.feed||[]).filter(p=>p.w===w);/* poda: fuera las noticias de jornadas anteriores */
+ G.feed=(G.feed||[]).filter(p=>p.w<=w&&p.w>=w-FKEEP);/* poda: se conservan la jornada actual y las 3 anteriores */
  const LN=LGN[l],mg=G.mgr,slg=fslug(me.n),lht=fslug(LN),sg=r=>`${T(r[2]).n} ${r[4]}-${r[5]} ${T(r[3]).n}`,card=r=>({t:'r',h:r[2],a:r[3],hg:r[4],ag:r[5]}),
   tb=tab(l),lead=tb[0],pos=myPos(),so=i=>str(T(i)).o,wn=r=>r[4]>r[5]?r[2]:r[3],ls=r=>r[4]>r[5]?r[3]:r[2];
  let h,o,gf,gc,d,scorer=null;
@@ -345,7 +348,7 @@ function fdAlt(a){const out=[];let i=0;
    const p=g.splice(k,1)[0];out.push(p);rc.unshift(fdAK(p));rc.length=Math.min(rc.length,2)}
   i=j}
  return out}
-const fdList=f=>{const a=G.feed.filter(fdCur).reverse();return f=='all'?fdAlt(a):f=='my'?a.filter(p=>p.my):a.filter(p=>p.c==f)};
+const fdList=f=>{if(f=='all')return fdAlt(G.feed.filter(fdCur).reverse());const a=G.feed.filter(fdRec).reverse();return f=='my'?a.filter(p=>p.my):a.filter(p=>p.c==f)};
 const fdAv=a=>`<span class="av br${/^(LOGO|FD|SKY|HERTZ)/.test(a.img)?' lg':''}"><i>${fesc(a.n[0])}</i><img src="img/${encodeURIComponent(a.img)}" alt="" onerror="this.parentNode.classList.add('nf');this.remove()"></span>`;
 const VF='<svg class="vf" viewBox="0 0 24 24" aria-label="Cuenta verificada"><circle cx="12" cy="12" r="11"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 function fdAcc(p){if(p.a){const a=ACC[p.a];return{n:a.n,h:a.h,v:1,av:fdAv(a)}}
@@ -379,12 +382,15 @@ function fdSide(){const me=G.T[G.me],l=me.lg,w=G.week,tb=tab(l),sp=fpool(l).sort
 function fdProf(k){const a=ACC[k];return `<div class="prh">${fdAv(a)}<div><b>${fesc(a.n)}</b>${VF}<br><span class="mu sm">@${a.h} · ${a.f} seguidores</span></div><button id="pback">← Volver</button></div>`}
 function feedFull(){const pk=S.prof&&ACC[S.prof]?S.prof:null,f=FF.some(x=>x[0]==S.ff)?S.ff:'all',n=S.fn||20;
  if(!S.socOpen){S.socOpen=true;S.fseen=G.seen|0;G.seen=G.fs;save()}
- const L=pk?G.feed.filter(p=>fdCur(p)&&p.a==pk).reverse():fdList(f),seen=S.fseen|0;
+ const L=pk?G.feed.filter(p=>fdRec(p)&&p.a==pk).reverse():fdList(f),seen=S.fseen|0;
  return `<div class="sg"><section class="pn fdp"><div class="fdh"><h3><span class="live"></span>${pk?'Perfil · '+fesc(ACC[pk].n):'Redes · Mundo Superstar'}</h3></div>${pk?fdProf(pk):`<div class="fx">${FF.map(([k,t])=>`<button data-f="${k}" class="${f==k?'on':''}">${t}</button>`).join('')}</div>`}${L.slice(0,n).map(p=>fdPost(p,seen)).join('')||'<p class="mu" style="padding:16px">Todavía no hay publicaciones aquí.</p>'}${L.length>n?'<button id="fmore" class="mr">Cargar más publicaciones</button>':''}</section><aside class="sd">${fdSide()}</aside></div>`}
+/* al abrir/cerrar un perfil: lleva la vista hasta el perfil (sin saltar al inicio de la página), descontando la cabecera fija */
+function fdScrollProf(){const run=()=>{const t=document.querySelector('.sg .fdp');if(!t)return;const hd=document.querySelector('header.top'),off=(hd?hd.getBoundingClientRect().height:0)+8,y=t.getBoundingClientRect().top+window.pageYOffset-off;
+  window.scrollTo({top:Math.max(0,y),behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'})};requestAnimationFrame(()=>requestAnimationFrame(run))}
 function fdBind(){
  document.querySelectorAll('.po .a[data-a]').forEach(b=>b.onclick=()=>{const po=b.closest('.po'),p=G.feed.find(x=>x.i==+po.dataset.i);if(!p)return;if(b.dataset.a=='cm'){fdCmToggle(po,p);return}const k=b.dataset.a=='lk'?'lk':'rt',d=k+'d';p[d]=!p[d];p[k]+=p[d]?1:-1;b.classList.toggle('on',!!p[d]);b.querySelector('b').textContent=fN(p[k]);save()});
  document.querySelectorAll('.fx [data-f]').forEach(b=>b.onclick=()=>{S.ff=b.dataset.f;S.prof=null;S.fn=20;render()});
- document.querySelectorAll('.ac[data-p]').forEach(b=>{const go=()=>{S.prof=S.prof==b.dataset.p?null:b.dataset.p;S.fn=20;render();window.scrollTo(0,0)};b.onclick=go;b.onkeydown=e=>{if(e.key=='Enter'||e.key==' '){e.preventDefault();go()}}});
+ document.querySelectorAll('.ac[data-p]').forEach(b=>{const go=()=>{S.prof=S.prof==b.dataset.p?null:b.dataset.p;S.fn=20;render();fdScrollProf()};b.onclick=go;b.onkeydown=e=>{if(e.key=='Enter'||e.key==' '){e.preventDefault();go()}}});
  const pb=$('#pback');if(pb)pb.onclick=()=>{S.prof=null;S.fn=20;render()};
  const m=$('#fmore');if(m)m.onclick=()=>{S.fn=(S.fn||20)+20;render()};
  const a=$('#fall');if(a)a.onclick=()=>{S.tab='soc';S.prof=null;S.socOpen=false;render()}}
