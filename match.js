@@ -5,6 +5,11 @@ const [,,h,a,hg,ag]=m.r,ids=[h,a],T=ids.map(i=>G.T[i]),mine=ids[0]==G.me?0:1,MT=
 xi(MT);const orig=[MT.lu.slice(),MT.bn.slice()],strs=T.map(t=>str(t)),ev=[],MAXV=5;
 const pick=x=>x[Math.floor(Math.random()*x.length)],sn=n=>{const p=String(n).split(' ');return p.length>1?p.slice(1).join(' '):n};
 const gkOf=i=>{const g=xi(G.T[i]).find(p=>p.pos=='P');return g?sn(g.n):'el portero'};
+/* acciones según posición: los tiros los hacen sobre todo delanteros y medios; faltas y entradas, defensas y medios (diferencias suaves) */
+const PWT={save:[{F:4,M:3,D:1},{}],miss:[{F:4,M:3,D:1},{}],post:[{F:4,M:3,D:1},{}],block:[{F:4,M:3,D:1},{F:.8,M:2,D:3.4}],chance:[{F:5,M:2.5,D:.5},{}],free:[{F:2,M:4,D:1.6},{}],
+ foul:[{F:1.2,M:2.8,D:3},{F:3,M:3,D:1}],corner:[{F:3,M:3.4,D:1.4},{}],offside:[{F:6,M:2,D:.2},{}],cross:[{F:2.2,M:3.4,D:2.4},{F:1,M:1.6,D:3}],dribble:[{F:3.6,M:3.4,D:1.2},{F:1,M:2.4,D:3}],
+ counter:[{F:3.6,M:3.4,D:1},{}],tackle:[{F:3,M:3.4,D:1},{F:1,M:2.6,D:3.4}],pass:[{F:1.6,M:4,D:1.8},{}],penmiss:[{F:4,M:3,D:1},{}],pen:[{F:3.6,M:3.2,D:1},{F:.6,M:1.6,D:3.6}]};
+const wpl=(l,w)=>{w=w||{};const ww=l.map(p=>w[p.pos]!=null?w[p.pos]:1);let r=Math.random()*ww.reduce((s,x)=>s+x,0);for(let i=0;i<l.length;i++){if((r-=ww[i])<=0)return l[i]}return l[l.length-1]};
 const wp=l=>{let r=Math.random()*l.reduce((s,x)=>s+x[1],0);for(const x of l){if((r-=x[1])<=0)return x[0]}return l[0][0]};
 /* ---- textos ---- */
 const L={
@@ -61,14 +66,14 @@ const deck={};Object.keys(L).forEach(k=>{let q=[];deck[k]=()=>{if(!q.length)q=L[
 const gk=e=>{const t={co:'Co',fa:'Fa',pe:'Pe'}[e.gt];if(t){const k='goal'+t+(e.as?'A':'');if(deck[k])return k}return e.as?'goalA':'goalS'};
 /* ---- eventos ---- */
 m.sc.forEach(s=>{const sd=s[0]==h?0:1,ty=s[4]||'n',ox=xi(G.T[ids[1-sd]]).filter(p=>p.pos!='P'),mx=xi(G.T[ids[sd]]).filter(p=>p.pos!='P'),pre=Math.max(0,s[2]-1),ml=mx.filter(p=>p.n!=s[1]);
- if(ty=='pe')ev.push({min:pre,k:'pen',s:sd,who:sn(pick(ml.length?ml:mx).n),opp:sn(pick(ox).n),pre:1});
+ if(ty=='pe')ev.push({min:pre,k:'pen',s:sd,who:sn(wpl(ml.length?ml:mx,PWT.pen[0]).n),opp:sn(wpl(ox,PWT.pen[1]).n),pre:1});
  else if(ty=='fa')ev.push({min:pre,k:'fapre',s:sd,who:sn(s[1]),pre:1});
  else if(ty=='co')ev.push({min:pre,k:'corner',s:sd,who:sn(s[3]||pick(ml.length?ml:mx).n),pre:1});
  ev.push({min:s[2],k:'goal',s:sd,who:sn(s[1]),wf:s[1],as:s[3]?sn(s[3]):null,asf:s[3]||null,gt:ty,gk:gkOf(ids[1-sd])})});
 (m.cd||[]).forEach(c=>ev.push({min:c[2],k:'card',s:c[0]==h?0:1,who:sn(c[1]),wf:c[1]}));
 const TF={d:[.75,.65],e:[1,1],o:[1.35,1.25]};
 const filler=(from,tc)=>{const out=[];ids.forEach((id,s)=>{const mx=xi(G.T[id]).filter(p=>p.pos!='P'),ox=xi(G.T[ids[1-s]]).filter(p=>p.pos!='P'),n=Math.round(R(9,14)*TF[tc][s==mine?0:1]*Math.max(0,89-from)/88);
- for(let i=0;i<n;i++){const k=wp(KW);out.push({min:Math.floor(R(from+1,89)),k,s,who:sn(pick(mx).n),opp:sn(pick(ox).n),gk:gkOf(ids[1-s])})}});return out};
+ for(let i=0;i<n;i++){const k=wp(KW);const pw=PWT[k]||[];out.push({min:Math.floor(R(from+1,89)),k,s,who:sn(wpl(mx,pw[0]).n),opp:sn(wpl(ox,pw[1]).n),gk:gkOf(ids[1-s])})}});return out};
 ev.push(...filler(1,'e'));
 ev.sort((x,y)=>x.min-y.min);
 /* ---- pantalla ---- */
@@ -119,7 +124,27 @@ function recap(){
  const pos=myPos(),end=F(pick(d>0?['Los tres puntos te colocan {pos}º en la tabla.','Con la victoria, {me} es {pos}º.','Suma tres y se queda {pos}º.']:d==0?['Un punto que te deja {pos}º.','El empate mantiene a {me} {pos}º en la clasificación.']:['Sin puntos: {pos}º en la tabla.','La derrota te deja {pos}º.','{me} se queda {pos}º tras este resultado.']),{pos,me});
  const po=cl(Math.round(50+(strs[0].o-strs[1].o)*1.3+R(-4,4)+(mine==0?1:-1)*({d:-5,e:0,o:5}[tac])),34,66),el=document.createElement('div');el.className='lm l2 sum';
  el.innerHTML=`<h4>Resumen · ${pick(HD)}</h4><p>${F(pick(OP),{me:B(me),opp:B(opp),ven})}. ${narr}</p><div class="rch"><span>Tiros <b>${sh[0]}-${sh[1]}</b></span><span>Córners <b>${co[0]}-${co[1]}</b></span><span>Faltas <b>${fo[0]}-${fo[1]}</b></span><span>Amarillas <b>${yc[0]}-${yc[1]}</b></span><span>Posesión <b>${po}%-${100-po}%</b></span></div><p class="mv">${mv}</p><p class="se">${end}</p>`;feed.append(el)}
-function end(){fin=1;sublog.forEach(([a,b,mn])=>{const po=MT.pl[a],pi=MT.pl[b],fr=(90-mn)/90;po.fa=Math.max(0,(po.fa|0)-Math.round((R(5,9)+3)*fr));pi.fa=Math.max(0,Math.min(100,(pi.fa|0)+Math.round(12+R(5,9)*fr-3*(1-fr))))});MT.lu=orig[0];MT.bn=orig[1];save();feed.innerHTML='';feed.style.height='';q('#lvh').style.display='none';feed.classList.add('end');say(90,2,`🏁 Final: ${T[0].n} ${hg} - ${ag} ${T[1].n}`,'h f');recap();q('#lvok').style.display='';q('#lvtac').style.display='none';q('.lvct').querySelectorAll('button:not(#lvok)').forEach(b=>b.style.display='none');q('#lvok').onclick=()=>{window.removeEventListener('resize',rsz);o.remove();done()}}
+/* ---- animación final: confeti si ganas, rebote del marcador si empatas, sacudida suave si pierdes ---- */
+if(!document.getElementById('lvfx')){const st=document.createElement('style');st.id='lvfx';st.textContent=`
+#lv .fxl{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:25}
+#lv .cf{position:absolute;top:-16px;width:9px;height:15px;border-radius:2px;opacity:.95;animation:lvcf var(--t) cubic-bezier(.3,.6,.5,1) var(--d) forwards}
+@keyframes lvcf{to{transform:translate3d(var(--dx),108vh,0) rotate(var(--r));opacity:.9}}
+#lv.fw .lvmid .sc{animation:lvwin 1.1s ease-out}
+#lv.fd .lvmid .sc{animation:lvdraw .8s ease-out}
+#lv.fl .lvmid .sc{animation:lvlose .7s ease-out}
+@keyframes lvwin{0%{transform:scale(1)}30%{transform:scale(1.35);text-shadow:0 0 28px rgba(255,215,0,.9)}60%{transform:scale(.94)}100%{transform:scale(1)}}
+@keyframes lvdraw{0%{transform:scale(1)}40%{transform:scale(1.14)}100%{transform:scale(1)}}
+@keyframes lvlose{0%,100%{transform:translateX(0)}15%{transform:translateX(-7px)}35%{transform:translateX(6px)}55%{transform:translateX(-4px)}75%{transform:translateX(3px)}}
+#lv.fin .lm.sum{animation:lvsum .7s .25s ease-out both}
+@keyframes lvsum{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+#lv.fw .lvtop{animation:lvglow 1.6s ease-out}
+@keyframes lvglow{0%{box-shadow:0 6px 20px rgba(0,0,0,.25)}35%{box-shadow:0 0 38px 6px rgba(255,215,0,.55)}100%{box-shadow:0 6px 20px rgba(0,0,0,.25)}}
+@media(prefers-reduced-motion:reduce){#lv .fxl{display:none}#lv.fin .lvmid .sc,#lv.fin .lvtop,#lv.fin .lm.sum{animation:none}}`;document.head.appendChild(st)}
+function celebrate(){const d=sc[mine]-sc[1-mine];o.classList.add('fin',d>0?'fw':d<0?'fl':'fd');if(d<=0)return;
+ const L=document.createElement('div');L.className='fxl';const cs=['#ffd700','#ffffff','var(--ac)','#ff4d6d','#4dd2ff','#7CFC9A'],n=d>=3?90:60;
+ for(let i=0;i<n;i++){const c=document.createElement('i');c.className='cf';c.style.cssText=`left:${Math.random()*100}%;background:${cs[i%cs.length]};--dx:${Math.round(R(-90,90))}px;--r:${Math.round(R(240,900))}deg;--t:${R(2.2,4.2).toFixed(2)}s;--d:${R(0,1.1).toFixed(2)}s;width:${Math.round(R(6,11))}px;height:${Math.round(R(10,18))}px`;L.appendChild(c)}
+ o.appendChild(L);setTimeout(()=>L.remove(),5600)}
+function end(){fin=1;sublog.forEach(([a,b,mn])=>{const po=MT.pl[a],pi=MT.pl[b],fr=(90-mn)/90;po.fa=Math.max(0,(po.fa|0)-Math.round((R(5,9)+3)*fr));pi.fa=Math.max(0,Math.min(100,(pi.fa|0)+Math.round(12+R(5,9)*fr-3*(1-fr))))});MT.lu=orig[0];MT.bn=orig[1];save();feed.innerHTML='';feed.style.height='';q('#lvh').style.display='none';feed.classList.add('end');say(90,2,`🏁 Final: ${T[0].n} ${hg} - ${ag} ${T[1].n}`,'h f');recap();celebrate();q('#lvok').style.display='';q('#lvtac').style.display='none';q('.lvct').querySelectorAll('button:not(#lvok)').forEach(b=>b.style.display='none');q('#lvok').onclick=()=>{window.removeEventListener('resize',rsz);o.remove();done()}}
 function frame(now){if(fin)return;const dt=Math.min(.05,(now-last)/1000);last=now;
  if(!pz){if(pause>0)pause-=dt;
   else{min+=dt*2*sp;

@@ -32,7 +32,7 @@ function pois(l){const L=Math.exp(-l);let k=0,p=1;do{k++;p*=Math.random()}while(
 function scorers(t,n){const x=xi(t),sp=slots(t.form),c=typeof tacOf=='function'?tacOf(t):{},ti=c.tk!=null?t.lu.indexOf(c.tk):-1,
  W=f=>x.map((p,i)=>(f[sp[i]]||0)*ef(p)/70),
  pk=(w,ex)=>{const v=w.map((q,i)=>i==ex?0:q),T=v.reduce((a,b)=>a+b,0);let r=Math.random()*T,j=0;while(j<v.length-1&&r>v[j]){r-=v[j];j++}return j},
- base=W({F:6,M:2.5,D:.8,P:0}),hd=W({F:3.5,M:1,D:3,P:0}),as0=W({F:3,M:4,D:1.2,P:.05}),
+ base=W({F:6.6,M:2.9,D:.65,P:0}),hd=W({F:3.5,M:1,D:2.8,P:0}),as0=W({F:3,M:4,D:1.4,P:.05}),
  pP=.07,pF=.05+(c.sp=='fa'?.05:0),pC=.09+(c.sp=='co'?.06:0),o=[];
  for(let i=0;i<n;i++){const q=Math.random();let ty='n',j,as=null;
   if(q<pP)ty='pe';else if(q<pP+pF)ty='fa';else if(q<pP+pF+pC)ty='co';
@@ -42,7 +42,7 @@ function scorers(t,n){const x=xi(t),sp=slots(t.form),c=typeof tacOf=='function'?
   x[j].g++;let an=null;if(as!=null){x[as].a=(x[as].a|0)+1;an=x[as].n}
   o.push([x[j].n,Math.floor(R(1,91)),an,ty])}
  return o.sort((a,b)=>a[1]-b[1])}
-function cards(t){const x=xi(t),sp=slots(t.form),w=x.map((p,i)=>({D:3,M:3,F:1.5,P:.3}[sp[i]])),T=w.reduce((a,b)=>a+b,0),n=Math.min(4,pois(1.6)),c={},o=[];
+function cards(t){const x=xi(t),sp=slots(t.form),w=x.map((p,i)=>({D:3.5,M:2.7,F:1.3,P:.3}[sp[i]])),T=w.reduce((a,b)=>a+b,0),n=Math.min(4,pois(1.6)),c={},o=[];
  for(let i=0;i<n;i++){let r=Math.random()*T,j=0;while(j<w.length-1&&r>w[j]){r-=w[j];j++}if((c[j]|0)>=1)continue;c[j]=1;x[j].yc=(x[j].yc|0)+1;o.push([x[j].n,Math.floor(R(3,90))])}return o}
 function upd(t,f,c){t.pj++;t.gf+=f;t.gc+=c;if(f>c){t.w++;t.pts+=3}else if(f==c){t.d++;t.pts++}else t.l++}
 function simW(){let mine=null;G.wsc=[];G.T.forEach(t=>{if(t.id!=G.me||!t.man)auto(t)});[1,2].forEach(l=>(G.fx[l][G.week]||[]).forEach(([h,a])=>{const H=G.T[h],A=G.T[a],sh=str(H),sa=str(A),hg=pois(Math.max(.25,1.55+(sh.a-sa.d+tacMx(sh,sa)[0])/22)),ag=pois(Math.max(.2,1.1+(sa.a-sh.d+tacMx(sh,sa)[1])/22)),s1=scorers(H,hg),s2=scorers(A,ag),c1=cards(H),c2=cards(A);G.wsc.push([h,a,s1,s2]);fat(H,h!=G.me);fat(A,a!=G.me);upd(H,hg,ag);upd(A,ag,hg);const r=[G.week,l,h,a,hg,ag];G.res.push(r);if(h==G.me||a==G.me){mine={r,sc:[...s1.map(s=>[h,...s]),...s2.map(s=>[a,...s])].sort((x,y)=>x[2]-y[2]),cd:[...c1.map(c=>[h,...c]),...c2.map(c=>[a,...c])].sort((x,y)=>x[2]-y[2])};G.last=mine;const d=h==G.me?hg-ag:ag-hg;G.conf=Math.max(0,Math.min(100,G.conf+(d>0?3:d<0?-2:0)));G.fans=Math.max(0,Math.min(100,(G.fans??60)+(d>0?(d>2?4:3):d<0?(d<-2?-4:-3):h==G.me?-1:1)))}}));try{genFeed(G.week)}catch(e){console.error(e)}G.week++;if(G.week>=NW)endSeason();return mine}
