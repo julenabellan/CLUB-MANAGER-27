@@ -529,3 +529,11 @@ body.tcm #mn>*{animation:none}
 /* v10: sin parpadeo entre la animación y el partido */
 #lv{animation:none!important}
 #mi.out{pointer-events:none}
+
+/* perfiles de cuentas (redes) */
+.ac[data-p]{cursor:pointer;border-radius:10px;padding:7px 8px;margin:0 -8px;transition:background .15s}
+.ac[data-p]:hover,.ac[data-p].on{background:color-mix(in srgb,var(--ac) 16%,transparent)}
+.prh{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--ln)}
+.prh .av{width:56px;height:56px;font-size:22px}
+.prh>div{flex:1;min-width:0}.prh b{font-size:18px}
+.prh button{border-radius:999px;padding:5px 14px;font-weight:600}

@@ -14,7 +14,7 @@ const ACC={
  hertz:{n:'HERTZ',h:'hertz',img:'HERTZ.png',m:1.3,f:'5,2 M',c:'prensa'}};
 /* imágenes stock de los eventos nuevos (si una no existe, la tarjeta se muestra sin foto) */
 const IMG={cs:['ST4.png','ST4-2.png'],iv:[]};
-const FF=[['all','Todo'],['my','Mi club'],['prensa','Noticias'],['fich','Fichajes'],['datos','Datos'],['fd','FD Sports'],['sky','Sky Sports'],['club','Clubes'],['fan','Afición']];
+const FF=[['all','Todo'],['my','Mi club'],['prensa','Noticias'],['fich','Fichajes'],['datos','Datos'],['club','Clubes'],['fan','Afición']];
 let FW=0,FT=540;
 /* Solo se muestran noticias de la jornada actual: la última jugada (G.week-1). Al empezar temporada (G.week==0) se ven fin de temporada (-2) y pretemporada (-1) */
 const fdCurW=()=>G.week>0?[G.week-1]:[-2,-1],fdCur=p=>fdCurW().includes(p.w);
@@ -373,17 +373,18 @@ function feedHome(){const a=fdList('all').filter(fdTop).slice(0,6),seen=G.seen|0
  return `<section class="pn fdp"><div class="fdh"><h3><span class="live"></span>Destacados · Mundo Superstar</h3><button id="fall">Ver todo →</button></div>${a.map(p=>fdPost(p,seen)).join('')||'<p class="mu" style="padding:16px">Todavía no hay tweets destacados.</p>'}</section>`}
 function fdSide(){const me=G.T[G.me],l=me.lg,w=G.week,tb=tab(l),sp=fpool(l).sort((a,b)=>b.p.g-a.p.g)[0],
  hv=s=>{let x=7;for(const ch of s)x=(x*31+ch.charCodeAt(0))%99991;return 900+(x*(w+5))%47000},
- tr=[['#'+fslug(me.n),'Tu club'],['#J'+Math.min(w+1,NWL[l]),'Jornada en juego'],['#'+fslug(tb[0].n),'Líder de la liga'],sp&&sp.p.g>0?['#Pichichi',sp.p.n+' · '+sp.p.g+' goles']:null,['#OnceIdeal','Equipo de la jornada'],['#Mercado','Rumores de fichajes'],['#'+fslug(LGN[l]),LGN[l]]].filter(Boolean),
- rows=tb.slice(0,5);if(!rows.some(t=>t.id==G.me))rows.push(me);
+ tr=[['#'+fslug(me.n),'Tu club'],['#J'+Math.min(w+1,NWL[l]),'Jornada en juego'],sp&&sp.p.g>0?['#Pichichi',sp.p.n+' · '+sp.p.g+' goles']:null,['#Mercado','Rumores de fichajes']].filter(Boolean);
  return `<div class="pn"><h3>Tendencias</h3>${tr.map(([t,s])=>`<div class="tr"><span class="mu sm">${fesc(s)} · Tendencia</span><b>${fesc(t)}</b><span class="mu sm">${fN(hv(t))} publicaciones</span></div>`).join('')}</div>
- <div class="pn"><h3 class="lgt">${lgl(l,44)}<span>${LGN[l]}</span></h3><table class="mini">${rows.map(t=>`<tr class="${t.id==G.me?'me':''}"><td class="n">${tb.indexOf(t)+1}</td><td><span class="tn">${crest(t.id,20)}${t.n}</span></td><td class="n"><b>${t.pts}</b></td></tr>`).join('')}</table></div>
- <div class="pn"><h3>Cuentas que mandan</h3>${Object.values(ACC).map(a=>`<div class="ac">${fdAv(a)}<div><b>${fesc(a.n)}</b>${VF}<br><span class="mu sm">@${a.h} · ${a.f} seguidores</span></div></div>`).join('')}</div>`}
-function feedFull(){const f=S.ff||'all',n=S.fn||20;
+ <div class="pn"><h3>Cuentas que mandan</h3>${Object.keys(ACC).map(k=>{const a=ACC[k];return `<div class="ac${S.prof==k?' on':''}" data-p="${k}" role="button" tabindex="0">${fdAv(a)}<div><b>${fesc(a.n)}</b>${VF}<br><span class="mu sm">@${a.h} · ${a.f} seguidores</span></div></div>`}).join('')}</div>`}
+function fdProf(k){const a=ACC[k];return `<div class="prh">${fdAv(a)}<div><b>${fesc(a.n)}</b>${VF}<br><span class="mu sm">@${a.h} · ${a.f} seguidores</span></div><button id="pback">← Volver</button></div>`}
+function feedFull(){const pk=S.prof&&ACC[S.prof]?S.prof:null,f=FF.some(x=>x[0]==S.ff)?S.ff:'all',n=S.fn||20;
  if(!S.socOpen){S.socOpen=true;S.fseen=G.seen|0;G.seen=G.fs;save()}
- const L=fdList(f),seen=S.fseen|0;
- return `<div class="sg"><section class="pn fdp"><div class="fdh"><h3><span class="live"></span>Redes · Mundo Superstar</h3></div><div class="fx">${FF.map(([k,t])=>`<button data-f="${k}" class="${f==k?'on':''}">${t}</button>`).join('')}</div>${L.slice(0,n).map(p=>fdPost(p,seen)).join('')||'<p class="mu" style="padding:16px">Todavía no hay publicaciones aquí.</p>'}${L.length>n?'<button id="fmore" class="mr">Cargar más publicaciones</button>':''}</section><aside class="sd">${fdSide()}</aside></div>`}
+ const L=pk?G.feed.filter(p=>fdCur(p)&&p.a==pk).reverse():fdList(f),seen=S.fseen|0;
+ return `<div class="sg"><section class="pn fdp"><div class="fdh"><h3><span class="live"></span>${pk?'Perfil · '+fesc(ACC[pk].n):'Redes · Mundo Superstar'}</h3></div>${pk?fdProf(pk):`<div class="fx">${FF.map(([k,t])=>`<button data-f="${k}" class="${f==k?'on':''}">${t}</button>`).join('')}</div>`}${L.slice(0,n).map(p=>fdPost(p,seen)).join('')||'<p class="mu" style="padding:16px">Todavía no hay publicaciones aquí.</p>'}${L.length>n?'<button id="fmore" class="mr">Cargar más publicaciones</button>':''}</section><aside class="sd">${fdSide()}</aside></div>`}
 function fdBind(){
  document.querySelectorAll('.po .a[data-a]').forEach(b=>b.onclick=()=>{const po=b.closest('.po'),p=G.feed.find(x=>x.i==+po.dataset.i);if(!p)return;if(b.dataset.a=='cm'){fdCmToggle(po,p);return}const k=b.dataset.a=='lk'?'lk':'rt',d=k+'d';p[d]=!p[d];p[k]+=p[d]?1:-1;b.classList.toggle('on',!!p[d]);b.querySelector('b').textContent=fN(p[k]);save()});
- document.querySelectorAll('.fx [data-f]').forEach(b=>b.onclick=()=>{S.ff=b.dataset.f;S.fn=20;render()});
+ document.querySelectorAll('.fx [data-f]').forEach(b=>b.onclick=()=>{S.ff=b.dataset.f;S.prof=null;S.fn=20;render()});
+ document.querySelectorAll('.ac[data-p]').forEach(b=>{const go=()=>{S.prof=S.prof==b.dataset.p?null:b.dataset.p;S.fn=20;render();window.scrollTo(0,0)};b.onclick=go;b.onkeydown=e=>{if(e.key=='Enter'||e.key==' '){e.preventDefault();go()}}});
+ const pb=$('#pback');if(pb)pb.onclick=()=>{S.prof=null;S.fn=20;render()};
  const m=$('#fmore');if(m)m.onclick=()=>{S.fn=(S.fn||20)+20;render()};
- const a=$('#fall');if(a)a.onclick=()=>{S.tab='soc';S.socOpen=false;render()}}
+ const a=$('#fall');if(a)a.onclick=()=>{S.tab='soc';S.prof=null;S.socOpen=false;render()}}
