@@ -66,20 +66,36 @@ const deck={};Object.keys(L).forEach(k=>{let q=[];deck[k]=()=>{if(!q.length)q=L[
 const gk=e=>{const t={co:'Co',fa:'Fa',pe:'Pe'}[e.gt];if(t){const k='goal'+t+(e.as?'A':'');if(deck[k])return k}return e.as?'goalA':'goalS'};
 /* ---- eventos ---- */
 m.sc.forEach(s=>{const sd=s[0]==h?0:1,ty=s[4]||'n',ox=xi(G.T[ids[1-sd]]).filter(p=>p.pos!='P'),mx=xi(G.T[ids[sd]]).filter(p=>p.pos!='P'),pre=Math.max(0,s[2]-1),ml=mx.filter(p=>p.n!=s[1]);
- if(ty=='pe')ev.push({min:pre,k:'pen',s:sd,who:sn(wpl(ml.length?ml:mx,PWT.pen[0]).n),opp:sn(wpl(ox,PWT.pen[1]).n),pre:1});
- else if(ty=='fa')ev.push({min:pre,k:'fapre',s:sd,who:sn(s[1]),pre:1});
- else if(ty=='co')ev.push({min:pre,k:'corner',s:sd,who:sn(s[3]||pick(ml.length?ml:mx).n),pre:1});
- ev.push({min:s[2],k:'goal',s:sd,who:sn(s[1]),wf:s[1],as:s[3]?sn(s[3]):null,asf:s[3]||null,gt:ty,gk:gkOf(ids[1-sd])})});
-(m.cd||[]).forEach(c=>ev.push({min:c[2],k:'card',s:c[0]==h?0:1,who:sn(c[1]),wf:c[1]}));
+ if(ty=='pe'){const pp=wpl(ml.length?ml:mx,PWT.pen[0]);ev.push({min:pre,k:'pen',s:sd,who:sn(pp.n),wf:pp.n,opp:sn(wpl(ox,PWT.pen[1]).n),pre:1})}
+ else if(ty=='fa')ev.push({min:pre,k:'fapre',s:sd,who:sn(s[1]),wf:s[1],pre:1});
+ else if(ty=='co'){const cn=s[3]||pick(ml.length?ml:mx).n;ev.push({min:pre,k:'corner',s:sd,who:sn(cn),wf:cn,pre:1})}
+ ev.push({min:s[2],k:'goal',s:sd,who:sn(s[1]),wf:s[1],as:s[3]?sn(s[3]):null,asf:s[3]||null,gt:ty,gk:gkOf(ids[1-sd]),ref:s})});
+(m.cd||[]).forEach(c=>ev.push({min:c[2],k:'card',s:c[0]==h?0:1,who:sn(c[1]),wf:c[1],ref:c}));
 const TF={d:[.75,.65],e:[1,1],o:[1.35,1.25]};
 const filler=(from,tc)=>{const out=[];ids.forEach((id,s)=>{const mx=xi(G.T[id]).filter(p=>p.pos!='P'),ox=xi(G.T[ids[1-s]]).filter(p=>p.pos!='P'),n=Math.round(R(9,14)*TF[tc][s==mine?0:1]*Math.max(0,89-from)/88);
  for(let i=0;i<n;i++){const k=wp(KW);const pw=PWT[k]||[];out.push({min:Math.floor(R(from+1,89)),k,s,who:sn(wpl(mx,pw[0]).n),opp:sn(wpl(ox,pw[1]).n),gk:gkOf(ids[1-s])})}});return out};
 ev.push(...filler(1,'e'));
 ev.sort((x,y)=>x.min-y.min);
 /* ---- pantalla ---- */
+if(!document.getElementById('lvhd')){const st=document.createElement('style');st.id='lvhd';st.textContent=`
+#lv .lvtop{position:relative;overflow:hidden;isolation:isolate;padding:12px 14px 14px;border-radius:16px;border:1px solid rgba(255,255,255,.2);
+ background:radial-gradient(120% 140% at 50% 0%,color-mix(in srgb,var(--ac) 88%,#fff) 0%,var(--ac) 38%,color-mix(in srgb,var(--ac) 50%,#000) 100%);
+ box-shadow:0 8px 24px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.28),inset 0 -3px 0 rgba(0,0,0,.18)}
+#lv .lvtop>*{position:relative;z-index:2}
+#lv .lvtop>.lvbg{position:absolute;z-index:0;left:50%;top:50%;height:185%;width:auto;max-width:none;transform:translate(-50%,-50%);opacity:.2;pointer-events:none;
+ filter:grayscale(1) brightness(1.7);mix-blend-mode:soft-light;-webkit-mask-image:radial-gradient(closest-side,#000 45%,transparent 100%);mask-image:radial-gradient(closest-side,#000 45%,transparent 100%)}
+#lv .lvtop::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+ background:linear-gradient(112deg,rgba(0,0,0,.24) 0 27%,transparent 27.2%),linear-gradient(248deg,rgba(0,0,0,.24) 0 27%,transparent 27.2%),
+ linear-gradient(112deg,transparent 0 40%,rgba(255,255,255,.1) 40% 42.5%,transparent 42.5% 46%,rgba(255,255,255,.06) 46% 47.5%,transparent 47.5%)}
+#lv .lvtop::after{content:"";position:absolute;left:8%;right:8%;bottom:0;height:3px;z-index:3;border-radius:3px 3px 0 0;background:linear-gradient(90deg,transparent,var(--hi),transparent)}
+#lv .lvmid .lgl{height:clamp(70px,22vw,118px);max-width:36vw;width:auto;object-fit:contain;margin-bottom:2px;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5))}
+#lv .lvmid .sc{text-shadow:0 3px 0 rgba(0,0,0,.35),0 0 22px rgba(255,255,255,.18);font-variant-numeric:tabular-nums}
+#lv .lvmid .lvmin{background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.28);box-shadow:0 2px 6px rgba(0,0,0,.3);letter-spacing:.05em}
+#lv .lvtm .cr{filter:drop-shadow(0 3px 7px rgba(0,0,0,.5))}
+#lv .lvtm b{text-shadow:0 2px 4px rgba(0,0,0,.45);text-transform:uppercase;letter-spacing:.03em}`;document.head.appendChild(st)}
 const o=document.createElement('div');o.id='lv';
 const cr=(i,s)=>crest(i,s);
-o.innerHTML=`<div class="lvc"><div class="lvtop"><div class="lvtm">${cr(ids[0],54)}${form5(ids[0],m.r[0])}<b>${T[0].n}</b></div>
+o.innerHTML=`<div class="lvc"><div class="lvtop"><img class="lvbg" src="img/LOGO%20${m.r[1]}A.png" alt="" onerror="this.style.display='none'"><div class="lvtm">${cr(ids[0],54)}${form5(ids[0],m.r[0])}<b>${T[0].n}</b></div>
 <div class="lvmid"><div>${lgl(m.r[1],96)}</div><div class="sc" id="lvs">0 - 0</div><div class="lvmin" id="lvm">0'</div></div>
 <div class="lvtm r">${cr(ids[1],54)}${form5(ids[1],m.r[0])}<b>${T[1].n}</b></div>
 <div class="lvg"><div id="lg0"></div><div id="lg1" class="r"></div></div></div>
@@ -159,6 +175,18 @@ o.querySelectorAll('#lvtac button').forEach(b=>b.onclick=()=>{if(fin||b.dataset.
  const fut=ev.splice(ei).filter(e=>e.k=='goal'||e.k=='card'||e.pre);ev.push(...fut,...filler(Math.floor(min),tac));ev.sort((x,y)=>x.min-y.min);
  say(Math.min(90,Math.floor(min)),mine,`${TM[tac][0]} <b>${MT.n}</b> ${TM[tac][1]}`,'sub')});
 const gone=new Set(),ent=new Set(),sublog=[];
+/* Un jugador sustituido ya no puede marcar, asistir ni ver tarjetas: sus acciones futuras pasan al suplente (también en estadísticas y datos del partido) */
+const rmp=(A,B)=>{const oN=MT.pl[A].n,iN=MT.pl[B].n,bump=(n,f,d)=>{const p=MT.pl.find(z=>z.n==n);if(p)p[f]=Math.max(0,(p[f]|0)+d)},
+ w=(G.wsc||[]).find(z=>z[0]==m.r[2]&&z[1]==m.r[3]),wl=w?(m.r[2]==G.me?w[2]:w[3]):[];
+ ev.slice(ei).forEach(e=>{if(e.s!=mine)return;
+  if(e.k=='goal'){const r=e.ref,x=wl.find(z=>z[0]==r[1]&&z[1]==r[2]&&(z[3]||'n')==(r[4]||'n'));
+   if(e.wf==oN){bump(oN,'g',-1);bump(iN,'g',1);e.wf=r[1]=iN;e.who=sn(iN);if(x)x[0]=iN}
+   if(e.asf==oN){bump(oN,'a',-1);bump(iN,'a',1);e.asf=r[3]=iN;e.as=sn(iN);if(x)x[2]=iN}
+   if(e.asf&&e.asf==e.wf){bump(e.asf,'a',-1);e.as=e.asf=null;r[3]=null;if(x)x[2]=null}}
+  else if(e.pre&&e.wf==oN){e.wf=iN;e.who=sn(iN)}
+  else if(e.k=='card'&&e.wf==oN){bump(oN,'yc',-1);
+   if(ev.some(z=>z!==e&&z.k=='card'&&z.wf==iN)){ev.splice(ev.indexOf(e),1);const ix=(m.cd||[]).indexOf(e.ref);if(ix>=0)m.cd.splice(ix,1)}
+   else{bump(iN,'yc',1);e.wf=e.ref[1]=iN;e.who=sn(iN)}}})};
 q('#lvsb').onclick=()=>{if(fin||subs>=5)return;pz=1;
  const cur=MT.lu.slice(),cs=new Set(cur),dl=cur.slice(),db=MT.bn.filter(i=>!gone.has(i)),sp=slots(MT.form),left=5-subs;let pk=null,msg='';
  const pn=document.createElement('div');pn.id='lvsub';o.appendChild(pn);
@@ -180,7 +208,7 @@ q('#lvsb').onclick=()=>{if(fin||subs>=5)return;pz=1;
   pn.querySelector('#sbc').onclick=()=>{pn.remove();pz=0;last=performance.now()};
   pn.querySelector('#sbg').onclick=()=>{const ins=dl.filter(i=>!cs.has(i)),outs=cur.filter(i=>!dl.includes(i)),pairs=ins.map(i=>{let k=outs.findIndex(j=>MT.pl[j].pos==MT.pl[i].pos);if(k<0)k=0;return[outs.splice(k,1)[0],i]});
    pairs.forEach(([a])=>gone.add(a));MT.lu=dl.slice();MT.bn=db.filter(i=>!gone.has(i));subs+=ins.length;ins.forEach(i=>{if(ent.has(i))return;ent.add(i);const p=MT.pl[i];p.pj=(p.pj|0)+1});
-   const mn=Math.min(90,Math.floor(min));pairs.forEach(([a,b])=>sublog.push([a,b,mn]));pairs.forEach(([a,b])=>say(mn,mine,`🔄 Cambio en ${MT.n}: sale <b>${sn(MT.pl[a].n)}</b>, entra <b>${sn(MT.pl[b].n)}</b>`,'sub'));
+   const mn=Math.min(90,Math.floor(min));pairs.forEach(([a,b])=>sublog.push([a,b,mn]));pairs.forEach(([a,b])=>rmp(a,b));pairs.forEach(([a,b])=>say(mn,mine,`🔄 Cambio en ${MT.n}: sale <b>${sn(MT.pl[a].n)}</b>, entra <b>${sn(MT.pl[b].n)}</b>`,'sub'));
    q('#lvsb').textContent='Cambios ('+(5-subs)+')';if(subs>=5)q('#lvsb').disabled=true;pn.remove();pz=0;last=performance.now()}};
  draw()};
 requestAnimationFrame(frame)}
