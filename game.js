@@ -19,16 +19,33 @@ function auto(t){const f=FORM[t.form],used=new Set(),lu=[],ix=t.pl.map((p,i)=>i)
  t.lu=lu;t.bn=gk.concat(r.filter(i=>!gk.includes(i)).sort(by).slice(0,7-gk.length))}
 function xi(t){if(!t.lu||t.lu.length!=11||t.lu.some(i=>!t.pl[i]))auto(t);if(!t.bn)auto(t);return t.lu.map(i=>t.pl[i])}
 function str(t){const x=xi(t),sp=slots(t.form),r=x.map((p,i)=>rt(p,sp[i])),g=c=>{const a=r.filter((_,i)=>sp[i]==c);return a.length?mean(a):50},m=g('M'),f=g('F');return{a:.55*f+.35*m+.1*g('D'),d:.45*g('D')+.3*g('P')+.25*m,o:mean(r)}}
-const fat=t=>{const x=new Set(t.lu);t.pl.forEach((p,i)=>{if(x.has(i))p.pj=(p.pj|0)+1;p.fa=Math.max(0,Math.min(100,(p.fa|0)+(x.has(i)?R(5,9):-9)))})};
+/* fatiga por minutos: titular 90' suma cansancio; quien sale antes (o entra) lo nota proporcionalmente; quien no juega descansa más.
+   Los equipos de la IA hacen cambios automáticos (1-5) entre el 46' y el 86'. */
+const fat=(t,ai)=>{const x=new Set(t.lu),out={},inn={},f=m=>R(5,9)*m/90-3*(90-m)/90;
+ if(ai&&t.bn&&t.bn.length){const n=Math.min(5,1+pois(2));
+  for(let k=0;k<n;k++){const c=t.lu.filter(i=>t.pl[i].pos!='P'&&out[i]==null).sort((a,b)=>(t.pl[b].fa|0)-(t.pl[a].fa|0));if(!c.length)break;
+   const s=c[Math.floor(Math.random()*Math.min(c.length,4))],bc=t.bn.filter(i=>t.pl[i]&&inn[i]==null&&t.pl[i].pos!='P'),bb=bc.find(i=>t.pl[i].pos==t.pl[s].pos)??bc[0];if(bb==null)break;
+   const m=Math.round(R(46,86));out[s]=m;inn[bb]=90-m}}
+ t.pl.forEach((p,i)=>{let d;if(x.has(i)){p.pj=(p.pj|0)+1;d=f(out[i]??90)}else if(inn[i]!=null){p.pj=(p.pj|0)+1;d=f(inn[i])}else d=-12;
+  p.fa=Math.max(0,Math.min(100,Math.round((p.fa|0)+d)))})};
 function pois(l){const L=Math.exp(-l);let k=0,p=1;do{k++;p*=Math.random()}while(p>L);return k-1}
-function scorers(t,n){const x=xi(t),sp=slots(t.form),w=x.map((p,i)=>({F:6,M:2.5,D:.8,P:0}[sp[i]]*ef(p)/70)),T=w.reduce((a,b)=>a+b,0),o=[];
- for(let i=0;i<n;i++){let r=Math.random()*T,j=0;while(j<w.length-1&&r>w[j]){r-=w[j];j++}x[j].g++;let as=null;
-  if(Math.random()<.72){const w2=x.map((p,k)=>k==j?0:({F:3,M:4,D:1.2,P:.05}[sp[k]]*ef(p)/70)),T2=w2.reduce((a,b)=>a+b,0);let r2=Math.random()*T2,k=0;while(k<w2.length-1&&r2>w2[k]){r2-=w2[k];k++}if(k!=j){x[k].a=(x[k].a|0)+1;as=x[k].n}}
-  o.push([x[j].n,Math.floor(R(1,91)),as])}return o.sort((a,b)=>a[1]-b[1])}
+function scorers(t,n){const x=xi(t),sp=slots(t.form),c=typeof tacOf=='function'?tacOf(t):{},ti=c.tk!=null?t.lu.indexOf(c.tk):-1,
+ W=f=>x.map((p,i)=>(f[sp[i]]||0)*ef(p)/70),
+ pk=(w,ex)=>{const v=w.map((q,i)=>i==ex?0:q),T=v.reduce((a,b)=>a+b,0);let r=Math.random()*T,j=0;while(j<v.length-1&&r>v[j]){r-=v[j];j++}return j},
+ base=W({F:6,M:2.5,D:.8,P:0}),hd=W({F:3.5,M:1,D:3,P:0}),as0=W({F:3,M:4,D:1.2,P:.05}),
+ pP=.07,pF=.05+(c.sp=='fa'?.05:0),pC=.09+(c.sp=='co'?.06:0),pS=c.sp=='sl'?.07:0,o=[];
+ for(let i=0;i<n;i++){const q=Math.random();let ty='n',j,as=null;
+  if(q<pP)ty='pe';else if(q<pP+pF)ty='fa';else if(q<pP+pF+pC)ty='co';else if(q<pP+pF+pC+pS)ty='sl';
+  if(ty=='pe'||ty=='fa')j=ti>=0&&sp[ti]!='P'&&Math.random()<.75?ti:pk(base);
+  else if(ty=='co'||ty=='sl'){j=pk(hd,ti);const k=ti>=0&&ti!=j&&Math.random()<.85?ti:pk(as0,j);if(k!=j)as=k}
+  else{j=pk(base);if(Math.random()<.72){const k=pk(as0,j);if(k!=j)as=k}}
+  x[j].g++;let an=null;if(as!=null){x[as].a=(x[as].a|0)+1;an=x[as].n}
+  o.push([x[j].n,Math.floor(R(1,91)),an,ty])}
+ return o.sort((a,b)=>a[1]-b[1])}
 function cards(t){const x=xi(t),sp=slots(t.form),w=x.map((p,i)=>({D:3,M:3,F:1.5,P:.3}[sp[i]])),T=w.reduce((a,b)=>a+b,0),n=Math.min(4,pois(1.6)),c={},o=[];
  for(let i=0;i<n;i++){let r=Math.random()*T,j=0;while(j<w.length-1&&r>w[j]){r-=w[j];j++}if((c[j]|0)>=1)continue;c[j]=1;x[j].yc=(x[j].yc|0)+1;o.push([x[j].n,Math.floor(R(3,90))])}return o}
 function upd(t,f,c){t.pj++;t.gf+=f;t.gc+=c;if(f>c){t.w++;t.pts+=3}else if(f==c){t.d++;t.pts++}else t.l++}
-function simW(){let mine=null;G.T.forEach(t=>{if(t.id!=G.me||!t.man)auto(t)});[1,2].forEach(l=>(G.fx[l][G.week]||[]).forEach(([h,a])=>{const H=G.T[h],A=G.T[a],sh=str(H),sa=str(A),hg=pois(Math.max(.25,1.55+(sh.a-sa.d+tacMx(sh,sa)[0])/22)),ag=pois(Math.max(.2,1.1+(sa.a-sh.d+tacMx(sh,sa)[1])/22)),s1=scorers(H,hg),s2=scorers(A,ag),c1=cards(H),c2=cards(A);fat(H);fat(A);upd(H,hg,ag);upd(A,ag,hg);const r=[G.week,l,h,a,hg,ag];G.res.push(r);if(h==G.me||a==G.me){mine={r,sc:[...s1.map(s=>[h,...s]),...s2.map(s=>[a,...s])].sort((x,y)=>x[2]-y[2]),cd:[...c1.map(c=>[h,...c]),...c2.map(c=>[a,...c])].sort((x,y)=>x[2]-y[2])};G.last=mine;const d=h==G.me?hg-ag:ag-hg;G.conf=Math.max(0,Math.min(100,G.conf+(d>0?3:d<0?-2:0)));G.fans=Math.max(0,Math.min(100,(G.fans??60)+(d>0?(d>2?4:3):d<0?(d<-2?-4:-3):h==G.me?-1:1)))}}));try{genFeed(G.week)}catch(e){console.error(e)}G.week++;if(G.week>=NW)endSeason();return mine}
+function simW(){let mine=null;G.wsc=[];G.T.forEach(t=>{if(t.id!=G.me||!t.man)auto(t)});[1,2].forEach(l=>(G.fx[l][G.week]||[]).forEach(([h,a])=>{const H=G.T[h],A=G.T[a],sh=str(H),sa=str(A),hg=pois(Math.max(.25,1.55+(sh.a-sa.d+tacMx(sh,sa)[0])/22)),ag=pois(Math.max(.2,1.1+(sa.a-sh.d+tacMx(sh,sa)[1])/22)),s1=scorers(H,hg),s2=scorers(A,ag),c1=cards(H),c2=cards(A);G.wsc.push([h,a,s1,s2]);fat(H,h!=G.me);fat(A,a!=G.me);upd(H,hg,ag);upd(A,ag,hg);const r=[G.week,l,h,a,hg,ag];G.res.push(r);if(h==G.me||a==G.me){mine={r,sc:[...s1.map(s=>[h,...s]),...s2.map(s=>[a,...s])].sort((x,y)=>x[2]-y[2]),cd:[...c1.map(c=>[h,...c]),...c2.map(c=>[a,...c])].sort((x,y)=>x[2]-y[2])};G.last=mine;const d=h==G.me?hg-ag:ag-hg;G.conf=Math.max(0,Math.min(100,G.conf+(d>0?3:d<0?-2:0)));G.fans=Math.max(0,Math.min(100,(G.fans??60)+(d>0?(d>2?4:3):d<0?(d<-2?-4:-3):h==G.me?-1:1)))}}));try{genFeed(G.week)}catch(e){console.error(e)}G.week++;if(G.week>=NW)endSeason();return mine}
 function simWeek(){if(G.week>=NW)return;const my=G.T[G.me].lg,mine=simW();if(G.week>=NWL[my]&&G.week<NW)while(G.week>=NWL[my]&&G.week<NW)simW();save();return mine}
 const tab=l=>G.T.filter(t=>t.lg==l).sort((a,b)=>b.pts-a.pts||(b.gf-b.gc)-(a.gf-a.gc)||b.gf-a.gf);
 function setObj(){const me=G.T[G.me],l=me.lg,n=G.T.filter(t=>t.lg==l).length,rk=G.T.filter(t=>t.lg==l).map(t=>str(t).o).sort((a,b)=>b-a).findIndex(o=>o<=str(me).o),q=21*(n-1-rk)/(n-1),k=(n-1)*2/42;

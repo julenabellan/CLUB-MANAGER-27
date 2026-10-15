@@ -27,9 +27,47 @@ const ICON={goal:'⚽',save:'🧤',miss:'💨',post:'🥅',block:'🛡️',foul:
  SHOT=['save','miss','post','block','chance','free'],
  KW=[['save',22],['miss',15],['post',4],['block',10],['foul',12],['corner',12],['offside',7],['chance',5],['free',5],['cross',5],['dribble',5],['counter',4]];
 ICON.foul='🦵';
+
+/* ---- ampliación: más frases, goles de córner/falta/penalti/saque largo y acciones nuevas ---- */
+const AD={
+goalA:['¡GOOOL de {p}! Gran jugada colectiva que remata tras el pase de {a}','¡GOOOL de {p}! {a} abre el campo y {p} define con calidad','¡GOOOL de {p}! Combinación brillante con {a} y definición a la escuadra','¡GOOOL de {p}! Pared con {a} y al fondo de la red','¡GOOOL de {p}! Pase de la muerte de {a} y gol cantado','¡GOOOL de {p}! Robo, apertura de {a} y remate cruzado','¡GOOOL de {p}! {a} filtra, {p} se planta solo y bate al portero','¡GOOOL de {p}! Zurdazo seco a pase de {a}','¡GOOOL de {p}! Desborde de {a} y toque suave para el gol','¡GOOOL de {p}! {a} la pone con el interior y no hay quien lo pare'],
+goalS:['¡GOOOL de {p}! Arranca desde el medio campo y firma una jugada de videojuego','¡GOOOL de {p}! Zapatazo seco al palo largo','¡GOOOL de {p}! Se la lleva con el pecho y define de volea','¡GOOOL de {p}! Roba arriba y la manda a la red sin dudar','¡GOOOL de {p}! Cobra el rechace y no perdona','¡GOOOL de {p}! Recorte, hueco y disparo ajustado al palo','¡GOOOL de {p}! Latigazo desde la frontal imposible para {k}','¡GOOOL de {p}! Error en la salida rival y castiga al instante'],
+goalCoA:['¡GOOOL de {p}! Córner de {a} y cabezazo imparable al primer palo','¡GOOOL de {p}! {a} pone el córner en la cabeza de {p} y el balón a la red','¡GOOOL de {p}! Saque de esquina medido de {a} y remate a placer','¡GOOOL de {p}! Gran jugada de pizarra a la salida de un córner de {a}','¡GOOOL de {p}! Córner de {a}, peinada y {p} empuja el balón dentro','¡GOOOL de {p}! Se eleva más que nadie tras el córner de {a}'],
+goalCo:['¡GOOOL de {p}! Remata de cabeza tras un córner y bate a {k}','¡GOOOL de {p}! Jaleo en el área tras el córner y {p} la manda dentro','¡GOOOL de {p}! El córner acaba en la red tras un rechace de {p}','¡GOOOL de {p}! Gol de estrategia: córner ensayado y remate letal'],
+goalFa:['¡GOOOL de {p}! Falta directa y el balón se cuela por la escuadra','¡GOOOL de {p}! Golazo de falta: la barrera no puede hacer nada','¡GOOOL de {p}! Libre directo por encima de la barrera y al fondo de la red','¡GOOOL de {p}! Lanza la falta con rosca y {k} no llega','¡GOOOL de {p}! Obra de arte a balón parado, ajustada al palo','¡GOOOL de {p}! Falta al borde del área y misil imparable'],
+goalPe:['¡GOOOL de {p}! Penalti ejecutado con frialdad, {k} se tira al otro lado','¡GOOOL de {p}! Desde los once metros no perdona: al centro y gol','¡GOOOL de {p}! Penalti picado a la escuadra, imposible para {k}','¡GOOOL de {p}! Pena máxima transformada con categoría','¡GOOOL de {p}! Engaña a {k} y convierte el penalti'],
+goalSlA:['¡GOOOL de {p}! Saque largo de {a} que prolonga la defensa y {p} remata','¡GOOOL de {p}! Bombeo desde la banda de {a} y gol en el área','¡GOOOL de {p}! Saque de banda envenenado de {a} y cabezazo a la red'],
+goalSl:['¡GOOOL de {p}! Saque de banda largo, confusión en el área y gol','¡GOOOL de {p}! Del saque largo nace el gol: remate imparable'],
+pen:['¡PENALTI! {o} derriba a {p} dentro del área','Mano de {o} en el área: ¡penalti a favor!','¡Penalti claro! {o} hace falta sobre {p}','El árbitro señala penalti tras el tropiezo de {p} con {o}','¡Penalti! {p} cae en el área y el colegiado no lo duda'],
+fapre:['Falta peligrosa al borde del área. Se perfila {p}...','Falta frontal: {p} coloca el balón','¡Falta cerca del área! {p} se hace cargo del lanzamiento'],
+sl:['Saque de banda largo de {p} al corazón del área','{p} prepara un saque largo con mucho veneno'],
+penmiss:['¡PENALTI! {p} lo lanza... ¡y {k} se lo detiene!','¡Penalti fallado! {p} lo estrella en el palo','¡Penalti a favor! {p} dispara por encima del larguero','¡Pena máxima! {p} tira... ¡y {k} adivina y lo para!'],
+tackle:['Gran entrada de {o} que corta el avance de {p}','{o} se anticipa a {p} con un tackle providencial','Barrida espectacular de {o} para evitar el peligro','{o} roba el balón limpio a {p}'],
+pass:['Pase en profundidad de {p} que rompe la defensa','{p} saca un pase de otro partido pero no llega nadie','Gran cambio de juego de {p} al otro costado','Tiki-taka del equipo con {p} marcando el ritmo'],
+save:['{k} vuela hasta la escuadra para negar el gol a {p}','Manopla de {k} a un disparo cruzado de {p}','{k} sale bien y le gana el mano a mano a {p}','Parada de museo de {k} tras el remate de {p}'],
+miss:['{p} manda el balón a las gradas desde buena posición','Remate de {p} que se va rozando el larguero','{p} no acierta tras un buen centro','Disparo flojo de {p} que no inquieta al portero'],
+post:['¡Palo! Remate de {p} que se estrella en el poste izquierdo','¡Madera! {p} la pone en la escuadra y rebota en el larguero'],
+block:['{o} se tira al suelo y bloquea el tiro de {p}','Remate de {p} que sale rebotado en un defensa'],
+foul:['{p} derriba a {o} y el árbitro le recrimina','Falta de {p} para frenar el contragolpe','Entrada dura de {p}, el colegiado habla con él'],
+corner:['{p} gana un córner con un buen pase al hueco','El balón sale rebotado: córner para el equipo de {p}'],
+offside:['{p} estaba en posición adelantada en el pase de su compañero','El asistente levanta la bandera: {p} se pasó de frenada'],
+chance:['¡Ocasión de oro para {p}! Remata a un metro de la línea y no entra','{p} la tiene en el área pequeña y se la entrega a {k}'],
+free:['{p} lanza la falta con potencia pero el balón se estrella en la barrera','Falta de {p} que {k} atrapa sin problemas'],
+cross:['{p} saca un centro tenso que {o} despeja de puños... de cabeza','Centro al segundo palo de {p} que se pierde por línea de fondo'],
+dribble:['{p} se saca de encima a {o} con un caño y levanta al público','Gran control orientado de {p} y arranque imparable'],
+counter:['Contra letal liderada por {p}: el balón se queda en el último pase','{p} conduce la contra y le falta un pase más fino'],
+card:['Amarilla para {p} por simular una caída','El colegiado amonesta a {p} por cortar una jugada peligrosa']};
+Object.keys(AD).forEach(k=>{L[k]=(L[k]||[]).concat(AD[k])});
+Object.assign(ICON,{pen:'⚠️',fapre:'🎯',penmiss:'🧤',tackle:'🦶',pass:'🎩',sl:'🤾'});
+SHOT.push('penmiss');KW.push(['tackle',7],['pass',6],['penmiss',1.2]);
 const deck={};Object.keys(L).forEach(k=>{let q=[];deck[k]=()=>{if(!q.length)q=L[k].map((_,i)=>i).sort(()=>Math.random()-.5);return L[k][q.pop()]}});
+const gk=e=>{const t={co:'Co',fa:'Fa',pe:'Pe',sl:'Sl'}[e.gt];if(t){const k='goal'+t+(e.as?'A':'');if(deck[k])return k}return e.as?'goalA':'goalS'};
 /* ---- eventos ---- */
-m.sc.forEach(s=>ev.push({min:s[2],k:'goal',s:s[0]==h?0:1,who:sn(s[1]),wf:s[1],as:s[3]?sn(s[3]):null,asf:s[3]||null}));
+m.sc.forEach(s=>{const sd=s[0]==h?0:1,ty=s[4]||'n',ox=xi(G.T[ids[1-sd]]).filter(p=>p.pos!='P'),mx=xi(G.T[ids[sd]]).filter(p=>p.pos!='P'),pre=Math.max(0,s[2]-1),ml=mx.filter(p=>p.n!=s[1]);
+ if(ty=='pe')ev.push({min:pre,k:'pen',s:sd,who:sn(pick(ml.length?ml:mx).n),opp:sn(pick(ox).n),pre:1});
+ else if(ty=='fa')ev.push({min:pre,k:'fapre',s:sd,who:sn(s[1]),pre:1});
+ else if(ty=='co'||ty=='sl')ev.push({min:pre,k:ty=='co'?'corner':'sl',s:sd,who:sn(s[3]||pick(ml.length?ml:mx).n),pre:1});
+ ev.push({min:s[2],k:'goal',s:sd,who:sn(s[1]),wf:s[1],as:s[3]?sn(s[3]):null,asf:s[3]||null,gt:ty,gk:gkOf(ids[1-sd])})});
 (m.cd||[]).forEach(c=>ev.push({min:c[2],k:'card',s:c[0]==h?0:1,who:sn(c[1]),wf:c[1]}));
 const TF={d:[.75,.65],e:[1,1],o:[1.35,1.25]};
 const filler=(from,tc)=>{const out=[];ids.forEach((id,s)=>{const mx=xi(G.T[id]).filter(p=>p.pos!='P'),ox=xi(G.T[ids[1-s]]).filter(p=>p.pos!='P'),n=Math.round(R(9,14)*TF[tc][s==mine?0:1]*Math.max(0,89-from)/88);
@@ -58,10 +96,10 @@ const rsz=()=>{if(!fin)fit()};window.addEventListener('resize',rsz);
 o.querySelectorAll('.lvct button[data-v]').forEach(b=>b.onclick=()=>{sp=+b.dataset.v;o.querySelectorAll('.lvct button[data-v]').forEach(x=>x.classList.toggle('on',x==b))});
 say(0,2,'¡Comienza el partido!','h');
 const fill=(t,e)=>t.replace(/\{p\}/g,'<b>'+e.who+'</b>').replace(/\{a\}/g,'<b>'+(e.as||'')+'</b>').replace(/\{k\}/g,'<b>'+(e.gk||'el portero')+'</b>').replace(/\{o\}/g,'<b>'+(e.opp||'un rival')+'</b>');
-function fire(e){const t=fill(deck[e.k=='goal'?(e.as?'goalA':'goalS'):e.k](),e);
+function fire(e){const t=fill(deck[e.k=='goal'?gk(e):e.k](),e);
  if(e.k=='goal'){sc[e.s]++;sh[e.s]++;pause=hold(1.8);gl[e.s].push(`${e.min}' ${e.who}${e.as?' <i>(as. '+e.as+')</i>':''}`);q('#lg'+e.s).innerHTML=gl[e.s].join('<br>');
   say(e.min,e.s,`${ICON.goal} ${t}`,'g'+(e.s==mine?' gm':''));q('#lvs').classList.remove('flash');void q('#lvs').offsetWidth;q('#lvs').classList.add('flash')}
- else{if(SHOT.includes(e.k))sh[e.s]++;if(e.k=='corner')co[e.s]++;if(e.k=='foul')fo[e.s]++;if(e.k=='card')yc[e.s]++;pause=hold(.35);say(e.min,e.s,`${ICON[e.k]} ${t}`,e.k=='card'?'y':'')}}
+ else{if(SHOT.includes(e.k))sh[e.s]++;if(e.k=='corner')co[e.s]++;if(e.k=='foul')fo[e.s]++;if(e.k=='fapre')fo[1-e.s]++;if(e.k=='card')yc[e.s]++;pause=hold(.35);say(e.min,e.s,`${ICON[e.k]} ${t}`,e.k=='card'?'y':'')}}
 /* ---- resumen final ---- */
 function recap(){
  const gs=ev.filter(e=>e.k=='goal'),cs=ev.filter(e=>e.k=='card'),my=sc[mine],th=sc[1-mine],d=my-th,me=MT.n,opp=T[1-mine].n,ven=mine==0?'en casa':'lejos de casa',run=[0,0],
@@ -69,7 +107,7 @@ function recap(){
  const HD=d>=3?['Goleada','Exhibición','Paseo triunfal','Festival de goles']:d==2?['Victoria sólida','Triunfo con autoridad','Dominio claro']:d==1?['Victoria ajustada','Tres puntos sufridos','Triunfo de mérito']:d==0&&my?['Empate con emoción','Reparto de puntos','Tablas con goles']:d==0?['Empate sin goles','Cerrojo mutuo','Un punto y poco más']:d==-1?['Derrota mínima','Cayeron por poco','Amarga derrota']:d==-2?['Derrota clara','Superados','Tarde complicada']:['Noche para olvidar','Hundimiento','Sonrojante derrota'];
  const OP=d>=3?['{me} se dio un festín ante {opp} {ven}','Exhibición de {me}, que arrolló a {opp}','Noche redonda para {me}: {opp} no pudo seguirle el ritmo']:d==2?['{me} se impuso con autoridad a {opp} {ven}','Victoria convincente de {me} frente a {opp}','{me} controló el partido ante {opp} y se llevó los tres puntos']:d==1?['{me} sufrió, pero sacó los tres puntos ante {opp} {ven}','Triunfo por la mínima de {me} frente a {opp}','{me} supo sufrir ante {opp} y se marchó con la victoria']:d==0&&my?['{me} y {opp} se repartieron los puntos en un duelo de ida y vuelta','Tablas entre {me} y {opp} tras un partido con goles en ambas áreas','{me} y {opp} firmaron un empate lleno de alternativas']:d==0?['{me} y {opp} no lograron perforar la portería rival','Cero a cero entre {me} y {opp}: muchas dudas y poco peligro','Los porteros mandaron en el empate sin goles entre {me} y {opp}']:d==-1?['{me} cayó por la mínima ante {opp} {ven}','Derrota amarga de {me} frente a {opp}','{opp} aprovechó su momento y se llevó el choque ante {me}']:d==-2?['{opp} fue superior y {me} no encontró soluciones','Tarde complicada para {me}, que cayó ante {opp} {ven}','{opp} se mostró más fino y superó a {me}']:['{opp} arrolló a {me} {ven}','Una tarde para olvidar de {me} ante {opp}','{me} naufragó ante {opp}'];
  const AS=[' tras un pase de {a}',' con asistencia de {a}',' a pase de {a}',' servido por {a}'];
- const phrase=(e,i)=>{const pd=run[e.s]-run[1-e.s],nd=pd+1,t=T[e.s].n,w=B(e.who),as=e.as?F(pick(AS),{a:B(e.as)}):'',mm=e.min+"'";run[e.s]++;
+ const phrase=(e,i)=>{const pd=run[e.s]-run[1-e.s],nd=pd+1,t=T[e.s].n,w=B(e.who),as=(e.as?F(pick(AS),{a:B(e.as)}):'')+({pe:' de penalti',fa:' de falta directa',co:' tras un córner',sl:' tras un saque largo'}[e.gt]||''),mm=e.min+"'";run[e.s]++;
   const pool=i==0?['{w} abrió el marcador para {t} en el {m}{as}','El primero fue obra de {w} ({m}){as}, para {t}','{t} golpeó primero: {w} ({m}){as}']:nd==0?['{w} igualó el choque ({m}){as}','{w} devolvió las tablas ({m}){as}','Respuesta inmediata de {t}: {w} empató ({m}){as}']:pd<0&&nd>0?['{w} completó la remontada ({m}){as}','Remontada de {t} con gol de {w} ({m}){as}']:nd<0?['{w} recortó distancias ({m}){as}','{w} metió a {t} en el partido ({m}){as}']:pd==0?['{w} puso por delante a {t} ({m}){as}','{t} se adelantó con un gol de {w} ({m}){as}']:['{w} amplió la ventaja ({m}){as}','{w} sentenció ({m}){as}','Otro más para {t}: {w} ({m}){as}'];
   return F(pick(pool),{w,t,m:mm,as})};
  let ph=gs.map((e,i)=>phrase(e,i));if(ph.length>6)ph=[...ph.slice(0,2),`Entre medias llegaron ${ph.length-4} goles más`,...ph.slice(-2)];
@@ -84,7 +122,7 @@ function recap(){
  const pos=myPos(),end=F(pick(d>0?['Los tres puntos te colocan {pos}º en la tabla.','Con la victoria, {me} es {pos}º.','Suma tres y se queda {pos}º.']:d==0?['Un punto que te deja {pos}º.','El empate mantiene a {me} {pos}º en la clasificación.']:['Sin puntos: {pos}º en la tabla.','La derrota te deja {pos}º.','{me} se queda {pos}º tras este resultado.']),{pos,me});
  const po=cl(Math.round(50+(strs[0].o-strs[1].o)*1.3+R(-4,4)+(mine==0?1:-1)*({d:-5,e:0,o:5}[tac])),34,66),el=document.createElement('div');el.className='lm l2 sum';
  el.innerHTML=`<h4>Resumen · ${pick(HD)}</h4><p>${F(pick(OP),{me:B(me),opp:B(opp),ven})}. ${narr}</p><div class="rch"><span>Tiros <b>${sh[0]}-${sh[1]}</b></span><span>Córners <b>${co[0]}-${co[1]}</b></span><span>Faltas <b>${fo[0]}-${fo[1]}</b></span><span>Amarillas <b>${yc[0]}-${yc[1]}</b></span><span>Posesión <b>${po}%-${100-po}%</b></span></div><p class="mv">${mv}</p><p class="se">${end}</p>`;feed.append(el)}
-function end(){fin=1;MT.lu=orig[0];MT.bn=orig[1];save();feed.innerHTML='';feed.style.height='';q('#lvh').style.display='none';feed.classList.add('end');say(90,2,`🏁 Final: ${T[0].n} ${hg} - ${ag} ${T[1].n}`,'h f');recap();q('#lvok').style.display='';q('#lvtac').style.display='none';q('.lvct').querySelectorAll('button:not(#lvok)').forEach(b=>b.style.display='none');q('#lvok').onclick=()=>{window.removeEventListener('resize',rsz);o.remove();done()}}
+function end(){fin=1;sublog.forEach(([a,b,mn])=>{const po=MT.pl[a],pi=MT.pl[b],fr=(90-mn)/90;po.fa=Math.max(0,(po.fa|0)-Math.round((R(5,9)+3)*fr));pi.fa=Math.max(0,Math.min(100,(pi.fa|0)+Math.round(12+R(5,9)*fr-3*(1-fr))))});MT.lu=orig[0];MT.bn=orig[1];save();feed.innerHTML='';feed.style.height='';q('#lvh').style.display='none';feed.classList.add('end');say(90,2,`🏁 Final: ${T[0].n} ${hg} - ${ag} ${T[1].n}`,'h f');recap();q('#lvok').style.display='';q('#lvtac').style.display='none';q('.lvct').querySelectorAll('button:not(#lvok)').forEach(b=>b.style.display='none');q('#lvok').onclick=()=>{window.removeEventListener('resize',rsz);o.remove();done()}}
 function frame(now){if(fin)return;const dt=Math.min(.05,(now-last)/1000);last=now;
  if(!pz){if(pause>0)pause-=dt;
   else{min+=dt*2*sp;
@@ -96,9 +134,9 @@ function frame(now){if(fin)return;const dt=Math.min(.05,(now-last)/1000);last=no
  requestAnimationFrame(frame)}
 const TM={d:['🛡️','plantea el partido de forma defensiva: se repliega y cierra espacios'],e:['⚖️','busca el equilibrio entre defensa y ataque'],o:['⚔️','se lanza al ataque y adelanta sus líneas']};
 o.querySelectorAll('#lvtac button').forEach(b=>b.onclick=()=>{if(fin||b.dataset.t==tac)return;tac=b.dataset.t;o.querySelectorAll('#lvtac button').forEach(x=>x.classList.toggle('on',x==b));
- const fut=ev.splice(ei).filter(e=>e.k=='goal'||e.k=='card');ev.push(...fut,...filler(Math.floor(min),tac));ev.sort((x,y)=>x.min-y.min);
+ const fut=ev.splice(ei).filter(e=>e.k=='goal'||e.k=='card'||e.pre);ev.push(...fut,...filler(Math.floor(min),tac));ev.sort((x,y)=>x.min-y.min);
  say(Math.min(90,Math.floor(min)),mine,`${TM[tac][0]} <b>${MT.n}</b> ${TM[tac][1]}`,'sub')});
-const gone=new Set(),ent=new Set();
+const gone=new Set(),ent=new Set(),sublog=[];
 q('#lvsb').onclick=()=>{if(fin||subs>=5)return;pz=1;
  const cur=MT.lu.slice(),cs=new Set(cur),dl=cur.slice(),db=MT.bn.filter(i=>!gone.has(i)),sp=slots(MT.form),left=5-subs;let pk=null,msg='';
  const pn=document.createElement('div');pn.id='lvsub';o.appendChild(pn);
@@ -119,8 +157,8 @@ q('#lvsb').onclick=()=>{if(fin||subs>=5)return;pz=1;
   pn.querySelector('#sbr').onclick=()=>{cur.forEach((v,i)=>dl[i]=v);const bo=MT.bn.filter(i=>!gone.has(i));bo.forEach((v,i)=>db[i]=v);pk=null;msg='';draw()};
   pn.querySelector('#sbc').onclick=()=>{pn.remove();pz=0;last=performance.now()};
   pn.querySelector('#sbg').onclick=()=>{const ins=dl.filter(i=>!cs.has(i)),outs=cur.filter(i=>!dl.includes(i)),pairs=ins.map(i=>{let k=outs.findIndex(j=>MT.pl[j].pos==MT.pl[i].pos);if(k<0)k=0;return[outs.splice(k,1)[0],i]});
-   pairs.forEach(([a])=>gone.add(a));MT.lu=dl.slice();MT.bn=db.filter(i=>!gone.has(i));subs+=ins.length;ins.forEach(i=>{if(ent.has(i))return;ent.add(i);const p=MT.pl[i];p.pj=(p.pj|0)+1;p.fa=Math.min(100,(p.fa|0)+4)});
-   const mn=Math.min(90,Math.floor(min));pairs.forEach(([a,b])=>say(mn,mine,`🔄 Cambio en ${MT.n}: sale <b>${sn(MT.pl[a].n)}</b>, entra <b>${sn(MT.pl[b].n)}</b>`,'sub'));
+   pairs.forEach(([a])=>gone.add(a));MT.lu=dl.slice();MT.bn=db.filter(i=>!gone.has(i));subs+=ins.length;ins.forEach(i=>{if(ent.has(i))return;ent.add(i);const p=MT.pl[i];p.pj=(p.pj|0)+1});
+   const mn=Math.min(90,Math.floor(min));pairs.forEach(([a,b])=>sublog.push([a,b,mn]));pairs.forEach(([a,b])=>say(mn,mine,`🔄 Cambio en ${MT.n}: sale <b>${sn(MT.pl[a].n)}</b>, entra <b>${sn(MT.pl[b].n)}</b>`,'sub'));
    q('#lvsb').textContent='Cambios ('+(5-subs)+')';if(subs>=5)q('#lvsb').disabled=true;pn.remove();pz=0;last=performance.now()}};
  draw()};
 requestAnimationFrame(frame)}
