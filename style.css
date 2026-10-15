@@ -526,3 +526,6 @@ body.tcm #mn>*{animation:none}
 .lm.y{background:color-mix(in srgb,#f5b800 16%,var(--pn));border-color:#f5b800;animation:jump .45s cubic-bezier(.2,1.5,.4,1),yk .5s .25s}
 @keyframes yk{20%{transform:translateX(-4px)}40%{transform:translateX(4px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
 @media(prefers-reduced-motion:reduce){.mi-p,.mi-s,.mi-vs,.mi-lg,.mi-bar i,.cdk,.lm.y{animation:none!important;opacity:1}}
+/* v10: sin parpadeo entre la animación y el partido */
+#lv{animation:none!important}
+#mi.out{pointer-events:none}

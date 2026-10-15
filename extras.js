@@ -26,10 +26,12 @@ function fdMore(w){const me=G.T[G.me],l=me.lg,rs=G.res.filter(r=>r[0]==w&&r[1]==
 const _gf=genFeed;genFeed=function(w){_gf(w);try{fdMore(w)}catch(e){console.error(e)}};
 /* --- destacados: una publicación por cuenta, mezcladas --- */
 const fdKey=p=>p.a||(p.per!=null?'p'+p.per:p.k=='club'?'c'+p.cr:'f'+p.fh);
-feedHome=function(){const seen=G.seen|0,s=G.fs|0,best={};G.feed.forEach(p=>{const k=fdKey(p);if(!best[k]||p.lk>best[k].lk)best[k]=p});
- let a=Object.values(best).filter(p=>fdTop(p)||p.lk>=700).sort((x,y)=>y.lk*(.35+1.3*fdH(y.i,s))-x.lk*(.35+1.3*fdH(x.i,s))).slice(0,6);if(a.length<3)a=fdList('all').filter(fdTop).slice(0,6);
- return `<section class="pn fdp"><div class="fdh"><h3><span class="live"></span>Destacados · Mundo Superstar</h3><button id="fall">Ver todo →</button></div>${a.map(p=>fdPost(p,seen)).join('')||'<p class="mu" style="padding:16px">Todavía no hay tweets destacados.</p>'}</section>`};
+function fdLatest(n){const out=[];let w,g=0;for(let k=G.feed.length-1;k>=0;k--){const p=G.feed[k];if(g==0||p.w!==w){g++;w=p.w}if(g>n)break;out.push(p)}return out}
+function fdPick(n){const s=G.fs|0,best={};fdLatest(n).forEach(p=>{const k=fdKey(p);if(!best[k]||p.lk>best[k].lk)best[k]=p});
+ let a=Object.values(best),nw=a.filter(p=>p.a||p.k=='club');if(nw.length>=3)a=nw;return a.sort((x,y)=>y.lk*(.35+1.3*fdH(y.i,s))-x.lk*(.35+1.3*fdH(x.i,s))).slice(0,6)}
+feedHome=function(){const seen=G.seen|0;let a=fdPick(1);if(a.length<4)a=fdPick(2);
+ return `<section class="pn fdp"><div class="fdh"><h3><span class="live"></span>Destacados · Mundo Superstar</h3><button id="fall">Ver todo →</button></div>${a.map(p=>fdPost(p,seen)).join('')||'<p class="mu" style="padding:16px">Todavía no hay noticias de esta jornada.</p>'}</section>`};
 /* --- animación de salida al campo --- */
 function matchIntro(m,cb){const [w,l,h,a]=m.r,o=document.createElement('div'),rm=matchMedia('(prefers-reduced-motion:reduce)').matches;o.id='mi';
  o.innerHTML=`<div class="mi-p l"></div><div class="mi-p r"></div><div class="mi-c"><div class="mi-lg">${lgl(l,44)}<span>${LGN[l]} · Jornada ${w+1}</span></div><div class="mi-t"><div class="mi-s l">${crest(h,120)}<span>${nm(h)}</span>${form5(h,w)}</div><div class="mi-vs">VS</div><div class="mi-s r">${crest(a,120)}<span>${nm(a)}</span>${form5(a,w)}</div></div><div class="mi-bar"><i></i></div><p class="mi-go">🏟️ Saliendo al campo… <small>(toca para saltar)</small></p></div>`;
- document.body.appendChild(o);let d=0;const go=()=>{if(d)return;d=1;o.classList.add('out');setTimeout(()=>{o.remove();cb()},rm?0:420)};o.onclick=go;setTimeout(go,rm?500:2400)}
+ document.body.appendChild(o);let d=0;const go=()=>{if(d)return;d=1;cb();o.classList.add('out');setTimeout(()=>o.remove(),rm?0:420)};o.onclick=go;setTimeout(go,rm?500:2400)}
