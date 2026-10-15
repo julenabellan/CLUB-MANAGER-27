@@ -26,10 +26,10 @@ function fdMore(w){const me=G.T[G.me],l=me.lg,rs=G.res.filter(r=>r[0]==w&&r[1]==
 const _gf=genFeed;genFeed=function(w){_gf(w);try{fdMore(w)}catch(e){console.error(e)}};
 /* --- destacados: una publicación por cuenta, mezcladas --- */
 const fdKey=p=>p.a||(p.per!=null?'p'+p.per:p.k=='club'?'c'+p.cr:'f'+p.fh);
-function fdLatest(n){const out=[];let w,g=0;for(let k=G.feed.length-1;k>=0;k--){const p=G.feed[k];if(g==0||p.w!==w){g++;w=p.w}if(g>n)break;out.push(p)}return out}
-function fdPick(n){const s=G.fs|0,best={};fdLatest(n).forEach(p=>{const k=fdKey(p);if(!best[k]||p.lk>best[k].lk)best[k]=p});
+function fdLatest(){return G.feed.filter(fdCur)}
+function fdPick(){const s=G.fs|0,best={};fdLatest().forEach(p=>{const k=fdKey(p);if(!best[k]||p.lk>best[k].lk)best[k]=p});
  let a=Object.values(best),nw=a.filter(p=>p.a||p.k=='club');if(nw.length>=3)a=nw;return a.sort((x,y)=>y.lk*(.35+1.3*fdH(y.i,s))-x.lk*(.35+1.3*fdH(x.i,s))).slice(0,6)}
-feedHome=function(){const seen=G.seen|0;let a=fdPick(1);if(a.length<4)a=fdPick(2);
+feedHome=function(){const seen=G.seen|0;const a=fdPick();
  return `<section class="pn fdp"><div class="fdh"><h3><span class="live"></span>Destacados · Mundo Superstar</h3><button id="fall">Ver todo →</button></div>${a.map(p=>fdPost(p,seen)).join('')||'<p class="mu" style="padding:16px">Todavía no hay noticias de esta jornada.</p>'}</section>`};
 /* --- animación de salida al campo --- */
 function matchIntro(m,cb){const [w,l,h,a]=m.r,o=document.createElement('div'),rm=matchMedia('(prefers-reduced-motion:reduce)').matches;o.id='mi';

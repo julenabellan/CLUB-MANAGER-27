@@ -1,6 +1,7 @@
 /* ===== Redes sociales del universo Superstar (estilo X / Twitter) =====
    Cada jornada se generan publicaciones de prensa, datos, mercado, ligas, clubes y aficionados.
-   Imágenes esperadas en /img: MARCA.png, JORGE.png, OPTA.png, TRANSFER.png, FD.png, SKY.png, LOGO 1A.png, LOGO 2A.png */
+   Imágenes esperadas en /img: MARCA.png, JORGE.png, OPTA.png, TRANSFER.png, FD.png, SKY.png, HERTZ.png, LOGO 1A.png, LOGO 2A.png,
+   ST1..ST3.png (MVP, jugador del mes, hat-trick), ST4.png y ST4-2.png (portería a 0) */
 const ACC={
  marca:{n:'MARCA',h:'marca',img:'MARCA.png',m:1.6,f:'4,8 M',c:'prensa'},
  jorge:{n:'Jorge de la Mata Oficial',h:'JorgedelaMata',img:'JORGE.png',m:1.9,f:'12,3 M',c:'fich'},
@@ -9,9 +10,14 @@ const ACC={
  l1:{n:'Liga Superstar One',h:'SuperstarOne',img:'LOGO 1A.png',m:1.1,f:'3,4 M',c:'prensa'},
  l2:{n:'Liga Superstar 2',h:'Superstar2',img:'LOGO 2A.png',m:.6,f:'890 K',c:'prensa'},
  fd:{n:'FD SPORTS',h:'FDSports',img:'FD.png',m:1.5,f:'7,8 M',c:'fd'},
- sky:{n:'Sky Sports',h:'SkySports',img:'SKY.png',m:1.7,f:'9,4 M',c:'sky'}};
+ sky:{n:'Sky Sports',h:'SkySports',img:'SKY.png',m:1.7,f:'9,4 M',c:'sky'},
+ hertz:{n:'HERTZ',h:'hertz',img:'HERTZ.png',m:1.3,f:'5,2 M',c:'prensa'}};
+/* imágenes stock de los eventos nuevos (si una no existe, la tarjeta se muestra sin foto) */
+const IMG={cs:['ST4.png','ST4-2.png'],iv:[]};
 const FF=[['all','Todo'],['my','Mi club'],['prensa','Noticias'],['fich','Fichajes'],['datos','Datos'],['fd','FD Sports'],['sky','Sky Sports'],['club','Clubes'],['fan','Afición']];
 let FW=0,FT=540;
+/* Solo se muestran noticias de la jornada actual: la última jugada (G.week-1). Al empezar temporada (G.week==0) se ven fin de temporada (-2) y pretemporada (-1) */
+const fdCurW=()=>G.week>0?[G.week-1]:[-2,-1],fdCur=p=>fdCurW().includes(p.w);
 const fesc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),
  fslug=s=>String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9]+/g,''),
  fpk=a=>a[Math.floor(Math.random()*a.length)],
@@ -193,8 +199,48 @@ function fdVibes(w,l,rs,LN,lht){const T=i=>G.T[i],me=T(G.me),sg=r=>`${T(r[2]).n}
  if(pe&&Math.random()<.5)fdAdd('sky',fpk([`⚖️ PENALTI | ${pe.n} (${T(pe.t).n}) transforma la pena máxima en el minuto ${pe.min} ante ${T(pe.v).n}.`,`⚖️ ACTA | Penalti transformado por ${pe.n} (${T(pe.t).n}) en el minuto ${pe.min}, frente al ${T(pe.v).n}.`]),{my:pe.t==G.me||pe.v==G.me});
  if(Math.random()<.7){const tb=tab(l);fdAdd('sky',`📊 CLASIFICACIÓN OFICIAL | Tras la jornada ${w+1} de la ${LN}: ${tb.slice(0,3).map((t,i)=>`${i+1}. ${t.n} (${t.pts})`).join(' · ')}. Zona baja: ${tb.slice(-REL).map(t=>t.n).join(', ')}.\n#${lht}`,{my:tb.slice(0,3).concat(tb.slice(-REL)).some(t=>t.id==G.me)})}
  if(tg&&Math.random()<.6){const m=wk.find(q=>q[0]==tg[2]&&q[1]==tg[3]);fdAdd('sky',`🏁 FINAL | ${sg(tg)}.${m&&(m[2].length+m[3].length)?' Goles: '+fdSc(m)+'.':''}\n#J${w+1} #${lht}`,{card:cd(tg),my:has(tg)})}}
+/* ---------- DECLARACIONES Y ENTREVISTAS (Marca, Sky Sports y FD Sports) ---------- */
+const QV={
+ w:['Estoy feliz por el gol, pero lo importante es el equipo. Hemos trabajado toda la semana para esto.','Cuando entra, te olvidas de todo. Se lo dedico a la afición y a mi familia.','Sabíamos que {v} iba a apretar, pero el míster nos preparó a la perfección.','Llevaba tiempo buscándolo. Ahora toca no bajar el pistón.','Aquí gana el vestuario, no uno solo. Hoy me ha tocado a mí.'],
+ l:['Un golpe duro. Toca callar, trabajar y devolverle a la afición lo que merece.','No hay excusas contra {v}. Nos faltó intensidad y hay que reconocerlo.','Estamos tristes, pero el vestuario está unido. Esto se arregla trabajando.','Merecíamos más, pero el fútbol es así. Cabeza alta y a la siguiente.'],
+ mv:['Estoy en un gran momento, pero no quiero relajarme ni un segundo.','Los números ayudan, pero lo que quiero son títulos con el {t}.','Estoy muy a gusto aquí. Mientras el míster confíe en mí, lo daré todo.','Sueño con llevar al {t} a lo más alto de esta liga.'],
+ g:['Vamos jornada a jornada, sin mirar la tabla. Lo demás vendrá solo.','El míster nos pide paciencia con el proyecto y yo confío ciegamente.','Mi objetivo es seguir creciendo. Lo demás, que lo decidan los goles.']};
+function fdQuote(w,l,rs,LN,lht,mv){const T=i=>G.T[i],pool=[];
+ fdWk(l).forEach(([h,a,s1,s2])=>[[h,a,s1,s2.length],[a,h,s2,s1.length]].forEach(([t,v,s,gc])=>{
+  if(s.length>gc)s.forEach(g=>pool.push({n:g[0],t,v,k:'w'}));
+  else if(s.length<gc){const tm=T(t),lu=(tm.lu&&tm.lu.length?tm.lu.map(i=>tm.pl[i]):tm.pl).filter(p=>p&&p.pos!='P').sort((x,y)=>y.ovr-x.ovr).slice(0,4);if(lu.length)pool.push({n:fpk(lu).n,t,v,k:'l'})}}));
+ if(mv)pool.push({n:mv.p.n,t:mv.t.id,v:null,k:'mv'});
+ if(!pool.length)return;
+ const used=new Set(),ac=fsh(['marca','sky','fd']),n=Math.random()<.15?2:1;
+ for(let z=0;z<n;z++){const mine=pool.filter(x=>(x.t==G.me||x.v==G.me)&&!used.has(x.n)),fr=pool.filter(x=>!used.has(x.n));if(!fr.length)break;
+  const x=mine.length&&Math.random()<.45?fpk(mine):fpk(fr);used.add(x.n);
+  const q=fpk(Math.random()<.15?QV.g:QV[x.k]).replace(/\{v\}/g,x.v!=null?T(x.v).n:'el rival').replace(/\{t\}/g,T(x.t).n),a=ac[z],tn=T(x.t).n,my=x.t==G.me||(x.v!=null&&x.v==G.me);
+  const tx=a=='marca'?fpk([`🎙️ ENTREVISTA | ${x.n} (${tn}) habla en exclusiva para MARCA: «${q}»`,`🗞️ ${x.n}, sin filtros en MARCA: «${q}»\n#${lht}`]):
+   a=='sky'?fpk([`🎤 DECLARACIONES | ${x.n} (${tn}) atiende a Sky Sports tras la jornada ${w+1}: «${q}»`,`🎤 ZONA MIXTA | ${x.n}: «${q}»\n#${lht}`]):
+   fpk([`👀 ${x.n.toUpperCase()} SE SINCERA: «${q}» 🔥\n#J${w+1}`,`🎙️ Palabras mayores de ${x.n} (${tn}): «${q}» 🗣️`]);
+  const o={my};if(IMG.iv.length)o.card={t:'ph',img:fpk(IMG.iv),h:'DECLARACIONES',n:x.n,cr:x.t,st:tn,rt:0};
+  fdAdd(a,tx,o)}}
+
+/* ---------- PORTERÍA A 0 (de vez en cuando, con ST4.png o ST4-2.png) ---------- */
+function fdCS(w,l,rs,LN,lht){if(Math.random()>.5)return;const T=i=>G.T[i],c=[];
+ rs.forEach(r=>[[r[2],r[3],r[5],r[4]],[r[3],r[2],r[4],r[5]]].forEach(([t,v,gc,gf])=>{if(gc!=0)return;const tm=T(t),k=(tm.lu&&tm.lu.length?tm.lu.map(i=>tm.pl[i]):[]).find(p=>p&&p.pos=='P')||tm.pl.find(p=>p.pos=='P');if(k)c.push({k,t,v,win:gf>0})}));
+ if(!c.length)return;const mine=c.filter(x=>x.t==G.me),x=mine.length&&Math.random()<.6?mine[0]:fpk(c),a=Math.random()<.5?'fd':'sky',vn=T(x.v).n,tn=T(x.t).n;
+ fdAdd(a,a=='fd'?fpk(x.win?[`🧤🔒 PORTERÍA A 0 | ${x.k.n} (${tn}) cierra la puerta ante ${vn}. ¡Muro! 🧱\n#PorteríaA0 #J${w+1}`,`🧱 ¡NO PASA NADIE! ${x.k.n} deja el cero en el marcador y el ${tn} se lleva el partido ante ${vn} 🙌`]:[`🧤🔒 PORTERÍA A 0 | ${x.k.n} (${tn}) mantiene el cero ante ${vn}. Sin goles, pero ¡qué muro! 🧱\n#PorteríaA0 #J${w+1}`,`🧱 ¡NO PASA NADIE! ${x.k.n} firma otra noche perfecta ante ${vn}. Cero en contra 🙌`]):fpk([`🧤 PORTERÍA A CERO | ${x.k.n} (${tn}) mantiene su portería imbatida ante el ${vn} en la jornada ${w+1} de la ${LN}.`,`🧤 ACTA | Meta invicta para ${x.k.n} (${tn}) frente al ${vn}.\n#${lht}`]),
+  {my:x.t==G.me||x.v==G.me,card:{t:'ph',img:fpk(IMG.cs),h:'PORTERÍA A 0 · J'+(w+1),n:x.k.n,cr:x.t,st:'Sin encajar ante '+vn,rt:0}})}
+
+/* ---------- GOL DEL MES patrocinado por HERTZ ---------- */
+function fdGMtrack(w,l){const T=i=>G.T[i];let b=G.gm&&G.gm.sc!=null?G.gm:null;
+ fdWk(l).forEach(([h,a,s1,s2])=>[[h,a,s1],[a,h,s2]].forEach(([t,v,s])=>s.forEach(g=>{
+  const sc=({fa:3.2,co:1.6,pe:-2}[g[3]]||0)+(g[1]>=88?1.4:g[1]>=80?.6:0)+(g[2]?.4:0)+R(0,1.6);
+  if(!b||sc>b.sc)b={sc,n:g[0],t,v,min:g[1],as:g[2],ty:g[3],w}})));
+ if(b)G.gm=b}
+function fdGM(w,l,LN,lht){fdGMtrack(w,l);if(w%4!=3||!G.gm)return;const x=G.gm,T=i=>G.T[i],tn=T(x.t).n,vn=T(x.v).n,
+  d=({fa:'Una falta de museo.',co:'Remate perfecto tras un córner.'}[x.ty])||fpk(['Una jugada para enmarcar.','Un golazo de los que se recuerdan.','Imposible no repetirlo una y otra vez.']);
+ fdAdd('hertz',fpk([`⚽🚗 El GOL DEL MES, patrocinado por HERTZ | ${x.n} (${tn}) ante ${vn}, minuto ${x.min}'. ${d}${x.as?' Asistencia de '+fdLn(x.as)+'.':''}\n#GolDelMes #HERTZ`,`🏆 HERTZ patrocina el gol y el ganador es ${x.n} (${tn}) frente al ${vn} (J${x.w+1}). ${d}\n#GolDelMes #${lht}`]),
+  {big:1,my:x.t==G.me||x.v==G.me,card:{t:'s',n:x.min+"'",l:`Gol del mes · ${x.n} · J${x.w+1}`,cr:x.t}});G.gm=null}
+
 function fdFD(w,l,rs){const LN=LGN[l],lht=fslug(LN),N=NWL[l],run=f=>{try{f()}catch(e){console.error(e)}};
- let mv=null;run(()=>{mv=fdIdeal(w,l,rs,LN)});run(()=>fdStars(w,l,LN,lht,mv));run(()=>fdVibes(w,l,rs,LN,lht));
+ let mv=null;run(()=>{mv=fdIdeal(w,l,rs,LN)});run(()=>fdStars(w,l,LN,lht,mv));run(()=>fdQuote(w,l,rs,LN,lht,mv));run(()=>fdCS(w,l,rs,LN,lht));run(()=>fdGM(w,l,LN,lht));run(()=>fdVibes(w,l,rs,LN,lht));
  if(w>=3&&(w+1)%5==0&&w<N-1)run(()=>fdPred(w,l,LN,lht));
  if(w%6==2)run(()=>fdDuel(w,l,LN));
  if(w%7==4)run(()=>fdYoung(w,l,LN));
@@ -207,6 +253,7 @@ function genFeed(w){
  const me=G.T[G.me],l=me.lg,T=i=>G.T[i],rs=G.res.filter(r=>r[0]==w&&r[1]==l),mr=G.res.find(r=>r[0]==w&&(r[2]==G.me||r[3]==G.me));
  if(!rs.length)return;
  FW=w;FT=Math.floor(R(470,600));
+ G.feed=(G.feed||[]).filter(p=>p.w===w);/* poda: fuera las noticias de jornadas anteriores */
  const LN=LGN[l],mg=G.mgr,slg=fslug(me.n),lht=fslug(LN),sg=r=>`${T(r[2]).n} ${r[4]}-${r[5]} ${T(r[3]).n}`,card=r=>({t:'r',h:r[2],a:r[3],hg:r[4],ag:r[5]}),
   tb=tab(l),lead=tb[0],pos=myPos(),so=i=>str(T(i)).o,wn=r=>r[4]>r[5]?r[2]:r[3],ls=r=>r[4]>r[5]?r[3]:r[2];
  let h,o,gf,gc,d,scorer=null;
@@ -277,7 +324,7 @@ function feedStart(first){const me=G.T[G.me],l=me.lg,LN=LGN[l],tb=G.T.filter(t=>
  try{const V=perV(null);perPost(fpk(perGrp('fan')),null,V,1);perPost(fpk(perGrp('hater')),null,V,1);if(Math.random()<.7)perPost(fpk(perGrp('tonto')),null,V,0)}catch(e){console.error(e)}
  G.feed.sort((a,b)=>a.i-b.i);save()}
 function feedSeason(s){const me=G.T[G.me],slg=fslug(me.n),id=n=>{const t=G.T.find(t=>t.n==n);return t?t.id:null},ch=id(s.champ);
- FW=-2;FT=Math.floor(R(500,560));
+ FW=-2;FT=Math.floor(R(500,560));G.gm=null;G.fdm={};
  fdAdd('marca',`🏆 ¡${s.champ} es campeón de la ${LGN[1]} ${s.season}! ${fpk(['Una temporada para la historia.','Lo ha merecido de principio a fin.','Fiesta grande en la ciudad.'])}`,{big:1,my:ch==G.me});
  fdAdd('l1',`🏆 Fin de temporada ${s.season}: campeón ${s.champ}. Descienden: ${s.rel.join(', ')}.`,{card:ch!=null?{t:'s',n:'1º',l:s.champ,cr:ch}:null});
  fdAdd('l2',`⬆️ Ascienden a la ${LGN[1]}: ${s.pro.join(', ')}. ¡Enhorabuena!`);
@@ -290,8 +337,16 @@ function feedSeason(s){const me=G.T[G.me],slg=fslug(me.n),id=n=>{const t=G.T.fin
 function fdInit(){if(G.fans==null)G.fans=60;if(G.seen==null)G.seen=0;if(!G.feed){G.feed=[];G.fs=0;feedStart(1)}}
 
 /* ---------- pintado ---------- */
-const fdList=f=>{const a=G.feed.slice().reverse();return f=='all'?fdMix(a):f=='my'?a.filter(p=>p.my):a.filter(p=>p.c==f)};
-const fdAv=a=>`<span class="av br${/^(LOGO|FD|SKY)/.test(a.img)?' lg':''}"><i>${fesc(a.n[0])}</i><img src="img/${encodeURIComponent(a.img)}" alt="" onerror="this.parentNode.classList.add('nf');this.remove()"></span>`;
+/* (fdKey ya existe en extras.js: aquí uso fdAK) alterna cuentas dentro de cada jornada (nunca repite cuenta seguida si hay alternativa) y mantiene siempre las jornadas más nuevas arriba */
+const fdAK=p=>p.a||(p.per!=null?'per'+p.per:p.k=='club'?'club'+p.cr:'fan'+p.cr);
+function fdAlt(a){const out=[];let i=0;
+ while(i<a.length){let j=i;while(j<a.length&&a[j].w==a[i].w)j++;const g=a.slice(i,j),rc=[];
+  while(g.length){let k=g.findIndex((p,q)=>q<14&&!rc.includes(fdAK(p)));if(k<0)k=g.findIndex((p,q)=>q<14&&fdAK(p)!=rc[0]);if(k<0)k=0;
+   const p=g.splice(k,1)[0];out.push(p);rc.unshift(fdAK(p));rc.length=Math.min(rc.length,2)}
+  i=j}
+ return out}
+const fdList=f=>{const a=G.feed.filter(fdCur).reverse();return f=='all'?fdAlt(a):f=='my'?a.filter(p=>p.my):a.filter(p=>p.c==f)};
+const fdAv=a=>`<span class="av br${/^(LOGO|FD|SKY|HERTZ)/.test(a.img)?' lg':''}"><i>${fesc(a.n[0])}</i><img src="img/${encodeURIComponent(a.img)}" alt="" onerror="this.parentNode.classList.add('nf');this.remove()"></span>`;
 const VF='<svg class="vf" viewBox="0 0 24 24" aria-label="Cuenta verificada"><circle cx="12" cy="12" r="11"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 function fdAcc(p){if(p.a){const a=ACC[p.a];return{n:a.n,h:a.h,v:1,av:fdAv(a)}}
  if(p.per!=null&&PER[p.per]){const P=PER[p.per];return{n:P.n,h:P.h,v:0,av:`<span class="av br per"><i>${fesc(P.n[0])}</i><img src="img/${P.img}" alt="" onerror="this.parentNode.classList.add('nf');this.remove()"></span>`}}
