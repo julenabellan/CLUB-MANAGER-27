@@ -172,7 +172,7 @@ const gs0=(mr,w)=>{const m=(G.wsc||[]).find(q=>q[0]==mr[2]&&q[1]==mr[3]);if(!m)r
 function fdHT(l){const o=[];fdWk(l).forEach(([h,a,s1,s2])=>[[h,a,s1],[a,h,s2]].forEach(([t,v,s])=>{const c={};s.forEach(g=>c[g[0]]=(c[g[0]]||0)+1);Object.keys(c).forEach(n=>{if(c[n]>=3)o.push({n,t,v,g:c[n]})})}));return o}
 function fdSP(l){const o=[];fdWk(l).forEach(([h,a,s1,s2])=>[[h,a,s1],[a,h,s2]].forEach(([t,v,s])=>s.forEach(g=>{if(g[3]&&g[3]!='n')o.push({n:g[0],t,v,min:g[1],as:g[2],ty:g[3]})})));return o}
 const fdSc=m=>[m[2],m[3]].filter(s=>s.length).map(s=>s.map(g=>`${fdLn(g[0])} ${g[1]}'${({pe:' (p)',fa:' (f)'}[g[3]]||'')}`).join(', ')).join(' · ');
-function fdStars(w,l,LN,lht,mv){const T=i=>G.T[i],ph=(img,h,n,t,st,rt)=>({t:'ph',img,h,n,cr:t,st,rt}),has=(...a)=>a.includes(G.me),pa=()=>Math.random()<.5?'fd':'sky',rn=v=>v.toFixed(1).replace('.',',');
+function fdStars(w,l,LN,lht,mv){const T=i=>G.T[i],ph=(img,h,n,t,st,rt)=>({t:'ph',img:Math.random()<.5?img:img.replace('.png','-2.png'),h,n,cr:t,st,rt}),has=(...a)=>a.includes(G.me),pa=()=>Math.random()<.5?'fd':'sky',rn=v=>v.toFixed(1).replace('.',',');
  /* la foto la sube una sola cuenta: a veces FD (viral) y a veces Sky (oficial) */
  fdHT(l).forEach(x=>{const c=ph('ST3.png','HAT-TRICK · J'+(w+1),x.n,x.t,`${x.g} goles vs ${T(x.v).n}`,0),mi=has(x.t,x.v),a=pa();
   fdAdd(a,a=='fd'?fpk([`🎩🔥 ¡¡HAT-TRICK!! ${x.n} (${T(x.t).n}) no perdona: ${x.g} goles a ${T(x.v).n}. Se lleva el balón a casa 🏠⚽\n#HatTrick #J${w+1}`,`🤯 ¡TRIPLETE! ${x.n} está on fire: ${x.g} golazos ante ${T(x.v).n}. Hay delantero en ${T(x.t).n} 🔥\n#HatTrick`,`😱 ¿QUIÉN LO PARA? ${x.n} firma ${x.g} goles y manda el partido a la historia. ¡Nivel BESTIAL!\n#HatTrick #J${w+1}`]):fpk([`📄 HAT-TRICK | ${x.n} (${T(x.t).n}) anota ${x.g} goles ante ${T(x.v).n} en la jornada ${w+1} de la ${LN}.`,`📄 PARTE OFICIAL | Triplete de ${x.n} (${T(x.t).n}) frente al ${T(x.v).n}. Actuación destacada de la jornada ${w+1}.`]),{big:1,my:mi,card:c})});
@@ -290,7 +290,7 @@ function feedSeason(s){const me=G.T[G.me],slg=fslug(me.n),id=n=>{const t=G.T.fin
 function fdInit(){if(G.fans==null)G.fans=60;if(G.seen==null)G.seen=0;if(!G.feed){G.feed=[];G.fs=0;feedStart(1)}}
 
 /* ---------- pintado ---------- */
-const fdList=f=>{const a=G.feed.slice().reverse();return f=='all'?a:f=='my'?a.filter(p=>p.my):a.filter(p=>p.c==f)};
+const fdList=f=>{const a=G.feed.slice().reverse();return f=='all'?fdMix(a):f=='my'?a.filter(p=>p.my):a.filter(p=>p.c==f)};
 const fdAv=a=>`<span class="av br${/^(LOGO|FD|SKY)/.test(a.img)?' lg':''}"><i>${fesc(a.n[0])}</i><img src="img/${encodeURIComponent(a.img)}" alt="" onerror="this.parentNode.classList.add('nf');this.remove()"></span>`;
 const VF='<svg class="vf" viewBox="0 0 24 24" aria-label="Cuenta verificada"><circle cx="12" cy="12" r="11"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 function fdAcc(p){if(p.a){const a=ACC[p.a];return{n:a.n,h:a.h,v:1,av:fdAv(a)}}

@@ -495,3 +495,34 @@ body.tcm #mn>*{animation:none}
 .lgt.open .tnm{overflow:visible;white-space:nowrap}
 .fd-pc{padding:9px 14px}
 .lvmid .lgl{height:clamp(56px,15vw,84px);width:auto;margin-bottom:2px}
+/* ===== v9: clasificación con las dos ligas lado a lado, salida al campo y tarjetas ===== */
+.seg{display:grid!important;grid-template-columns:1fr 1fr;gap:8px}
+.seg button,.seg button:first-child,.seg button:last-child{min-width:0;justify-content:center;padding:8px 10px}
+.seg button .lgl{height:34px!important}.seg button span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+@media(max-width:640px){.seg button{font-size:13px;gap:6px}.seg button .lgl{height:28px!important}}
+#mi{position:fixed;inset:0;z-index:30;overflow:hidden;background:#050912;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;cursor:pointer}
+.mi-p{position:absolute;top:0;bottom:0;width:62%}
+.mi-p.l{left:-12%;background:linear-gradient(120deg,#17419a,#2f7bff);animation:miL .7s cubic-bezier(.2,.9,.2,1) both}
+.mi-p.r{right:-12%;background:linear-gradient(240deg,#a8231d,#ff5a4f);animation:miR .7s cubic-bezier(.2,.9,.2,1) both}
+@keyframes miL{from{transform:skewX(-12deg) translateX(-115%)}to{transform:skewX(-12deg)}}
+@keyframes miR{from{transform:skewX(-12deg) translateX(115%)}to{transform:skewX(-12deg)}}
+.mi-c{position:relative;z-index:2;width:100%;max-width:760px;padding:16px;text-align:center}
+.mi-lg{display:flex;justify-content:center;align-items:center;gap:10px;font-size:20px;letter-spacing:.1em;text-transform:uppercase;opacity:0;animation:miUp .5s .5s forwards}
+.mi-t{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:6px;margin:14px 0}
+.mi-s{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:clamp(22px,5vw,38px);font-weight:700;text-transform:uppercase;text-shadow:0 3px 14px rgba(0,0,0,.6);opacity:0}
+.mi-s.l{animation:miSl .6s .35s cubic-bezier(.2,1.4,.4,1) forwards}.mi-s.r{animation:miSr .6s .45s cubic-bezier(.2,1.4,.4,1) forwards}
+.mi-s .cr{width:clamp(80px,22vw,130px)!important;height:auto!important}
+.mi-vs{font-size:clamp(40px,10vw,80px);font-weight:700;font-style:italic;color:var(--hi);opacity:0;text-shadow:0 0 24px var(--hi);animation:miVs .5s .8s cubic-bezier(.2,1.8,.4,1) forwards}
+.mi-bar{height:4px;background:rgba(255,255,255,.25);border-radius:3px;overflow:hidden;margin:14px auto 8px;max-width:320px}.mi-bar i{display:block;height:100%;background:#fff;animation:miBar 2.3s linear forwards}
+.mi-go{margin:0;font-size:15px;opacity:.9}
+@keyframes miUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes miSl{from{opacity:0;transform:translateX(-90px) scale(.7)}to{opacity:1;transform:none}}
+@keyframes miSr{from{opacity:0;transform:translateX(90px) scale(.7)}to{opacity:1;transform:none}}
+@keyframes miVs{from{opacity:0;transform:scale(.2) rotate(-12deg)}to{opacity:1;transform:none}}
+@keyframes miBar{from{width:0}to{width:100%}}
+#mi.out{animation:miOut .42s forwards}@keyframes miOut{to{opacity:0;transform:scale(1.12)}}
+.cdk{display:inline-block;width:15px;height:21px;border-radius:3px;background:linear-gradient(135deg,#ffe767,#f5b800);box-shadow:0 2px 7px rgba(0,0,0,.45);vertical-align:-5px;margin-right:4px;animation:cdk .6s cubic-bezier(.2,1.5,.4,1)}
+@keyframes cdk{from{transform:translateY(-34px) rotate(55deg) scale(.4);opacity:0}to{transform:rotate(-8deg);opacity:1}}
+.lm.y{background:color-mix(in srgb,#f5b800 16%,var(--pn));border-color:#f5b800;animation:jump .45s cubic-bezier(.2,1.5,.4,1),yk .5s .25s}
+@keyframes yk{20%{transform:translateX(-4px)}40%{transform:translateX(4px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
+@media(prefers-reduced-motion:reduce){.mi-p,.mi-s,.mi-vs,.mi-lg,.mi-bar i,.cdk,.lm.y{animation:none!important;opacity:1}}

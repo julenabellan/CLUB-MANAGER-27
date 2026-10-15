@@ -96,7 +96,7 @@ const fill=(t,e)=>t.replace(/\{p\}/g,'<b>'+e.who+'</b>').replace(/\{a\}/g,'<b>'+
 function fire(e){const t=fill(deck[e.k=='goal'?gk(e):e.k](),e);
  if(e.k=='goal'){sc[e.s]++;sh[e.s]++;pause=hold(1.8);gl[e.s].push(`${e.min}' ${e.who}${e.as?' <i>(as. '+e.as+')</i>':''}`);q('#lg'+e.s).innerHTML=gl[e.s].join('<br>');
   say(e.min,e.s,`${ICON.goal} ${t}`,'g'+(e.s==mine?' gm':''));q('#lvs').classList.remove('flash');void q('#lvs').offsetWidth;q('#lvs').classList.add('flash')}
- else{if(SHOT.includes(e.k))sh[e.s]++;if(e.k=='corner')co[e.s]++;if(e.k=='foul')fo[e.s]++;if(e.k=='fapre')fo[1-e.s]++;if(e.k=='card')yc[e.s]++;pause=hold(.35);say(e.min,e.s,`${ICON[e.k]} ${t}`,e.k=='card'?'y':'')}}
+ else{if(SHOT.includes(e.k))sh[e.s]++;if(e.k=='corner')co[e.s]++;if(e.k=='foul')fo[e.s]++;if(e.k=='fapre')fo[1-e.s]++;if(e.k=='card')yc[e.s]++;pause=hold(.35);say(e.min,e.s,`${e.k=='card'?'<i class="cdk"></i>':ICON[e.k]} ${t}`,e.k=='card'?'y':'')}}
 /* ---- resumen final ---- */
 function recap(){
  const gs=ev.filter(e=>e.k=='goal'),cs=ev.filter(e=>e.k=='card'),my=sc[mine],th=sc[1-mine],d=my-th,me=MT.n,opp=T[1-mine].n,ven=mine==0?'en casa':'lejos de casa',run=[0,0],

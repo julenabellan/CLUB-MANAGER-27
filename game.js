@@ -131,5 +131,5 @@ function sqBind(){document.querySelectorAll('[data-l^="x:"],[data-l^="b:"],[data
 function modal(h){$('#mdc').innerHTML=h+'<p style="margin:16px 0 0"><button class="p" id="ok">Continuar</button></p>';$('#md').style.display='flex';$('#ok').onclick=()=>{$('#md').style.display='none';if(G.pend){G.pend=0;save()}}}
 function season(){const s=G.sum;modal(`<h2>Fin de temporada ${s.season}</h2><p>Campeón de ${LGN[1]}: <b>${s.champ}</b></p><p>Tu equipo terminó <b>${s.pos}º</b> en ${LGN[s.lg]} y cumplió <b>${s.met}/${s.tot}</b> objetivos.</p><p class="sm">Ascienden: ${s.pro.join(', ')}<br>Descienden: ${s.rel.join(', ')}</p>${s.sc?`<p class="sm">Pichichi de tu liga: ${s.sc[0]} (${s.sc[1]}), ${s.sc[2]} goles</p>`:''}${s.fired?'<p class="ko"><b>La directiva te ha despedido.</b> Empieza una nueva partida.</p>':'<p class="sm mu">Los jugadores han envejecido un año y la nueva temporada está lista.</p>'}`);
  if(s.fired)$('#ok').onclick=()=>{try{localStorage.removeItem(KEY)}catch(e){}location.reload()}}
-function playMatch(){const m=simWeek(),fin=()=>{render();if(G.pend)season()};if(m)liveMatch(m,fin);else fin()}
+function playMatch(){const m=simWeek(),fin=()=>{render();if(G.pend)season()};if(m)matchIntro(m,()=>liveMatch(m,fin));else fin()}
 renderStart();
