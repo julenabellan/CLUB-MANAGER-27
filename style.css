@@ -481,3 +481,17 @@ body.tcm #mn>*{animation:none}
 .fd-pc b{display:block;font:700 21px/1.1 'Barlow Condensed',sans-serif;text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .fd-pc span{font-size:13px;opacity:.92}
 .fd-pc i{font:700 26px 'Barlow Condensed',sans-serif;font-style:normal;background:#06101f;color:var(--hi);border-radius:10px;padding:2px 10px}
+
+/* ===== v11: tabla simplificada, fotos sin escudo y logo de liga grande en el partido ===== */
+.lgt{cursor:pointer}
+.lgt table{width:100%}
+.lgt .tn{display:flex;align-items:center;gap:6px;min-width:0}.lgt .tnm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lgt:not(.open){overflow-x:visible}
+.lgt:not(.open) .xc{display:none}
+.lgt:not(.open) table{table-layout:fixed}
+.lgt:not(.open) th:first-child,.lgt:not(.open) td:first-child{width:30px}
+.lgt:not(.open) th.n,.lgt:not(.open) td.n{width:46px}
+.lgt:not(.open) td:nth-child(2){overflow:hidden}
+.lgt.open .tnm{overflow:visible;white-space:nowrap}
+.fd-pc{padding:9px 14px}
+.lvmid .lgl{height:clamp(56px,15vw,84px);width:auto;margin-bottom:2px}

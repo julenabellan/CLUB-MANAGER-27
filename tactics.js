@@ -4,14 +4,14 @@ const STY={eq:{n:'Equilibrado',i:'⚖️',a:.4,d:.4,t:'Sin riesgos: rinde igual 
  con:{n:'Contraataque',i:'⚡',a:-.3,d:1.3,t:'Atrás y a la contra. Rinde más con buena defensa y delanteros.'},
  pre:{n:'Presión alta',i:'🔥',a:1.6,d:-.6,t:'Asfixia arriba. Exige nivel alto y poco cansancio.'}};
 const BEATS={pre:'pos',pos:'con',con:'pre'};
-const SPS={no:['Ninguna',0],co:['Córners',.8],fa:['Faltas directas',.8],sl:['Saques largos',.6]};
+const SPS={no:['Ninguna',0],co:['Córners',.8],fa:['Faltas directas',.8]};
 /* cruce de estilos suave: ninguna táctica gana siempre; el encaje con la plantilla pesa más */
 const tacMx=(x,y)=>{const m=(p,q)=>BEATS[p]==q?.5:BEATS[q]==p?-.3:0;return[m(x.st,y.st),m(y.st,x.st)]};
 const tacFit=(t,k)=>{const x=t.lu.map(i=>t.pl[i]).filter(Boolean);if(!x.length||k=='eq')return 0;const g=c=>{const a=x.filter(p=>p.pos==c);return a.length?av(a):68},fa=x.reduce((s,p)=>s+(p.fa|0),0)/x.length,all=av(x);
  const f=k=='pos'?(g('M')-68)*.05:k=='con'?((g('D')+g('F'))/2-68)*.05:((all-68)*.03-fa*.02);return Math.max(-.8,Math.min(.8,f))};
 const tacBest=(t,k)=>t.pl.map((p,i)=>i).filter(i=>k.includes(t.pl[i].pos)).sort((a,b)=>t.pl[b].ovr-t.pl[a].ovr);
-function tacOf(t){if(!t.tac){const h=(t.id*3+1)%4,st=['eq','pos','con','pre'][h],f={eq:['4-3-3','4-4-2'],pos:['4-5-1','3-5-2'],con:['5-3-2','5-4-1'],pre:['4-3-3','3-4-3']}[st][t.id%2];
- t.tac={st,cre:tacBest(t,'M')[0],rem:tacBest(t,'F')[0],tk:tacBest(t,'MF')[1],sp:['co','fa','sl','no'][t.id%4]};if(t.id!=G.me)t.form=f}return t.tac}
+function tacOf(t){if(t.tac&&t.tac.sp=='sl')t.tac.sp='no';if(!t.tac){const h=(t.id*3+1)%4,st=['eq','pos','con','pre'][h],f={eq:['4-3-3','4-4-2'],pos:['4-5-1','3-5-2'],con:['5-3-2','5-4-1'],pre:['4-3-3','3-4-3']}[st][t.id%2];
+ t.tac={st,cre:tacBest(t,'M')[0],rem:tacBest(t,'F')[0],tk:tacBest(t,'MF')[1],sp:['co','fa','no'][t.id%3]};if(t.id!=G.me)t.form=f}return t.tac}
 const _str=str;
 str=function(t){const s=_str(t),c=tacOf(t),y=STY[c.st],on=i=>i!=null&&t.lu.includes(i),b=i=>Math.max(0,(ef(t.pl[i])-68)*.06);let a=s.a+y.a,d=s.d+y.d;const ft=tacFit(t,c.st);if(c.st=='con')d+=ft;else a+=ft;
  if(on(c.cre))a+=.4+b(c.cre);if(on(c.rem))a+=.3+b(c.rem);if(c.sp!='no'&&on(c.tk))a+=SPS[c.sp][1]+b(c.tk)/2;return{...s,a,d,st:c.st}};
@@ -21,7 +21,7 @@ hubSq=function(){const t=G.T[G.me],c=tacOf(t);return _hubSq().replace(/<\/div>$/
 SQM.push(['tac','Tácticas']);
 const _sqm=sqm;
 sqm=function(){return S.sq=='tac'?back('q','Plantilla','Tácticas')+tacv():_sqm()};
-const SPI={no:'🚫',co:'🚩',fa:'🥅',sl:'🧤'},RI={cre:'🪄',rem:'🎯',tk:'🦶'};
+const SPI={no:'🚫',co:'🚩',fa:'🥅'},RI={cre:'🪄',rem:'🎯',tk:'🦶'};
 const tcPh=(t,i)=>{const p=t.pl[i],x=t.lu.includes(i);return `<span class="ps ${p.pos}">${PN[p.pos]}</span><span class="pnm">${p.n}</span><em class="xt${x?'':' w'}">${x?'XI':'Banq.'}</em><b class="ov">${Math.round(ef(p))}</b>`};
 const tcDd=(k,items,cur,btn)=>{const o=S.dd==k;return `<div class="dd${o?' open':''}"><button class="ddb" data-ddt="${k}">${btn}<span class="ddc">▾</span></button>${o?`<div class="ddl">${items.map(([v,h])=>`<button class="ddi${String(v)==String(cur)?' on':''}" data-ddk="${k}" data-ddv="${v}">${h}</button>`).join('')}</div>`:''}</div>`};
 function tacv(){const t=G.T[G.me],c=tacOf(t),m=nxt(),oid=m[0]==G.me?m[1]:m[0],o=G.T[oid],oc=tacOf(o),os=str(o),mx=tacMx(str(t),os),net=mx[0]-mx[1];xi(t);
