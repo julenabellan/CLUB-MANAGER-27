@@ -543,9 +543,9 @@ body.tcm #mn>*{animation:none}
 .sl .fpl{opacity:.85;min-height:10px}
 .pr .ps{font-size:13px}
 /* alineación: el recuadro entero se tiñe según lo bien que encaja el jugador en el hueco */
-.sl.fit{border-color:var(--fc);background:linear-gradient(180deg,color-mix(in srgb,var(--fc) 38%,rgba(6,10,20,.9)),color-mix(in srgb,var(--fc) 14%,rgba(6,10,20,.9)));box-shadow:0 0 12px color-mix(in srgb,var(--fc) 45%,transparent)}
-.sl.fit.pk{border-color:var(--hi);box-shadow:0 0 0 2px var(--hi)}
-.sl.fit.inn{border-color:var(--ok);box-shadow:0 0 0 2px var(--ok)}
-.sl.fit .slp{background:none;color:#fff;font:700 22px/1 'Barlow Condensed',sans-serif;letter-spacing:.06em;width:auto;margin:0 auto 1px;padding:0;text-shadow:0 1px 4px rgba(0,0,0,.6)}
-.sl.fit .ov{font-size:18px;opacity:.9}
-@media(max-width:600px){.sl.fit .slp{font-size:18px}}
+.sl.fit{border-color:rgba(255,255,255,.8);background:linear-gradient(180deg,color-mix(in srgb,var(--fc) 42%,rgba(6,10,20,.92)),color-mix(in srgb,var(--fc) 16%,rgba(6,10,20,.92)));box-shadow:inset 0 0 0 2px var(--fc),0 0 6px color-mix(in srgb,var(--fc) 22%,transparent)}
+.sl.fit.pk{border-color:var(--hi);box-shadow:inset 0 0 0 2px var(--fc),0 0 0 2px var(--hi)}
+.sl.fit.inn{border-color:var(--ok);box-shadow:inset 0 0 0 2px var(--fc),0 0 0 2px var(--ok)}
+.sl.fit .slp{background:none;color:#fff;font:700 20px/1 'Barlow Condensed',sans-serif;letter-spacing:.06em;width:auto;margin:0 auto 1px;padding:0;text-shadow:0 1px 4px rgba(0,0,0,.6)}
+.sl.fit .ov{font-size:24px;opacity:1}
+@media(max-width:600px){.sl.fit .slp{font-size:17px}.sl.fit .ov{font-size:21px}}
