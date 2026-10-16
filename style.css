@@ -569,3 +569,10 @@ body.tcm #mn>*{animation:none}
 .fmt.open .chv{transform:translateY(2px) rotate(-135deg)}
 .fmlist{display:flex;flex-wrap:wrap;gap:6px;padding:10px;border-radius:10px;background:color-mix(in srgb,var(--ac) 7%,var(--pn));border:1px solid var(--ln);animation:fmin .18s ease-out}
 @keyframes fmin{from{opacity:0;transform:translateY(-6px)}}
+
+/* ===== partido: el marcador y los controles NO se encogen; solo el feed cede espacio y se desplaza ===== */
+#lv .lvc{overflow:hidden}
+#lv .lvtop{flex:none;position:relative;z-index:4}
+#lv .lvc>.bar,#lv .lvc>.lvst,#lv .lvc>.lvh,#lv .lvc>.lvbt{flex:none}
+#lv #lvf{flex:1 1 0;min-height:96px;overflow-y:auto;overflow-x:hidden}
+#lv #lvf.end{flex:1 1 0;height:auto!important}
