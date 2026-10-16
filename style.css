@@ -549,3 +549,7 @@ body.tcm #mn>*{animation:none}
 .sl.fit .slp{background:none;color:#fff;font:700 20px/1 'Barlow Condensed',sans-serif;letter-spacing:.06em;width:auto;margin:0 auto 1px;padding:0;text-shadow:0 1px 4px rgba(0,0,0,.6)}
 .sl.fit .ov{font-size:24px;opacity:1}
 @media(max-width:600px){.sl.fit .slp{font-size:17px}.sl.fit .ov{font-size:21px}}
+/* arrastrar jugadores por el campo para cambiar su rol */
+.sl{translate:var(--ox,0px) var(--oy,0px);transition:translate .18s,transform .12s,border-color .12s}
+.sl[data-l^="x:"]{touch-action:none;user-select:none;-webkit-user-select:none}
+.sl.drg{z-index:60;transition:none;cursor:grabbing;opacity:.92;box-shadow:0 8px 18px rgba(0,0,0,.5)}
