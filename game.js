@@ -11,7 +11,8 @@ VG=.96,BA=.92,BI=.88,
 COMPAT={CT:{LD:VG,LI:VG,MCD:BI},LD:{CT:VG,MD:BA},LI:{CT:VG,MI:BA},MCD:{CT:BI,MC:VG},MC:{MCD:VG,MP:VG,MI:BA,MD:BA},MP:{DC:VG,EI:BI,ED:BI,MI:BI,MD:BI},MI:{MP:BA,EI:VG},MD:{MP:BA,ED:VG},EI:{MI:VG,DC:VG},ED:{MD:VG,DC:VG},DC:{EI:BA,ED:BA,MP:BI,MCD:BI}},
 fslots=f=>['POR'].concat(...FSL[f].split('|').map(x=>x.split(' '))),
 fit=(p,s)=>{const f=p.fp||FPD[p.pos];if(s=='POR'||f=='POR')return f==s?1:.4;if(f==s)return 1;if(p.alt&&p.alt.includes(s))return .98;const c=COMPAT[f];return c&&c[s]||.8},
-PL=p=>p.fp||PN[p.pos];
+PL=p=>p.fp||PN[p.pos],
+FC=(p,s)=>{const h=Math.max(0,Math.min(145,(fit(p,s)-.78)/.2*145));return `hsl(${Math.round(h)},80%,50%)`};/* color según encaje: verde = su posición, amarillo/naranja = parecida, rojo = muy distinta */
 function fixPos(){/* migra partidas antiguas: recupera posiciones de la base de datos o las deduce */G.T.forEach((t,i)=>t.pl.forEach(p=>{if(p.fp)return;const d=D[i]&&D[i].p.find(x=>x[1]==p.n);p.fp=d&&d[6]||FPD[p.pos];p.alt=d&&d[7]||[]}))}
 const $=s=>document.querySelector(s),R=(a,b)=>a+Math.random()*(b-a),ef=p=>p.ovr*(1-.001*(p.fa|0)),av=a=>a.length?a.reduce((s,p)=>s+ef(p),0)/a.length:50;
 let G=null,S={tab:'home',lg:1,sel:{lg:1,t:null}};
@@ -122,7 +123,7 @@ function plv(){const t=G.T[G.me],o='PDMF',val={pos:p=>o.indexOf(p.pos),n:p=>p.n,
  return `<div class="pn ptb"><table class="plt"><thead><tr>${th('pos','Posición','')}${th('n','Nombre','')}${th('pj','Jug.','n')}${th('g','Goles','n')}${th('a','Asist.','n')}</tr></thead><tbody>${rows.map(p=>`<tr><td class="ppo ${p.pos}" title="${(p.alt||[]).length?'También: '+p.alt.join(', '):''}">${PL(p)}</td><td class="nm">${p.n}</td><td class="n">${p.pj|0}</td><td class="n">${p.g|0}</td><td class="n">${p.a|0}</td></tr>`).join('')}</tbody></table></div><p class="sm mu">Toca la leyenda de arriba para ordenar (otra vez para invertir). Las estadísticas se reinician cada temporada.</p>`}
 function sqv(){const t=G.T[G.me];xi(t);const sp=slots(t.form),fsp=fslots(t.form),inb=new Set(t.bn),inx=new Set(t.lu),ln=p=>p.n.split(' ').slice(1).join(' ')||p.n;
  const fb=p=>{const f=p.fa|0;return `<i class="fb" title="Cansancio ${f}%"><u class="${f>66?'hi':f>33?'md':'lo'}" style="width:${Math.max(6,f)}%"></u></i>`};
- const card=i=>{const p=t.pl[t.lu[i]];return `<div class="sl${S.pk=='x:'+i?' pk':''}${fit(p,fsp[i])<.96?' oop':''}" draggable="true" data-l="x:${i}"><span class="ps slp ${FGR(fsp[i])}">${fsp[i]}</span><span class="ov">${Math.round(ef(p))}</span><b>${ln(p)}</b><small class="fpl">${fsp[i]!=p.fp?'es '+PL(p):'&nbsp;'}</small>${fb(p)}</div>`};
+ const card=i=>{const p=t.pl[t.lu[i]];return `<div class="sl fit${S.pk=='x:'+i?' pk':''}" style="--fc:${FC(p,fsp[i])}" draggable="true" data-l="x:${i}"><span class="ps slp ${FGR(fsp[i])}">${fsp[i]}</span><span class="ov">${Math.round(ef(p))}</span><b>${ln(p)}</b>${fb(p)}</div>`};
  const row=(i,l)=>{const p=t.pl[i];return `<div class="pr${S.pk==l?' pk':''}" draggable="true" data-l="${l}"><span class="ps ${p.pos}">${PL(p)}</span><span class="pnm">${p.n}</span><span class="mu sm">${p.age}a${(p.alt||[]).length?' · '+p.alt.join('/'):''}</span><b>${Math.round(ef(p))}</b>${fb(p)}</div>`};
  const rs=t.pl.map((p,i)=>i).filter(i=>!inx.has(i)&&!inb.has(i)).sort((a,b)=>'PDMF'.indexOf(t.pl[a].pos)-'PDMF'.indexOf(t.pl[b].pos)||t.pl[b].ovr-t.pl[a].ovr);
  return `<div class="pn sqh"><label>Formación <select id="fm">${Object.keys(FORM).map(f=>`<option ${f==t.form?'selected':''}>${f}</option>`).join('')}</select></label><button id="au" class="${t.man?'':'p'}">Auto</button><span class="mu sm">Media del once <b>${Math.round(str(t).o)}</b> · Arrastra o toca dos jugadores para intercambiarlos · Barra = cansancio (verde fresco, rojo agotado): los cansados rinden menos · Rojo = fuera de posición</span></div>
