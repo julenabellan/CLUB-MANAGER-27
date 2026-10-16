@@ -186,7 +186,10 @@ const rmp=(A,B)=>{const oN=MT.pl[A].n,iN=MT.pl[B].n,bump=(n,f,d)=>{const p=MT.pl
   else if(e.pre&&e.wf==oN){e.wf=iN;e.who=sn(iN)}
   else if(e.k=='card'&&e.wf==oN){bump(oN,'yc',-1);
    if(ev.some(z=>z!==e&&z.k=='card'&&z.wf==iN)){ev.splice(ev.indexOf(e),1);const ix=(m.cd||[]).indexOf(e.ref);if(ix>=0)m.cd.splice(ix,1)}
-   else{bump(iN,'yc',1);e.wf=e.ref[1]=iN;e.who=sn(iN)}}})};
+   else{bump(iN,'yc',1);e.wf=e.ref[1]=iN;e.who=sn(iN)}}
+  else if(!e.wf&&e.who==sn(oN))e.who=sn(iN)});
+ /* el resto de acciones futuras (tiros, faltas, paradas...): el sustituido deja de ser protagonista, rival o portero de esas jugadas */
+ ev.slice(ei).forEach(e=>{if(e.s==mine)return;if(e.opp==sn(oN))e.opp=sn(iN);if(e.gk==sn(oN))e.gk=sn(iN)})};
 q('#lvsb').onclick=()=>{if(fin||subs>=5)return;pz=1;
  const cur=MT.lu.slice(),cs=new Set(cur),dl=cur.slice(),db=MT.bn.filter(i=>!gone.has(i)),sp=slots(MT.form),left=5-subs;let pk=null,msg='';
  const pn=document.createElement('div');pn.id='lvsub';o.appendChild(pn);
