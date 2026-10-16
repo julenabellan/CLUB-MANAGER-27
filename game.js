@@ -3,22 +3,31 @@ const lgl=(l,s=28)=>`<img class="lgl" height="${s}" src="img/LOGO%20${l}A.png" a
 const CRN=["cluc fc g.png", "CRAKOVIA CF G.png", "Campo.png", "GACKO.png", "as club g.png", "KFK.png", "BERLIN FC.png", "Paris CF.png", "Gacko Portugal.png", "NUBE.png", "blue wordl club g.png", "SPAIN CLUB.png", "ENGLAND CLUB.png", "leizpig fc.png", "Creg Belga.png", "Spartak Belgrade.png", "LONDON CLUB.png", "Creg Croata.png", "Holland Team.png", "Moscu fc g.png", "Italica FC.png", "Germanya FS.png", "Warsaw KP.png", "MILANO SP.png", "Zürich Aktiv.png", "CLUC B.png", "France Club.png", "Bratislava Fighters.png", "PUSKAS SPORTOS.png", "mac manchester.png", "VICTORIA ISTANBUL.png", "SOLIKSON ISLANDIA.png", "LAC LIVERPOOL.png", "KFK B.png", "DINAMO ROTTERDAM.png", "Cardiff Cambrian FC.png", "RIBERA LEVANTINA.png", "SOLIKSON IRLANDES.png", "IBERICA.png", "SKÄRHOLM AFC.png", "JAPAN FC.png", "BASILEA FF.png", "MIQAREM.png", "NYHAVN.png"];
 const crest=(i,s=28)=>`<img class="cr" width="${s}" height="${s}" src="img/${encodeURIComponent(CRN[i])}" alt="" onerror="this.style.visibility='hidden'">`;
 const PN={P:'POR',D:'DEF',M:'MED',F:'DEL'},FORM={'4-3-3':[1,4,3,3],'4-4-2':[1,4,4,2],'3-5-2':[1,3,5,2],'4-5-1':[1,4,5,1],'5-3-2':[1,5,3,2],'3-4-3':[1,3,4,3],'5-4-1':[1,5,4,1],'5-2-3':[1,5,2,3]},LGN={1:'Liga Superstar One',2:'Liga Superstar 2'},REL=3,PRO=3,NW=46,NWL={1:38,2:46},KEY='cm27c';
+/* Sistema de posiciones: grupo (P/D/M/F) + posición concreta (POR/CT/LD/LI/MCD/MC/MP/MI/MD/EI/ED/DC) + alternativas.
+   Jugar en su posición o en una alternativa apenas penaliza; en otra, según compatibilidad (muy bien .96 · bastante bien .92 · bien .88 · resto .80). */
+const FPD={P:'POR',D:'CT',M:'MC',F:'DC'},FGR=s=>s=='POR'?'P':'CT LD LI'.includes(s)?'D':s=='EI'||s=='ED'||s=='DC'?'F':'M',
+FSL={'4-3-3':'LI CT CT LD|MC MCD MC|EI DC ED','4-4-2':'LI CT CT LD|MI MC MC MD|DC DC','3-5-2':'CT CT CT|MI MC MCD MC MD|DC DC','4-5-1':'LI CT CT LD|MI MC MP MC MD|DC','5-3-2':'LI CT CT CT LD|MC MCD MC|DC DC','3-4-3':'CT CT CT|MI MC MC MD|EI DC ED','5-4-1':'LI CT CT CT LD|MI MC MC MD|DC','5-2-3':'LI CT CT CT LD|MCD MC|EI DC ED'},
+VG=.96,BA=.92,BI=.88,
+COMPAT={CT:{LD:VG,LI:VG,MCD:BI},LD:{CT:VG,MD:BA},LI:{CT:VG,MI:BA},MCD:{CT:BI,MC:VG},MC:{MCD:VG,MP:VG,MI:BA,MD:BA},MP:{DC:VG,EI:BI,ED:BI,MI:BI,MD:BI},MI:{MP:BA,EI:VG},MD:{MP:BA,ED:VG},EI:{MI:VG,DC:VG},ED:{MD:VG,DC:VG},DC:{EI:BA,ED:BA,MP:BI,MCD:BI}},
+fslots=f=>['POR'].concat(...FSL[f].split('|').map(x=>x.split(' '))),
+fit=(p,s)=>{const f=p.fp||FPD[p.pos];if(s=='POR'||f=='POR')return f==s?1:.4;if(f==s)return 1;if(p.alt&&p.alt.includes(s))return .98;const c=COMPAT[f];return c&&c[s]||.8},
+PL=p=>p.fp||PN[p.pos];
+function fixPos(){/* migra partidas antiguas: recupera posiciones de la base de datos o las deduce */G.T.forEach((t,i)=>t.pl.forEach(p=>{if(p.fp)return;const d=D[i]&&D[i].p.find(x=>x[1]==p.n);p.fp=d&&d[6]||FPD[p.pos];p.alt=d&&d[7]||[]}))}
 const $=s=>document.querySelector(s),R=(a,b)=>a+Math.random()*(b-a),ef=p=>p.ovr*(1-.001*(p.fa|0)),av=a=>a.length?a.reduce((s,p)=>s+ef(p),0)/a.length:50;
 let G=null,S={tab:'home',lg:1,sel:{lg:1,t:null}};
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(G))}catch(e){}};
 const load=()=>{try{return JSON.parse(localStorage.getItem(KEY))}catch(e){return null}};
 const ids=l=>G.T.filter(t=>t.lg==l).map(t=>t.id),nm=i=>G.T[i].n;
-function newGame(name,tid){G={mgr:name,me:tid,season:2027,week:0,conf:60,fans:60,feed:[],fs:0,seen:0,T:D.map((t,i)=>({id:i,n:t.n,c:t.c,lg:t.l,form:'4-3-3',pl:t.p.map(p=>({n:p[1],nat:p[2],age:p[3],pos:p[0],ovr:p[4],pot:p[5],g:0,a:0,yc:0,pj:0,fa:0}))}))};startSeason();feedStart(1);}
+function newGame(name,tid){G={mgr:name,me:tid,season:2027,week:0,conf:60,fans:60,feed:[],fs:0,seen:0,T:D.map((t,i)=>({id:i,n:t.n,c:t.c,lg:t.l,form:'4-3-3',pl:t.p.map(p=>({n:p[1],nat:p[2],age:p[3],pos:p[0],fp:p[6]||FPD[p[0]],alt:p[7]||[],ovr:p[4],pot:p[5],g:0,a:0,yc:0,pj:0,fa:0}))}))};startSeason();feedStart(1);}
 function startSeason(){G.week=0;G.res=[];G.last=null;G.T.forEach(t=>{t.pts=t.pj=t.gf=t.gc=t.w=t.d=t.l=0;t.pl.forEach(p=>{p.g=0;p.a=0;p.yc=0;p.pj=0;p.fa=0});if(t.id!=G.me||!t.man)auto(t)});G.fx={1:rounds(ids(1)),2:rounds(ids(2))};setObj();save();}
 function rounds(a){a=a.slice().sort(()=>Math.random()-.5);const n=a.length,m=n-1,H=[];for(let r=0;r<m;r++){const x=[r%2?[a[r],a[m]]:[a[m],a[r]]];for(let k=1;k<n/2;k++){const p=a[(r+k)%m],q=a[(r-k+m)%m];x.push(k%2?[p,q]:[q,p])}H.push(x)}return H.concat(H.map(r=>r.map(([h,b])=>[b,h])))}
-const slots=f=>{const a=FORM[f],o=[];'PDMF'.split('').forEach((c,i)=>{for(let k=0;k<a[i];k++)o.push(c)});return o},mean=a=>a.reduce((s,v)=>s+v,0)/a.length,rt=(p,s)=>ef(p)*(p.pos==s?1:.8);
+const slots=f=>{const a=FORM[f],o=[];'PDMF'.split('').forEach((c,i)=>{for(let k=0;k<a[i];k++)o.push(c)});return o},mean=a=>a.reduce((s,v)=>s+v,0)/a.length,rt=(p,s)=>ef(p)*fit(p,s);
 function auto(t){const f=FORM[t.form],used=new Set(),lu=[],ix=t.pl.map((p,i)=>i),by=(a,b)=>ef(t.pl[b])-ef(t.pl[a]);
- 'PDMF'.split('').forEach((c,k)=>ix.filter(i=>t.pl[i].pos==c&&!used.has(i)).sort(by).slice(0,f[k]).forEach(i=>{lu.push(i);used.add(i)}));
- ix.filter(i=>!used.has(i)&&t.pl[i].pos!='P').sort(by).slice(0,11-lu.length).forEach(i=>{lu.push(i);used.add(i)});
+ fslots(t.form).forEach(s=>{let b=-1,bv=-1;ix.forEach(i=>{if(used.has(i))return;const p=t.pl[i],v=ef(p)*fit(p,s)+(p.pos==FGR(s)?15:0);if(v>bv){bv=v;b=i}});if(b>=0){lu.push(b);used.add(b)}});
  const r=ix.filter(i=>!used.has(i)),gk=r.filter(i=>t.pl[i].pos=='P').sort(by).slice(0,1);
  t.lu=lu;t.bn=gk.concat(r.filter(i=>!gk.includes(i)).sort(by).slice(0,7-gk.length))}
 function xi(t){if(!t.lu||t.lu.length!=11||t.lu.some(i=>!t.pl[i]))auto(t);if(!t.bn)auto(t);return t.lu.map(i=>t.pl[i])}
-function str(t){const x=xi(t),sp=slots(t.form),r=x.map((p,i)=>rt(p,sp[i])),g=c=>{const a=r.filter((_,i)=>sp[i]==c);return a.length?mean(a):50},m=g('M'),f=g('F');return{a:.55*f+.35*m+.1*g('D'),d:.45*g('D')+.3*g('P')+.25*m,o:mean(r)}}
+function str(t){const x=xi(t),sp=slots(t.form),fs=fslots(t.form),r=x.map((p,i)=>rt(p,fs[i])),g=c=>{const a=r.filter((_,i)=>sp[i]==c);return a.length?mean(a):50},m=g('M'),f=g('F');return{a:.55*f+.35*m+.1*g('D'),d:.45*g('D')+.3*g('P')+.25*m,o:mean(r)}}
 /* fatiga por minutos: titular 90' suma cansancio; quien sale antes (o entra) lo nota proporcionalmente; quien no juega descansa más.
    Los equipos de la IA hacen cambios automáticos (1-5) entre el 46' y el 86'. */
 const fat=(t,ai)=>{const x=new Set(t.lu),out={},inn={},f=m=>R(5,9)*m/90-3*(90-m)/90;
@@ -71,7 +80,7 @@ ${sv?`<div class="pn"><b>Partida guardada:</b> ${sv.mgr} · ${sv.T[sv.me].n} · 
 <button class="p" id="go" ${s.t===null?'disabled':''}>Empezar partida</button></div>`;
  document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{s.lg=+b.dataset.l;s.t=null;renderStart()});
  document.querySelectorAll('.tl button').forEach(b=>b.onclick=()=>{s.t=+b.dataset.t;renderStart()});
- $('#go').onclick=()=>{newGame($('#mg').value.trim()||'Míster',s.t);enter()};if(sv)$('#co').onclick=()=>{G=sv;enter()}}
+ $('#go').onclick=()=>{newGame($('#mg').value.trim()||'Míster',s.t);enter()};if(sv)$('#co').onclick=()=>{G=sv;fixPos();enter()}}
 function enter(){fdInit();$('#st').style.display='none';$('#ap').style.display='block';render();if(G.pend)season()}
 function render(){const me=G.T[G.me],p=Math.round(G.conf);$('#hc').innerHTML=crest(G.me,40)+'<span>'+me.n+'</span>';document.body.dataset.lg=me.lg;$('#hs').innerHTML=`${lgl(me.lg,52)}<span><b class="hln">${LGN[me.lg]}</b><br>Temporada ${G.season} · Jornada ${Math.min(G.week+1,NWL[me.lg])}/${NWL[me.lg]}</span>`;
  $('#nv').innerHTML=[['home','Inicio'],['soc','Redes'],['tab','Clasificación'],['sq','Plantilla'],['obj','Oficina']].map(([k,l])=>`<button data-k="${k}" class="${S.tab==k?'on':''}">${l}${k=='soc'&&S.tab!='soc'&&G.fs>(G.seen|0)?`<span class="bd">${Math.min(99,G.fs-(G.seen|0))}</span>`:''}</button>`).join('');
@@ -110,11 +119,11 @@ function hubOf(){const me=G.T[G.me],l=me.lg,met=G.obj.filter(objOk).length,pl=G.
 function plv(){const t=G.T[G.me],o='PDMF',val={pos:p=>o.indexOf(p.pos),n:p=>p.n,pj:p=>p.pj|0,g:p=>p.g|0,a:p=>p.a|0},ks=val[S.ps]?S.ps:'pos',dr=S.pd||1,
  rows=t.pl.slice().sort((a,b)=>{const va=val[ks](a),vb=val[ks](b),c=typeof va=='string'?va.localeCompare(vb):va-vb;return c*dr||o.indexOf(a.pos)-o.indexOf(b.pos)||b.ovr-a.ovr||a.n.localeCompare(b.n)}),
  th=(k,l,c)=>`<th class="${c}${ks==k?' on':''}" data-s="${k}">${l}${ks==k?(dr>0?' ▲':' ▼'):''}</th>`;
- return `<div class="pn ptb"><table class="plt"><thead><tr>${th('pos','Posición','')}${th('n','Nombre','')}${th('pj','Jug.','n')}${th('g','Goles','n')}${th('a','Asist.','n')}</tr></thead><tbody>${rows.map(p=>`<tr><td class="ppo ${p.pos}">${PN[p.pos]}</td><td class="nm">${p.n}</td><td class="n">${p.pj|0}</td><td class="n">${p.g|0}</td><td class="n">${p.a|0}</td></tr>`).join('')}</tbody></table></div><p class="sm mu">Toca la leyenda de arriba para ordenar (otra vez para invertir). Las estadísticas se reinician cada temporada.</p>`}
-function sqv(){const t=G.T[G.me];xi(t);const sp=slots(t.form),inb=new Set(t.bn),inx=new Set(t.lu),ln=p=>p.n.split(' ').slice(1).join(' ')||p.n;
+ return `<div class="pn ptb"><table class="plt"><thead><tr>${th('pos','Posición','')}${th('n','Nombre','')}${th('pj','Jug.','n')}${th('g','Goles','n')}${th('a','Asist.','n')}</tr></thead><tbody>${rows.map(p=>`<tr><td class="ppo ${p.pos}" title="${(p.alt||[]).length?'También: '+p.alt.join(', '):''}">${PL(p)}</td><td class="nm">${p.n}</td><td class="n">${p.pj|0}</td><td class="n">${p.g|0}</td><td class="n">${p.a|0}</td></tr>`).join('')}</tbody></table></div><p class="sm mu">Toca la leyenda de arriba para ordenar (otra vez para invertir). Las estadísticas se reinician cada temporada.</p>`}
+function sqv(){const t=G.T[G.me];xi(t);const sp=slots(t.form),fsp=fslots(t.form),inb=new Set(t.bn),inx=new Set(t.lu),ln=p=>p.n.split(' ').slice(1).join(' ')||p.n;
  const fb=p=>{const f=p.fa|0;return `<i class="fb" title="Cansancio ${f}%"><u class="${f>66?'hi':f>33?'md':'lo'}" style="width:${Math.max(6,f)}%"></u></i>`};
- const card=i=>{const p=t.pl[t.lu[i]];return `<div class="sl${S.pk=='x:'+i?' pk':''}${p.pos!=sp[i]?' oop':''}" draggable="true" data-l="x:${i}"><span class="ov">${Math.round(ef(p))}</span><b>${ln(p)}</b>${fb(p)}</div>`};
- const row=(i,l)=>{const p=t.pl[i];return `<div class="pr${S.pk==l?' pk':''}" draggable="true" data-l="${l}"><span class="ps ${p.pos}">${PN[p.pos]}</span><span class="pnm">${p.n}</span><span class="mu sm">${p.age}a</span><b>${Math.round(ef(p))}</b>${fb(p)}</div>`};
+ const card=i=>{const p=t.pl[t.lu[i]];return `<div class="sl${S.pk=='x:'+i?' pk':''}${fit(p,fsp[i])<.96?' oop':''}" draggable="true" data-l="x:${i}"><span class="ps slp ${FGR(fsp[i])}">${fsp[i]}</span><span class="ov">${Math.round(ef(p))}</span><b>${ln(p)}</b><small class="fpl">${fsp[i]!=p.fp?'es '+PL(p):'&nbsp;'}</small>${fb(p)}</div>`};
+ const row=(i,l)=>{const p=t.pl[i];return `<div class="pr${S.pk==l?' pk':''}" draggable="true" data-l="${l}"><span class="ps ${p.pos}">${PL(p)}</span><span class="pnm">${p.n}</span><span class="mu sm">${p.age}a${(p.alt||[]).length?' · '+p.alt.join('/'):''}</span><b>${Math.round(ef(p))}</b>${fb(p)}</div>`};
  const rs=t.pl.map((p,i)=>i).filter(i=>!inx.has(i)&&!inb.has(i)).sort((a,b)=>'PDMF'.indexOf(t.pl[a].pos)-'PDMF'.indexOf(t.pl[b].pos)||t.pl[b].ovr-t.pl[a].ovr);
  return `<div class="pn sqh"><label>Formación <select id="fm">${Object.keys(FORM).map(f=>`<option ${f==t.form?'selected':''}>${f}</option>`).join('')}</select></label><button id="au" class="${t.man?'':'p'}">Auto</button><span class="mu sm">Media del once <b>${Math.round(str(t).o)}</b> · Arrastra o toca dos jugadores para intercambiarlos · Barra = cansancio (verde fresco, rojo agotado): los cansados rinden menos · Rojo = fuera de posición</span></div>
 <div class="g2 sq"><div class="pn pit">${['F','M','D','P'].map(c=>`<div class="rw">${sp.map((s,i)=>s==c?card(i):'').join('')}</div>`).join('')}</div><div><div class="pn zn" data-z="b"><h3>Banquillo <small>${t.bn.length}/7</small></h3>${t.bn.map((i,j)=>row(i,'b:'+j)).join('')||'<p class="mu sm">Arrastra aquí jugadores</p>'}</div><div class="pn zn" data-z="r"><h3>Reservas</h3>${rs.map(i=>row(i,'r:'+i)).join('')}</div></div></div>`}

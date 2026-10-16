@@ -537,3 +537,8 @@ body.tcm #mn>*{animation:none}
 .prh .av{width:56px;height:56px;font-size:22px}
 .prh>div{flex:1;min-width:0}.prh b{font-size:18px}
 .prh button{border-radius:999px;padding:5px 14px;font-weight:600}
+.sl .fpl{display:block;font:600 10px 'Barlow Condensed',sans-serif;letter-spacing:.06em;opacity:.7;line-height:1}
+.ps{font-size:12px;letter-spacing:.02em}
+.sl .slp{width:calc(100% - 8px);margin:0 auto 2px;font-size:13px;letter-spacing:.04em}
+.sl .fpl{opacity:.85;min-height:10px}
+.pr .ps{font-size:13px}
