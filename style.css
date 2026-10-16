@@ -562,3 +562,10 @@ body.tcm #mn>*{animation:none}
 /* escalonado vertical según la posición (MP más adelantado, MCD más atrás) */
 .pit{--k:1}#lvsub .pit{--k:.55}
 .sl{translate:0 calc(var(--oy,0px)*var(--k,1));transition:translate .18s,transform .12s,border-color .12s}
+/* desplegable integrado de formación */
+.fmt{display:flex;align-items:center;justify-content:space-between;gap:14px;min-width:150px;border-radius:10px;padding:7px 14px;border:1px solid var(--ac);background:color-mix(in srgb,var(--ac) 10%,var(--pn))}
+.fmt b{font:700 22px/1 'Barlow Condensed',sans-serif;letter-spacing:.04em}
+.fmt .chv{width:8px;height:8px;border-right:2px solid var(--ac);border-bottom:2px solid var(--ac);transform:translateY(-2px) rotate(45deg);transition:transform .2s}
+.fmt.open .chv{transform:translateY(2px) rotate(-135deg)}
+.fmlist{display:flex;flex-wrap:wrap;gap:6px;padding:10px;border-radius:10px;background:color-mix(in srgb,var(--ac) 7%,var(--pn));border:1px solid var(--ln);animation:fmin .18s ease-out}
+@keyframes fmin{from{opacity:0;transform:translateY(-6px)}}
