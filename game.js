@@ -112,7 +112,7 @@ gol(){const me=G.T[G.me],l=me.lg,pl=G.T.filter(t=>t.lg==l).flatMap(t=>t.pl.map(p
  lst=f=>`<table>${pl.filter(x=>f(x.p)>0).sort((a,b)=>f(b.p)-f(a.p)).slice(0,10).map((x,i)=>`<tr class="${x.t.id==G.me?'me':''}"><td class="n mu">${i+1}</td><td>${x.p.n}</td><td><span class="tn">${crest(x.t.id,18)}<span class="mu sm">${x.t.n}</span></span></td><td class="n"><b>${f(x.p)}</b></td></tr>`).join('')||'<tr><td class="mu">Sin datos todavía</td></tr>'}</table>`;
  return `<div class="lgbn">${lgl(l,64)}<div><h2>${LGN[l]}</h2><span class="mu sm">Estadísticas de la temporada ${G.season}</span></div></div><div class="g2"><div class="pn sx"><h3>⚽ Goleadores</h3>${lst(p=>p.g|0)}</div><div class="pn sx"><h3>🅰️ Asistentes</h3>${lst(p=>p.a|0)}</div></div><div class="pn sx"><h3>🟨 Más amarillas</h3>${lst(p=>p.yc|0)}</div>`},
 cal(){return V.cal()}};
-function bind(){document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{S.lg=+b.dataset.l;render()});document.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>{const[k,v]=b.dataset.nav.split(':');if(k=='o')S.of=v||null;else S.sq=v||null;S.pk=null;render();scrollTo(0,0)});document.querySelectorAll('[data-s]').forEach(h=>h.onclick=()=>{const k=h.dataset.s;if(S.ps==k)S.pd=-(S.pd||1);else{S.ps=k;S.pd=k=='n'||k=='pos'?1:-1}render()});if(S.tab=='sq'&&S.sq=='ali')sqBind();fdBind();document.querySelectorAll('[data-rv]').forEach(e=>e.onclick=()=>rivalView(+e.dataset.rv));const pb=$('#bs');if(pb)pb.onclick=playMatch;const lt=$('.lgt');if(lt)lt.onclick=()=>{S.tx=!S.tx;render()}}
+function bind(){document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{S.lg=+b.dataset.l;render()});document.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>{const[k,v]=b.dataset.nav.split(':');if(k=='o')S.of=v||null;else S.sq=v||null;S.pk=null;render();scrollTo(0,0)});document.querySelectorAll('[data-s]').forEach(h=>h.onclick=()=>{const k=h.dataset.s;if(S.ps==k)S.pd=-(S.pd||1);else{S.ps=k;S.pd=k=='n'||k=='pos'?1:-1}render()});if(S.tab=='sq'&&S.sq=='ali')sqBind();fdBind();document.querySelectorAll('[data-rv]').forEach(e=>e.onclick=()=>rivalView(+e.dataset.rv,{pre:1}));const pb=$('#bs');if(pb)pb.onclick=playMatch;const lt=$('.lgt');if(lt)lt.onclick=()=>{S.tx=!S.tx;render()}}
 const SQM=[['ali','Alineación'],['jug','Jugadores']];
 function sqm(){const k=S.sq;return k?back('q','Plantilla',SQM.find(x=>x[0]==k)[1])+(k=='ali'?sqv():plv()):hubSq()}
 const back=(k,root,label)=>`<div class="bkr"><button class="bk" data-nav="${k}:">← ${root}</button><h2>${label}</h2></div>`;
@@ -143,8 +143,8 @@ function sqBind(){document.querySelectorAll('[data-l^="x:"],[data-l^="b:"],[data
  document.querySelectorAll('[data-fm]').forEach(b=>b.onclick=()=>{const t=G.T[G.me];t.form=b.dataset.fm;auto(t);S.pk=null;S.fmo=false;save();render()});document.querySelectorAll('[data-fmo]').forEach(b=>b.onclick=()=>{S.fmo=!S.fmo;render()});
  $('#au').onclick=()=>{const t=G.T[G.me];t.man=false;auto(t);S.pk=null;save();render()}}
 /* Alineación del rival (solo lectura, mismo estilo que la tuya). Se abre al pulsar su escudo en Inicio o en el partido.
-   o.fa(p,i): cansancio a mostrar (en directo); o.onClose: al cerrar con la cruz. */
-function rivalView(id,o){o=o||{};const t=G.T[id];xi(t);const old=$('#rvw');if(old)old.remove();
+   o.pre: antes del partido, recalcula el once probable con el cansancio actual (igual que hará la simulación); o.fa(p,i): cansancio a mostrar (en directo); o.onClose: al cerrar con la cruz. */
+function rivalView(id,o){o=o||{};const t=G.T[id];if(o.pre&&id!=G.me)auto(t);xi(t);const old=$('#rvw');if(old)old.remove();
  const fsp=fslots(t.form),ln=p=>p.n.split(' ').slice(1).join(' ')||p.n,sp=slots(t.form),
  V=t.pl.map((p,i)=>o.fa?{...p,fa:o.fa(p,i)}:p),
  fb=p=>{const f=p.fa|0;return `<i class="fb" title="Cansancio ${f}%"><u class="${f>66?'hi':f>33?'md':'lo'}" style="width:${Math.max(6,f)}%"></u></i>`},

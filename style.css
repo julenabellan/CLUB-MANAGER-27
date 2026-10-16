@@ -579,7 +579,6 @@ body.tcm #mn>*{animation:none}
 
 /* Alineación del rival (clic en su escudo) */
 .rvc{position:relative;display:inline-block;cursor:pointer;line-height:0;-webkit-tap-highlight-color:transparent}
-.rvc::after{content:"📋";position:absolute;right:-6px;bottom:-4px;width:24px;height:24px;display:grid;place-items:center;font-size:13px;line-height:1;background:rgba(6,10,20,.88);border:1px solid var(--ln);border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,.4)}
 .rvc:hover .cr,.rvc:focus-visible .cr{transform:scale(1.06)}.rvc .cr{transition:transform .15s}
 #rvw{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:12px;animation:up .25s}
 .rvb{background:var(--bg);border:1px solid var(--ln);border-top:3px solid var(--ac);border-radius:14px;max-width:460px;width:100%;max-height:92vh;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px;box-shadow:0 18px 50px rgba(0,0,0,.6)}
