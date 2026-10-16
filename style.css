@@ -549,3 +549,16 @@ body.tcm #mn>*{animation:none}
 .sl.fit .slp{background:none;color:#fff;font:700 20px/1 'Barlow Condensed',sans-serif;letter-spacing:.06em;width:auto;margin:0 auto 1px;padding:0;text-shadow:0 1px 4px rgba(0,0,0,.6)}
 .sl.fit .ov{font-size:24px;opacity:1}
 @media(max-width:600px){.sl.fit .slp{font-size:17px}.sl.fit .ov{font-size:21px}}
+/* selector visual de formación */
+.fmp{display:flex;flex-direction:column;gap:8px}
+.fmr{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.fml{font-weight:600;color:var(--mu);min-width:72px;font-size:13px;text-transform:uppercase;letter-spacing:.05em}
+.fmc{border-radius:999px;padding:6px 14px;font-weight:600;transition:background .15s,transform .15s}
+.fmc:hover{transform:translateY(-1px)}
+.fmc.on{background:var(--ac);color:var(--ac2);border-color:var(--ac)}
+.fmv{display:flex;flex-direction:column;align-items:center;gap:1px;border-radius:12px;padding:6px 14px;line-height:1.15}
+.fmv small{font-size:11px;opacity:.75;letter-spacing:.04em}
+@media(max-width:640px){.fml{min-width:100%}}
+/* escalonado vertical según la posición (MP más adelantado, MCD más atrás) */
+.pit{--k:1}#lvsub .pit{--k:.55}
+.sl{translate:0 calc(var(--oy,0px)*var(--k,1));transition:translate .18s,transform .12s,border-color .12s}
