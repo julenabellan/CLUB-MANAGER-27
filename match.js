@@ -94,10 +94,10 @@ if(!document.getElementById('lvhd')){const st=document.createElement('style');st
 #lv .lvtm .cr{filter:drop-shadow(0 3px 7px rgba(0,0,0,.5))}
 #lv .lvtm b{text-shadow:0 2px 4px rgba(0,0,0,.45);text-transform:uppercase;letter-spacing:.03em}`;document.head.appendChild(st)}
 const o=document.createElement('div');o.id='lv';
-const cr=(i,s)=>crest(i,s);
-o.innerHTML=`<div class="lvc"><div class="lvtop"><img class="lvbg" src="img/LOGO%20${m.r[1]}A.png" alt="" onerror="this.style.display='none'"><div class="lvtm">${cr(ids[0],54)}${form5(ids[0],m.r[0])}<b>${T[0].n}</b></div>
+const cr=(i,s)=>crest(i,s),crv=s=>s==1-mine?`<span class="rvc" data-rv="${ids[s]}" role="button" tabindex="0" title="Ver alineación de ${T[s].n}">${cr(ids[s],54)}</span>`:cr(ids[s],54);
+o.innerHTML=`<div class="lvc"><div class="lvtop"><img class="lvbg" src="img/LOGO%20${m.r[1]}A.png" alt="" onerror="this.style.display='none'"><div class="lvtm">${crv(0)}${form5(ids[0],m.r[0])}<b>${T[0].n}</b></div>
 <div class="lvmid"><div>${lgl(m.r[1],96)}</div><div class="sc" id="lvs">0 - 0</div><div class="lvmin" id="lvm">0'</div></div>
-<div class="lvtm r">${cr(ids[1],54)}${form5(ids[1],m.r[0])}<b>${T[1].n}</b></div>
+<div class="lvtm r">${crv(1)}${form5(ids[1],m.r[0])}<b>${T[1].n}</b></div>
 <div class="lvg"><div id="lg0"></div><div id="lg1" class="r"></div></div></div>
 <div class="bar"><i id="lvk" style="width:0"></i></div>
 <div class="lvst"><div><span id="sh0">0</span><small>Tiros</small><span id="sh1">0</span></div><div><span id="co0">0</span><small>Córners</small><span id="co1">0</span></div><div><span id="fo0">0</span><small>Faltas</small><span id="fo1">0</span></div></div>
@@ -106,6 +106,9 @@ o.innerHTML=`<div class="lvc"><div class="lvtop"><img class="lvbg" src="img/LOGO
 document.body.appendChild(o);
 const q=s=>o.querySelector(s),feed=q('#lvf');
 let min=0,sp=1,pause=0,pz=0,sc=[0,0],sh=[0,0],co=[0,0],fo=[0,0],yc=[0,0],ei=0,last=performance.now(),half=0,fin=0,subs=0,tac='e';const gl=[[],[]];
+/* Pulsar el escudo del rival: el partido se pausa, se ve su once (media y cansancio a este minuto) y al cerrar con la cruz continúa */
+o.querySelectorAll('[data-rv]').forEach(e=>e.onclick=()=>{const rid=+e.dataset.rv,pre=G.pre&&G.pre[rid],st=new Set(G.T[rid].lu),prev=pz;pz=1;
+ rivalView(rid,{fa:pre&&!fin?(p,i)=>{const a=pre[i]|0;return st.has(i)?Math.round(a+((p.fa|0)-a)*Math.min(1,min/90)):a}:null,onClose:()=>{pz=prev;last=performance.now()}})});
 const hold=x=>x/(sp>10?40:1);
 /* se ven las 5 últimas acciones; las anteriores quedan debajo y se ven deslizando */
 const fit=()=>{q('#lvh').style.display=feed.scrollHeight>feed.clientHeight+2?'':'none'};
