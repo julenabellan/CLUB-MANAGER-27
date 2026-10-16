@@ -589,3 +589,15 @@ body.tcm #mn>*{animation:none}
 .rvb .pit{min-height:500px}.rvb .zn{margin:0}
 @media(max-width:640px){.rvb .pit{min-height:470px}}
 @media(prefers-reduced-motion:reduce){#rvw{animation:none}}
+
+/* ===== v6: marcador oculto solo en la pestaña de cambios; insignias en la alineación del rival ===== */
+#lvsub{z-index:10}
+#lv.sbo .lvtop{visibility:hidden}
+.rvb .sl{position:relative}
+.rvb .bds{position:absolute;top:-10px;left:50%;transform:translateX(-50%);display:flex;gap:3px;align-items:center;z-index:2;white-space:nowrap}
+.rvb .bds:empty{display:none}
+.bgg,.bgs{font:700 12px/1 'Barlow Condensed',sans-serif;background:rgba(6,10,20,.92);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:2px 5px;color:#fff}
+.bgy{display:inline-block;width:10px;height:14px;border-radius:2px;background:#ffd400;box-shadow:0 1px 4px rgba(0,0,0,.6)}
+.bgs.in{color:var(--ok);border-color:var(--ok)}.bgs.out{color:var(--bad);border-color:var(--bad)}
+.rvb .bdr{display:inline-flex;gap:4px;align-items:center;margin-left:4px}
+.rvb .pr.outt{opacity:.6}.rvb .pr em{color:var(--bad);font-style:normal;font-size:12px;font-weight:700;margin-left:4px}

@@ -35,11 +35,12 @@ function xi(t){if(!t.lu||t.lu.length!=11||t.lu.some(i=>!t.pl[i]))auto(t);if(!t.b
 function str(t){const x=xi(t),sp=slots(t.form),fs=fslots(t.form),r=x.map((p,i)=>rt(p,fs[i])),g=c=>{const a=r.filter((_,i)=>sp[i]==c);return a.length?mean(a):50},m=g('M'),f=g('F');return{a:.55*f+.35*m+.1*g('D'),d:.45*g('D')+.3*g('P')+.25*m,o:mean(r)}}
 /* fatiga por minutos: titular 90' suma cansancio; quien sale antes (o entra) lo nota proporcionalmente; quien no juega descansa más.
    Los equipos de la IA hacen cambios automáticos (1-5) entre el 46' y el 86'. */
-const fat=(t,ai)=>{const x=new Set(t.lu),out={},inn={},f=m=>R(5,9)*m/90-3*(90-m)/90;
+const fat=(t,ai,sc,cd)=>{const x=new Set(t.lu),out={},inn={},f=m=>R(5,9)*m/90-3*(90-m)/90,lastEv={};t.asb=[];
+ (sc||[]).forEach(s=>{lastEv[s[0]]=Math.max(lastEv[s[0]]|0,s[1]);if(s[2])lastEv[s[2]]=Math.max(lastEv[s[2]]|0,s[1])});(cd||[]).forEach(c=>{lastEv[c[0]]=Math.max(lastEv[c[0]]|0,c[1])});
  if(ai&&t.bn&&t.bn.length){const n=Math.min(5,1+pois(2));
   for(let k=0;k<n;k++){const c=t.lu.filter(i=>t.pl[i].pos!='P'&&out[i]==null).sort((a,b)=>(t.pl[b].fa|0)-(t.pl[a].fa|0));if(!c.length)break;
    const s=c[Math.floor(Math.random()*Math.min(c.length,4))],bc=t.bn.filter(i=>t.pl[i]&&inn[i]==null&&t.pl[i].pos!='P'),bb=bc.find(i=>t.pl[i].pos==t.pl[s].pos)??bc[0];if(bb==null)break;
-   const m=Math.round(R(46,86));out[s]=m;inn[bb]=90-m}}
+   const lo=Math.max(46,(lastEv[t.pl[s].n]|0)+1);if(lo>86)continue;const m=Math.round(R(lo,86));out[s]=m;inn[bb]=90-m;t.asb.push([s,bb,m])}}
  t.pl.forEach((p,i)=>{let d;if(x.has(i)){p.pj=(p.pj|0)+1;d=f(out[i]??90)}else if(inn[i]!=null){p.pj=(p.pj|0)+1;d=f(inn[i])}else d=-12;
   p.fa=Math.max(0,Math.min(100,Math.round((p.fa|0)+d)))})};
 function pois(l){const L=Math.exp(-l);let k=0,p=1;do{k++;p*=Math.random()}while(p>L);return k-1}
@@ -59,7 +60,7 @@ function scorers(t,n){const x=xi(t),sp=slots(t.form),c=typeof tacOf=='function'?
 function cards(t){const x=xi(t),sp=slots(t.form),w=x.map((p,i)=>({D:3.5,M:2.7,F:1.3,P:.3}[sp[i]])),T=w.reduce((a,b)=>a+b,0),n=Math.min(4,pois(1.6)),c={},o=[];
  for(let i=0;i<n;i++){let r=Math.random()*T,j=0;while(j<w.length-1&&r>w[j]){r-=w[j];j++}if((c[j]|0)>=1)continue;c[j]=1;x[j].yc=(x[j].yc|0)+1;o.push([x[j].n,Math.floor(R(3,90))])}return o}
 function upd(t,f,c){t.pj++;t.gf+=f;t.gc+=c;if(f>c){t.w++;t.pts+=3}else if(f==c){t.d++;t.pts++}else t.l++}
-function simW(){let mine=null;G.wsc=[];G.T.forEach(t=>{if(t.id!=G.me||!t.man)auto(t)});[1,2].forEach(l=>(G.fx[l][G.week]||[]).forEach(([h,a])=>{const H=G.T[h],A=G.T[a],sh=str(H),sa=str(A),hg=pois(Math.max(.25,1.55+(sh.a-sa.d+tacMx(sh,sa)[0])/22)),ag=pois(Math.max(.2,1.1+(sa.a-sh.d+tacMx(sh,sa)[1])/22)),s1=scorers(H,hg),s2=scorers(A,ag),c1=cards(H),c2=cards(A);G.wsc.push([h,a,s1,s2]);if(h==G.me||a==G.me)G.pre={[h]:H.pl.map(p=>p.fa|0),[a]:A.pl.map(p=>p.fa|0)};fat(H,h!=G.me);fat(A,a!=G.me);upd(H,hg,ag);upd(A,ag,hg);const r=[G.week,l,h,a,hg,ag];G.res.push(r);if(h==G.me||a==G.me){mine={r,sc:[...s1.map(s=>[h,...s]),...s2.map(s=>[a,...s])].sort((x,y)=>x[2]-y[2]),cd:[...c1.map(c=>[h,...c]),...c2.map(c=>[a,...c])].sort((x,y)=>x[2]-y[2])};G.last=mine;const d=h==G.me?hg-ag:ag-hg;G.conf=Math.max(0,Math.min(100,G.conf+(d>0?3:d<0?-2:0)));G.fans=Math.max(0,Math.min(100,(G.fans??60)+(d>0?(d>2?4:3):d<0?(d<-2?-4:-3):h==G.me?-1:1)))}}));try{genFeed(G.week)}catch(e){console.error(e)}G.week++;if(G.week>=NW)endSeason();return mine}
+function simW(){let mine=null;G.wsc=[];G.T.forEach(t=>{if(t.id!=G.me||!t.man)auto(t)});[1,2].forEach(l=>(G.fx[l][G.week]||[]).forEach(([h,a])=>{const H=G.T[h],A=G.T[a],sh=str(H),sa=str(A),hg=pois(Math.max(.25,1.55+(sh.a-sa.d+tacMx(sh,sa)[0])/22)),ag=pois(Math.max(.2,1.1+(sa.a-sh.d+tacMx(sh,sa)[1])/22)),s1=scorers(H,hg),s2=scorers(A,ag),c1=cards(H),c2=cards(A);G.wsc.push([h,a,s1,s2]);if(h==G.me||a==G.me)G.pre={[h]:H.pl.map(p=>p.fa|0),[a]:A.pl.map(p=>p.fa|0)};fat(H,h!=G.me,s1,c1);fat(A,a!=G.me,s2,c2);upd(H,hg,ag);upd(A,ag,hg);const r=[G.week,l,h,a,hg,ag];G.res.push(r);if(h==G.me||a==G.me){mine={r,sc:[...s1.map(s=>[h,...s]),...s2.map(s=>[a,...s])].sort((x,y)=>x[2]-y[2]),cd:[...c1.map(c=>[h,...c]),...c2.map(c=>[a,...c])].sort((x,y)=>x[2]-y[2])};G.last=mine;const d=h==G.me?hg-ag:ag-hg;G.conf=Math.max(0,Math.min(100,G.conf+(d>0?3:d<0?-2:0)));G.fans=Math.max(0,Math.min(100,(G.fans??60)+(d>0?(d>2?4:3):d<0?(d<-2?-4:-3):h==G.me?-1:1)))}}));try{genFeed(G.week)}catch(e){console.error(e)}G.week++;if(G.week>=NW)endSeason();return mine}
 function simWeek(){if(G.week>=NW)return;const my=G.T[G.me].lg,mine=simW();if(G.week>=NWL[my]&&G.week<NW)while(G.week>=NWL[my]&&G.week<NW)simW();save();return mine}
 const tab=l=>G.T.filter(t=>t.lg==l).sort((a,b)=>b.pts-a.pts||(b.gf-b.gc)-(a.gf-a.gc)||b.gf-a.gf);
 function setObj(){const me=G.T[G.me],l=me.lg,n=G.T.filter(t=>t.lg==l).length,rk=G.T.filter(t=>t.lg==l).map(t=>str(t).o).sort((a,b)=>b-a).findIndex(o=>o<=str(me).o),q=21*(n-1-rk)/(n-1),k=(n-1)*2/42;
@@ -144,18 +145,18 @@ function sqBind(){document.querySelectorAll('[data-l^="x:"],[data-l^="b:"],[data
  $('#au').onclick=()=>{const t=G.T[G.me];t.man=false;auto(t);S.pk=null;save();render()}}
 /* Alineación del rival (solo lectura, mismo estilo que la tuya). Se abre al pulsar su escudo en Inicio o en el partido.
    o.pre: antes del partido, recalcula el once probable con el cansancio actual (igual que hará la simulación); o.fa(p,i): cansancio a mostrar (en directo); o.onClose: al cerrar con la cruz. */
-function rivalView(id,o){o=o||{};const t=G.T[id];if(o.pre&&id!=G.me)auto(t);xi(t);const old=$('#rvw');if(old)old.remove();
+function rivalView(id,o){o=o||{};const t=G.T[id];if(o.pre&&id!=G.me)auto(t);xi(t);const lu=o.lu||t.lu,bn=o.bn||t.bn,old=$('#rvw');if(old)old.remove();
  const fsp=fslots(t.form),ln=p=>p.n.split(' ').slice(1).join(' ')||p.n,sp=slots(t.form),
  V=t.pl.map((p,i)=>o.fa?{...p,fa:o.fa(p,i)}:p),
  fb=p=>{const f=p.fa|0;return `<i class="fb" title="Cansancio ${f}%"><u class="${f>66?'hi':f>33?'md':'lo'}" style="width:${Math.max(6,f)}%"></u></i>`},
- xs=t.lu.map(i=>V[i]),me=Math.round(mean(xs.map((p,i)=>rt(p,fsp[i])))),fa=Math.round(xs.reduce((s,p)=>s+(p.fa|0),0)/11),
- card=i=>{const p=V[t.lu[i]];return `<div class="sl fit" style="--fc:${FC(p,fsp[i])};${ROY(fsp[i])}"><span class="ps slp ${FGR(fsp[i])}">${fsp[i]}</span><span class="ov">${Math.round(ef(p))}</span><b>${ln(p)}</b>${fb(p)}</div>`},
- row=i=>{const p=V[i];return `<div class="pr"><span class="ps ${p.pos}">${PL(p)}</span><span class="pnm">${p.n}</span><span class="mu sm">${p.age}a</span><b>${Math.round(ef(p))}</b>${fb(p)}</div>`},
+ xs=lu.map(i=>V[i]),me=Math.round(mean(xs.map((p,i)=>rt(p,fsp[i])))),fa=Math.round(xs.reduce((s,p)=>s+(p.fa|0),0)/11),
+ card=i=>{const p=V[lu[i]];return `<div class="sl fit" style="--fc:${FC(p,fsp[i])};${ROY(fsp[i])}">${o.bd?`<div class="bds">${o.bd(p)}</div>`:''}<span class="ps slp ${FGR(fsp[i])}">${fsp[i]}</span><span class="ov">${Math.round(ef(p))}</span><b>${ln(p)}</b>${fb(p)}</div>`},
+ row=i=>{const p=V[i],ou=o.out&&o.out.has(i);return `<div class="pr${ou?' outt':''}"><span class="ps ${p.pos}">${PL(p)}</span><span class="pnm">${p.n}${ou?' <em>sale</em>':''}</span>${o.bd?`<span class="bdr">${o.bd(p)}</span>`:''}<span class="mu sm">${p.age}a</span><b>${Math.round(ef(p))}</b>${fb(p)}</div>`},
  d=document.createElement('div');d.id='rvw';
  d.innerHTML=`<div class="rvb"><div class="rvh">${crest(id,48)}<div><h3>${t.n}</h3><span class="mu sm">${t.form} · Media del once <b>${me}</b> · Cansancio <b>${fa}%</b></span></div><button class="rvx" aria-label="Cerrar">✕</button></div>
 <p class="mu sm" style="margin:0">Barra = cansancio (verde fresco, rojo agotado) · Rojo en la ficha = fuera de posición</p>
 <div class="pn pit">${['F','M','D','P'].map(c=>`<div class="rw">${sp.map((s,i)=>s==c?card(i):'').join('')}</div>`).join('')}</div>
-<div class="pn zn"><h3>Banquillo <small>${t.bn.length}</small></h3>${t.bn.map(row).join('')||'<p class="mu sm">Sin suplentes</p>'}</div></div>`;
+<div class="pn zn"><h3>Banquillo <small>${bn.length}</small></h3>${bn.map(row).join('')||'<p class="mu sm">Sin suplentes</p>'}</div></div>`;
  document.body.appendChild(d);
  const cl=()=>{d.remove();if(o.onClose)o.onClose()};d.querySelector('.rvx').onclick=cl;d.onclick=e=>{if(e.target==d)cl()}}
 function modal(h){$('#mdc').innerHTML=h+'<p style="margin:16px 0 0"><button class="p" id="ok">Continuar</button></p>';$('#md').style.display='flex';$('#ok').onclick=()=>{$('#md').style.display='none';if(G.pend){G.pend=0;save()}}}

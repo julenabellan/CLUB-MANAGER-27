@@ -75,6 +75,10 @@ const TF={d:[.75,.65],e:[1,1],o:[1.35,1.25]};
 const filler=(from,tc)=>{const out=[];ids.forEach((id,s)=>{const mx=xi(G.T[id]).filter(p=>p.pos!='P'),ox=xi(G.T[ids[1-s]]).filter(p=>p.pos!='P'),n=Math.round(R(9,14)*TF[tc][s==mine?0:1]*Math.max(0,89-from)/88);
  for(let i=0;i<n;i++){const k=wp(KW);const pw=PWT[k]||[];out.push({min:Math.floor(R(from+1,89)),k,s,who:sn(wpl(mx,pw[0]).n),opp:sn(wpl(ox,pw[1]).n),gk:gkOf(ids[1-s])})}});return out};
 ev.push(...filler(1,'e'));
+/* cambios de la IA: vienen de la simulación (t.asb); salen en las acciones y el sustituido deja de ser protagonista de jugadas posteriores */
+const rs=1-mine,RT=T[rs],rsub=(RT.asb||[]).filter(x=>RT.pl[x[0]]&&RT.pl[x[1]]);
+const remapR=l=>rsub.forEach(([a,b,mn])=>{const on=sn(RT.pl[a].n),inn=sn(RT.pl[b].n);l.forEach(e=>{if(e.min<mn||e.k=='sub'||e.k=='goal'||e.k=='card')return;if(e.s==rs&&e.who==on){e.who=inn;if(e.wf)e.wf=RT.pl[b].n}if(e.s!=rs&&e.opp==on)e.opp=inn})});
+remapR(ev);rsub.forEach(([a,b,mn])=>ev.push({min:mn,k:'sub',s:rs,ia:a,ib:b,out:RT.pl[a].n,inn:RT.pl[b].n}));
 ev.sort((x,y)=>x.min-y.min);
 /* ---- pantalla ---- */
 if(!document.getElementById('lvhd')){const st=document.createElement('style');st.id='lvhd';st.textContent=`
@@ -106,9 +110,11 @@ o.innerHTML=`<div class="lvc"><div class="lvtop"><img class="lvbg" src="img/LOGO
 document.body.appendChild(o);
 const q=s=>o.querySelector(s),feed=q('#lvf');
 let min=0,sp=1,pause=0,pz=0,sc=[0,0],sh=[0,0],co=[0,0],fo=[0,0],yc=[0,0],ei=0,last=performance.now(),half=0,fin=0,subs=0,tac='e';const gl=[[],[]];
+let rl=RT.lu.slice(),rb=RT.bn.slice();const rOut=[],BD={},bd=(s,n)=>BD[s+'|'+n]||(BD[s+'|'+n]={g:0,y:0,s:''});
+const bh=p=>{const b=BD[rs+'|'+p.n]||{};return (b.g?`<span class="bgg">⚽${b.g>1?'×'+b.g:''}</span>`:'')+(b.y?'<span class="bgy"></span>':'')+(b.s=='in'?'<span class="bgs in">▲</span>':b.s=='out'?'<span class="bgs out">▼</span>':'')};
 /* Pulsar el escudo del rival: el partido se pausa, se ve su once (media y cansancio a este minuto) y al cerrar con la cruz continúa */
 o.querySelectorAll('[data-rv]').forEach(e=>e.onclick=()=>{const rid=+e.dataset.rv,pre=G.pre&&G.pre[rid],st=new Set(G.T[rid].lu),prev=pz;pz=1;
- rivalView(rid,{fa:pre&&!fin?(p,i)=>{const a=pre[i]|0;return st.has(i)?Math.round(a+((p.fa|0)-a)*Math.min(1,min/90)):a}:null,onClose:()=>{pz=prev;last=performance.now()}})});
+ rivalView(rid,{lu:rl.slice(),bn:rb.concat(rOut),out:new Set(rOut),bd:bh,fa:pre&&!fin?(p,i)=>{const a=pre[i]|0;return st.has(i)?Math.round(a+((p.fa|0)-a)*Math.min(1,min/90)):a}:null,onClose:()=>{pz=prev;last=performance.now()}})});
 const hold=x=>x/(sp>10?40:1);
 /* se ven las 5 últimas acciones; las anteriores quedan debajo y se ven deslizando */
 const fit=()=>{q('#lvh').style.display=feed.scrollHeight>feed.clientHeight+2?'':'none'};
@@ -117,10 +123,12 @@ const rsz=()=>{if(!fin)fit()};window.addEventListener('resize',rsz);
 o.querySelectorAll('.lvct button[data-v]').forEach(b=>b.onclick=()=>{sp=+b.dataset.v;o.querySelectorAll('.lvct button[data-v]').forEach(x=>x.classList.toggle('on',x==b))});
 say(0,2,'¡Comienza el partido!','h');
 const fill=(t,e)=>t.replace(/\{p\}/g,'<b>'+e.who+'</b>').replace(/\{a\}/g,'<b>'+(e.as||'')+'</b>').replace(/\{k\}/g,'<b>'+(e.gk||'el portero')+'</b>').replace(/\{o\}/g,'<b>'+(e.opp||'un rival')+'</b>');
-function fire(e){const t=fill(deck[e.k=='goal'?gk(e):e.k](),e);
- if(e.k=='goal'){sc[e.s]++;sh[e.s]++;pause=hold(1.8);gl[e.s].push(`${e.min}' ${e.who}${e.as?' <i>(as. '+e.as+')</i>':''}`);q('#lg'+e.s).innerHTML=gl[e.s].join('<br>');
+function fire(e){if(e.k=='sub'){pause=hold(.35);const ix=rl.indexOf(e.ia);if(ix>=0)rl[ix]=e.ib;rb=rb.filter(i=>i!=e.ib);rOut.push(e.ia);bd(e.s,e.inn).s='in';bd(e.s,e.out).s='out';
+  say(e.min,e.s,`🔄 Cambio en ${T[e.s].n}: sale <b>${sn(e.out)}</b>, entra <b>${sn(e.inn)}</b>`,'sub');return}
+ const t=fill(deck[e.k=='goal'?gk(e):e.k](),e);
+ if(e.k=='goal'){sc[e.s]++;sh[e.s]++;pause=hold(1.8);bd(e.s,e.wf).g++;gl[e.s].push(`${e.min}' ${e.who}${e.as?' <i>(as. '+e.as+')</i>':''}`);q('#lg'+e.s).innerHTML=gl[e.s].join('<br>');
   say(e.min,e.s,`${ICON.goal} ${t}`,'g'+(e.s==mine?' gm':''));q('#lvs').classList.remove('flash');void q('#lvs').offsetWidth;q('#lvs').classList.add('flash')}
- else{if(SHOT.includes(e.k))sh[e.s]++;if(e.k=='corner')co[e.s]++;if(e.k=='foul')fo[e.s]++;if(e.k=='fapre')fo[1-e.s]++;if(e.k=='card')yc[e.s]++;pause=hold(.35);say(e.min,e.s,`${e.k=='card'?'<i class="cdk"></i>':ICON[e.k]} ${t}`,e.k=='card'?'y':'')}}
+ else{if(SHOT.includes(e.k))sh[e.s]++;if(e.k=='corner')co[e.s]++;if(e.k=='foul')fo[e.s]++;if(e.k=='fapre')fo[1-e.s]++;if(e.k=='card'){yc[e.s]++;bd(e.s,e.wf).y=1}pause=hold(.35);say(e.min,e.s,`${e.k=='card'?'<i class="cdk"></i>':ICON[e.k]} ${t}`,e.k=='card'?'y':'')}}
 /* ---- resumen final ---- */
 function recap(){
  const gs=ev.filter(e=>e.k=='goal'),cs=ev.filter(e=>e.k=='card'),my=sc[mine],th=sc[1-mine],d=my-th,me=MT.n,opp=T[1-mine].n,ven=mine==0?'en casa':'lejos de casa',run=[0,0],
@@ -175,7 +183,7 @@ function frame(now){if(fin)return;const dt=Math.min(.05,(now-last)/1000);last=no
  requestAnimationFrame(frame)}
 const TM={d:['🛡️','plantea el partido de forma defensiva: se repliega y cierra espacios'],e:['⚖️','busca el equilibrio entre defensa y ataque'],o:['⚔️','se lanza al ataque y adelanta sus líneas']};
 o.querySelectorAll('#lvtac button').forEach(b=>b.onclick=()=>{if(fin||b.dataset.t==tac)return;tac=b.dataset.t;o.querySelectorAll('#lvtac button').forEach(x=>x.classList.toggle('on',x==b));
- const fut=ev.splice(ei).filter(e=>e.k=='goal'||e.k=='card'||e.pre);ev.push(...fut,...filler(Math.floor(min),tac));ev.sort((x,y)=>x.min-y.min);
+ const fut=ev.splice(ei).filter(e=>e.k=='goal'||e.k=='card'||e.k=='sub'||e.pre),nf=filler(Math.floor(min),tac);remapR(nf);ev.push(...fut,...nf);ev.sort((x,y)=>x.min-y.min);
  say(Math.min(90,Math.floor(min)),mine,`${TM[tac][0]} <b>${MT.n}</b> ${TM[tac][1]}`,'sub')});
 const gone=new Set(),ent=new Set(),sublog=[];
 /* Un jugador sustituido ya no puede marcar, asistir ni ver tarjetas: sus acciones futuras pasan al suplente (también en estadísticas y datos del partido) */
@@ -195,7 +203,7 @@ const rmp=(A,B)=>{const oN=MT.pl[A].n,iN=MT.pl[B].n,bump=(n,f,d)=>{const p=MT.pl
  ev.slice(ei).forEach(e=>{if(e.s==mine)return;if(e.opp==sn(oN))e.opp=sn(iN);if(e.gk==sn(oN))e.gk=sn(iN)})};
 q('#lvsb').onclick=()=>{if(fin||subs>=5)return;pz=1;
  const cur=MT.lu.slice(),cs=new Set(cur),dl=cur.slice(),db=MT.bn.filter(i=>!gone.has(i)),sp=slots(MT.form),left=5-subs;let pk=null,msg='';
- const pn=document.createElement('div');pn.id='lvsub';o.appendChild(pn);
+ const pn=document.createElement('div');pn.id='lvsub';o.appendChild(pn);o.classList.add('sbo');
  const nin=()=>dl.filter(i=>!cs.has(i)).length,
   fb=p=>{const f=p.fa|0;return `<i class="fb"><u class="${f>66?'hi':f>33?'md':'lo'}" style="width:${Math.max(6,f)}%"></u></i>`},
   get=l=>{const[k,v]=l.split(':');return k=='x'?dl[+v]:db[+v]},
@@ -211,10 +219,10 @@ q('#lvsb').onclick=()=>{if(fin||subs>=5)return;pz=1;
    e.ondragstart=ev=>{ev.dataTransfer.setData('text/plain',l);pk=null};e.ondragover=ev=>ev.preventDefault();
    e.ondrop=ev=>{ev.preventDefault();tr(ev.dataTransfer.getData('text/plain'),l);pk=null;draw()}});
   pn.querySelector('#sbr').onclick=()=>{cur.forEach((v,i)=>dl[i]=v);const bo=MT.bn.filter(i=>!gone.has(i));bo.forEach((v,i)=>db[i]=v);pk=null;msg='';draw()};
-  pn.querySelector('#sbc').onclick=()=>{pn.remove();pz=0;last=performance.now()};
+  pn.querySelector('#sbc').onclick=()=>{o.classList.remove('sbo');pn.remove();pz=0;last=performance.now()};
   pn.querySelector('#sbg').onclick=()=>{const ins=dl.filter(i=>!cs.has(i)),outs=cur.filter(i=>!dl.includes(i)),pairs=ins.map(i=>{let k=outs.findIndex(j=>MT.pl[j].pos==MT.pl[i].pos);if(k<0)k=0;return[outs.splice(k,1)[0],i]});
    pairs.forEach(([a])=>gone.add(a));MT.lu=dl.slice();MT.bn=db.filter(i=>!gone.has(i));subs+=ins.length;ins.forEach(i=>{if(ent.has(i))return;ent.add(i);const p=MT.pl[i];p.pj=(p.pj|0)+1});
    const mn=Math.min(90,Math.floor(min));pairs.forEach(([a,b])=>sublog.push([a,b,mn]));pairs.forEach(([a,b])=>rmp(a,b));pairs.forEach(([a,b])=>say(mn,mine,`🔄 Cambio en ${MT.n}: sale <b>${sn(MT.pl[a].n)}</b>, entra <b>${sn(MT.pl[b].n)}</b>`,'sub'));
-   q('#lvsb').textContent='Cambios ('+(5-subs)+')';if(subs>=5)q('#lvsb').disabled=true;pn.remove();pz=0;last=performance.now()}};
+   q('#lvsb').textContent='Cambios ('+(5-subs)+')';if(subs>=5)q('#lvsb').disabled=true;o.classList.remove('sbo');pn.remove();pz=0;last=performance.now()}};
  draw()};
 requestAnimationFrame(frame)}
