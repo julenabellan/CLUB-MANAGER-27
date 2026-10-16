@@ -2,26 +2,17 @@ const form5=(id,w=1e9)=>{const r=G.res.filter(x=>x[0]<w&&(x[2]==id||x[3]==id)).s
 const lgl=(l,s=28)=>`<img class="lgl" height="${s}" src="img/LOGO%20${l}A.png" alt="" onerror="this.style.display='none'">`;
 const CRN=["cluc fc g.png", "CRAKOVIA CF G.png", "Campo.png", "GACKO.png", "as club g.png", "KFK.png", "BERLIN FC.png", "Paris CF.png", "Gacko Portugal.png", "NUBE.png", "blue wordl club g.png", "SPAIN CLUB.png", "ENGLAND CLUB.png", "leizpig fc.png", "Creg Belga.png", "Spartak Belgrade.png", "LONDON CLUB.png", "Creg Croata.png", "Holland Team.png", "Moscu fc g.png", "Italica FC.png", "Germanya FS.png", "Warsaw KP.png", "MILANO SP.png", "Zürich Aktiv.png", "CLUC B.png", "France Club.png", "Bratislava Fighters.png", "PUSKAS SPORTOS.png", "mac manchester.png", "VICTORIA ISTANBUL.png", "SOLIKSON ISLANDIA.png", "LAC LIVERPOOL.png", "KFK B.png", "DINAMO ROTTERDAM.png", "Cardiff Cambrian FC.png", "RIBERA LEVANTINA.png", "SOLIKSON IRLANDES.png", "IBERICA.png", "SKÄRHOLM AFC.png", "JAPAN FC.png", "BASILEA FF.png", "MIQAREM.png", "NYHAVN.png"];
 const crest=(i,s=28)=>`<img class="cr" width="${s}" height="${s}" src="img/${encodeURIComponent(CRN[i])}" alt="" onerror="this.style.visibility='hidden'">`;
-const PN={P:'POR',D:'DEF',M:'MED',F:'DEL'},FORM={'4-3-3':[1,4,3,3],'4-4-2':[1,4,4,2],'3-5-2':[1,3,5,2],'4-5-1':[1,4,5,1],'5-3-2':[1,5,3,2],'3-4-3':[1,3,4,3],'5-4-1':[1,5,4,1],'5-2-3':[1,5,2,3]},LGN={1:'Liga Superstar One',2:'Liga Superstar 2'},REL=3,PRO=3,NW=46,NWL={1:38,2:46},KEY='cm27c';
+const PN={P:'POR',D:'DEF',M:'MED',F:'DEL'},FORM={'4-3-3':[1,4,3,3],'4-3-3 (1)':[1,4,3,3],'4-3-3 (2)':[1,4,3,3],'4-4-2':[1,4,4,2],'4-4-2 (1)':[1,4,4,2],'4-4-2 (2)':[1,4,4,2],'3-5-2':[1,3,5,2],'3-5-2 (1)':[1,3,5,2],'3-5-2 (2)':[1,3,5,2],'4-5-1':[1,4,5,1],'4-5-1 (1)':[1,4,5,1],'4-5-1 (2)':[1,4,5,1],'5-3-2':[1,5,3,2],'5-3-2 (1)':[1,5,3,2],'5-3-2 (2)':[1,5,3,2],'3-4-3':[1,3,4,3],'3-4-3 (1)':[1,3,4,3],'3-4-3 (2)':[1,3,4,3],'5-4-1':[1,5,4,1],'5-4-1 (1)':[1,5,4,1],'5-4-1 (2)':[1,5,4,1],'5-2-3':[1,5,2,3],'5-2-3 (1)':[1,5,2,3],'5-2-3 (2)':[1,5,2,3],'4-2-3-1':[1,4,5,1],'4-1-4-1':[1,4,5,1],'4-3-1-2':[1,4,4,2]},LGN={1:'Liga Superstar One',2:'Liga Superstar 2'},REL=3,PRO=3,NW=46,NWL={1:38,2:46},KEY='cm27c';
 /* Sistema de posiciones: grupo (P/D/M/F) + posición concreta (POR/CT/LD/LI/MCD/MC/MP/II/ID/EI/ED/DC) + alternativas.
    Jugar en su posición o en una alternativa apenas penaliza; en otra, según compatibilidad (muy bien .96 · bastante bien .92 · bien .88 · resto .80). */
 const FPD={P:'POR',D:'CT',M:'MC',F:'DC'},FGR=s=>s=='POR'?'P':'CT LD LI'.includes(s)?'D':s=='EI'||s=='ED'||s=='DC'?'F':'M',
-FSL={'4-3-3':'LI CT CT LD|MC MCD MC|EI DC ED','4-4-2':'LI CT CT LD|II MC MC ID|DC DC','3-5-2':'CT CT CT|II MC MCD MC ID|DC DC','4-5-1':'LI CT CT LD|II MC MP MC ID|DC','5-3-2':'LI CT CT CT LD|MC MCD MC|DC DC','3-4-3':'CT CT CT|II MC MC ID|EI DC ED','5-4-1':'LI CT CT CT LD|II MC MC ID|DC','5-2-3':'LI CT CT CT LD|MCD MC|EI DC ED'},
+FSL={'4-3-3':'LI CT CT LD|MC MCD MC|EI DC ED','4-3-3 (1)':'LI CT CT LD|MCD MC MCD|EI DC ED','4-3-3 (2)':'LI CT CT LD|MP MC MP|EI DC ED','4-4-2':'LI CT CT LD|II MC MC ID|DC DC','4-4-2 (1)':'LI CT CT LD|II MCD MP ID|DC DC','4-4-2 (2)':'LI CT CT LD|II MCD MCD ID|DC DC','3-5-2':'CT CT CT|II MC MCD MC ID|DC DC','3-5-2 (1)':'CT CT CT|II MCD MC MCD ID|DC DC','3-5-2 (2)':'CT CT CT|II MP MC MP ID|DC DC','4-5-1':'LI CT CT LD|II MC MP MC ID|DC','4-5-1 (1)':'LI CT CT LD|II MCD MC MCD ID|DC','4-5-1 (2)':'LI CT CT LD|II MP MC MP ID|DC','5-3-2':'LI CT CT CT LD|MC MCD MC|DC DC','5-3-2 (1)':'LI CT CT CT LD|MCD MC MCD|DC DC','5-3-2 (2)':'LI CT CT CT LD|MP MC MP|DC DC','3-4-3':'CT CT CT|II MC MC ID|EI DC ED','3-4-3 (1)':'CT CT CT|II MCD MCD ID|EI DC ED','3-4-3 (2)':'CT CT CT|II MC MP ID|EI DC ED','5-4-1':'LI CT CT CT LD|II MC MC ID|DC','5-4-1 (1)':'LI CT CT CT LD|II MCD MCD ID|DC','5-4-1 (2)':'LI CT CT CT LD|II MC MP ID|DC','5-2-3':'LI CT CT CT LD|MCD MC|EI DC ED','5-2-3 (1)':'LI CT CT CT LD|MCD MCD|EI DC ED','5-2-3 (2)':'LI CT CT CT LD|MC MP|EI DC ED','4-2-3-1':'LI CT CT LD|MCD MCD II MP ID|DC','4-1-4-1':'LI CT CT LD|MCD II MC MC ID|DC','4-3-1-2':'LI CT CT LD|MCD MC MC MP|DC DC'},
 VG=.96,BA=.92,BI=.88,
 COMPAT={CT:{LD:VG,LI:VG,MCD:BI},LD:{CT:VG,ID:BA},LI:{CT:VG,II:BA},MCD:{CT:BI,MC:VG},MC:{MCD:VG,MP:VG,II:BA,ID:BA},MP:{DC:VG,EI:BI,ED:BI,II:BI,ID:BI},II:{MP:BA,EI:VG},ID:{MP:BA,ED:VG},EI:{II:VG,DC:VG},ED:{ID:VG,DC:VG},DC:{EI:BA,ED:BA,MP:BI,MCD:BI}},
 fslots=f=>['POR'].concat(...FSL[f].split('|').map(x=>x.split(' '))),
 fit=(p,s)=>{const f=p.fp||FPD[p.pos];if(s=='POR'||f=='POR')return f==s?1:.4;if(f==s)return 1;if(p.alt&&p.alt.includes(s))return .98;const c=COMPAT[f];return c&&c[s]||.8},
 PL=p=>p.fp||PN[p.pos],
 FC=(p,s)=>{const h=Math.max(0,Math.min(145,(fit(p,s)-.78)/.2*145));return `hsl(${Math.round(h)},80%,50%)`};/* color según encaje: verde = su posición, amarillo/naranja = parecida, rojo = muy distinta */
-/* roles del once: por defecto los de la formación; el jugador puede moverlos arrastrando (t.rl) */
-const roles=t=>t.rl&&t.rf==t.form&&t.rl.length==11?t.rl:fslots(t.form);
-/* Cuadrícula del campo: [fila, columna]. Filas de arriba a abajo: ataque, mediapunta, centro, pivote, defensa, portería */
-const GR={EI:[0,0],DC:[0,1],ED:[0,2],MP:[1,1],II:[2,0],MC:[2,1],ID:[2,2],MCD:[3,1],LI:[4,0],CT:[4,1],LD:[4,2],POR:[5,1]},
-pitch=(rl,card)=>[0,1,2,3,4,5].map(r=>`<div class="rw">${rl.map((s,i)=>[s,i]).filter(a=>GR[a[0]][0]==r).sort((a,b)=>GR[a[0]][1]-GR[b[0]][1]).map(a=>card(a[1])).join('')}</div>`).join(''),
-/* movimientos permitidos al arrastrar un poco (U arriba, D abajo, L izquierda, R derecha) */
-NX={EI:{D:'II',R:'DC'},ED:{D:'ID',L:'DC'},DC:{D:'MP',L:'EI',R:'ED'},MP:{U:'DC',D:'MC'},II:{U:'EI',R:'MC'},ID:{U:'ED',L:'MC'},MC:{U:'MP',D:'MCD',L:'II',R:'ID'},MCD:{U:'MC'},CT:{L:'LI',R:'LD'},LI:{R:'CT'},LD:{L:'CT'}};
-function nudge(i,dx,dy){const t=G.T[G.me],rl=roles(t).slice(),r=rl[i],H=22,V=18,ax=Math.abs(dx)/H,ay=Math.abs(dy)/V;if(Math.max(ax,ay)<1)return;
- const d=ax>=ay?(dx<0?'L':'R'):(dy<0?'U':'D'),n=NX[r]&&NX[r][d];if(!n)return;rl[i]=n;t.rl=rl;t.rf=t.form;t.man=true;save()}
 function fixPos(){/* migra partidas antiguas: recupera posiciones de la base de datos o las deduce */G.T.forEach((t,i)=>t.pl.forEach(p=>{if(p.fp)return;const d=D[i]&&D[i].p.find(x=>x[1]==p.n);p.fp=d&&d[6]||FPD[p.pos];p.alt=d&&d[7]||[]}));/* renombra MI/MD antiguos a II/ID */const rn=x=>x=='MI'?'II':x=='MD'?'ID':x;G.T.forEach(t=>t.pl.forEach(p=>{p.fp=rn(p.fp);p.alt=(p.alt||[]).map(rn)}))}
 const $=s=>document.querySelector(s),R=(a,b)=>a+Math.random()*(b-a),ef=p=>p.ovr*(1-.001*(p.fa|0)),av=a=>a.length?a.reduce((s,p)=>s+ef(p),0)/a.length:50;
 let G=null,S={tab:'home',lg:1,sel:{lg:1,t:null}};
@@ -32,12 +23,12 @@ function newGame(name,tid){G={mgr:name,me:tid,season:2027,week:0,conf:60,fans:60
 function startSeason(){G.week=0;G.res=[];G.last=null;G.T.forEach(t=>{t.pts=t.pj=t.gf=t.gc=t.w=t.d=t.l=0;t.pl.forEach(p=>{p.g=0;p.a=0;p.yc=0;p.pj=0;p.fa=0});if(t.id!=G.me||!t.man)auto(t)});G.fx={1:rounds(ids(1)),2:rounds(ids(2))};setObj();save();}
 function rounds(a){a=a.slice().sort(()=>Math.random()-.5);const n=a.length,m=n-1,H=[];for(let r=0;r<m;r++){const x=[r%2?[a[r],a[m]]:[a[m],a[r]]];for(let k=1;k<n/2;k++){const p=a[(r+k)%m],q=a[(r-k+m)%m];x.push(k%2?[p,q]:[q,p])}H.push(x)}return H.concat(H.map(r=>r.map(([h,b])=>[b,h])))}
 const slots=f=>{const a=FORM[f],o=[];'PDMF'.split('').forEach((c,i)=>{for(let k=0;k<a[i];k++)o.push(c)});return o},mean=a=>a.reduce((s,v)=>s+v,0)/a.length,rt=(p,s)=>ef(p)*fit(p,s);
-function auto(t){t.rl=null;const f=FORM[t.form],used=new Set(),lu=[],ix=t.pl.map((p,i)=>i),by=(a,b)=>ef(t.pl[b])-ef(t.pl[a]);
+function auto(t){const f=FORM[t.form],used=new Set(),lu=[],ix=t.pl.map((p,i)=>i),by=(a,b)=>ef(t.pl[b])-ef(t.pl[a]);
  fslots(t.form).forEach(s=>{let b=-1,bv=-1;ix.forEach(i=>{if(used.has(i))return;const p=t.pl[i],v=ef(p)*fit(p,s)+(p.pos==FGR(s)?15:0);if(v>bv){bv=v;b=i}});if(b>=0){lu.push(b);used.add(b)}});
  const r=ix.filter(i=>!used.has(i)),gk=r.filter(i=>t.pl[i].pos=='P').sort(by).slice(0,1);
  t.lu=lu;t.bn=gk.concat(r.filter(i=>!gk.includes(i)).sort(by).slice(0,7-gk.length))}
 function xi(t){if(!t.lu||t.lu.length!=11||t.lu.some(i=>!t.pl[i]))auto(t);if(!t.bn)auto(t);return t.lu.map(i=>t.pl[i])}
-function str(t){const x=xi(t),fs=roles(t),sp=fs.map(FGR),r=x.map((p,i)=>rt(p,fs[i])),g=c=>{const a=r.filter((_,i)=>sp[i]==c);return a.length?mean(a):50},m=g('M'),f=g('F');return{a:.55*f+.35*m+.1*g('D'),d:.45*g('D')+.3*g('P')+.25*m,o:mean(r)}}
+function str(t){const x=xi(t),sp=slots(t.form),fs=fslots(t.form),r=x.map((p,i)=>rt(p,fs[i])),g=c=>{const a=r.filter((_,i)=>sp[i]==c);return a.length?mean(a):50},m=g('M'),f=g('F');return{a:.55*f+.35*m+.1*g('D'),d:.45*g('D')+.3*g('P')+.25*m,o:mean(r)}}
 /* fatiga por minutos: titular 90' suma cansancio; quien sale antes (o entra) lo nota proporcionalmente; quien no juega descansa más.
    Los equipos de la IA hacen cambios automáticos (1-5) entre el 46' y el 86'. */
 const fat=(t,ai)=>{const x=new Set(t.lu),out={},inn={},f=m=>R(5,9)*m/90-3*(90-m)/90;
@@ -48,7 +39,7 @@ const fat=(t,ai)=>{const x=new Set(t.lu),out={},inn={},f=m=>R(5,9)*m/90-3*(90-m)
  t.pl.forEach((p,i)=>{let d;if(x.has(i)){p.pj=(p.pj|0)+1;d=f(out[i]??90)}else if(inn[i]!=null){p.pj=(p.pj|0)+1;d=f(inn[i])}else d=-12;
   p.fa=Math.max(0,Math.min(100,Math.round((p.fa|0)+d)))})};
 function pois(l){const L=Math.exp(-l);let k=0,p=1;do{k++;p*=Math.random()}while(p>L);return k-1}
-function scorers(t,n){const x=xi(t),sp=roles(t).map(FGR),c=typeof tacOf=='function'?tacOf(t):{},ti=c.tk!=null?t.lu.indexOf(c.tk):-1,
+function scorers(t,n){const x=xi(t),sp=slots(t.form),c=typeof tacOf=='function'?tacOf(t):{},ti=c.tk!=null?t.lu.indexOf(c.tk):-1,
  W=f=>x.map((p,i)=>(f[sp[i]]||0)*ef(p)/70),
  pk=(w,ex)=>{const v=w.map((q,i)=>i==ex?0:q),T=v.reduce((a,b)=>a+b,0);let r=Math.random()*T,j=0;while(j<v.length-1&&r>v[j]){r-=v[j];j++}return j},
  base=W({F:6.6,M:2.9,D:.65,P:0}),hd=W({F:3.5,M:1,D:2.8,P:0}),as0=W({F:3,M:4,D:1.4,P:.05}),
@@ -61,7 +52,7 @@ function scorers(t,n){const x=xi(t),sp=roles(t).map(FGR),c=typeof tacOf=='functi
   x[j].g++;let an=null;if(as!=null){x[as].a=(x[as].a|0)+1;an=x[as].n}
   o.push([x[j].n,Math.floor(R(1,91)),an,ty])}
  return o.sort((a,b)=>a[1]-b[1])}
-function cards(t){const x=xi(t),sp=roles(t).map(FGR),w=x.map((p,i)=>({D:3.5,M:2.7,F:1.3,P:.3}[sp[i]])),T=w.reduce((a,b)=>a+b,0),n=Math.min(4,pois(1.6)),c={},o=[];
+function cards(t){const x=xi(t),sp=slots(t.form),w=x.map((p,i)=>({D:3.5,M:2.7,F:1.3,P:.3}[sp[i]])),T=w.reduce((a,b)=>a+b,0),n=Math.min(4,pois(1.6)),c={},o=[];
  for(let i=0;i<n;i++){let r=Math.random()*T,j=0;while(j<w.length-1&&r>w[j]){r-=w[j];j++}if((c[j]|0)>=1)continue;c[j]=1;x[j].yc=(x[j].yc|0)+1;o.push([x[j].n,Math.floor(R(3,90))])}return o}
 function upd(t,f,c){t.pj++;t.gf+=f;t.gc+=c;if(f>c){t.w++;t.pts+=3}else if(f==c){t.d++;t.pts++}else t.l++}
 function simW(){let mine=null;G.wsc=[];G.T.forEach(t=>{if(t.id!=G.me||!t.man)auto(t)});[1,2].forEach(l=>(G.fx[l][G.week]||[]).forEach(([h,a])=>{const H=G.T[h],A=G.T[a],sh=str(H),sa=str(A),hg=pois(Math.max(.25,1.55+(sh.a-sa.d+tacMx(sh,sa)[0])/22)),ag=pois(Math.max(.2,1.1+(sa.a-sh.d+tacMx(sh,sa)[1])/22)),s1=scorers(H,hg),s2=scorers(A,ag),c1=cards(H),c2=cards(A);G.wsc.push([h,a,s1,s2]);fat(H,h!=G.me);fat(A,a!=G.me);upd(H,hg,ag);upd(A,ag,hg);const r=[G.week,l,h,a,hg,ag];G.res.push(r);if(h==G.me||a==G.me){mine={r,sc:[...s1.map(s=>[h,...s]),...s2.map(s=>[a,...s])].sort((x,y)=>x[2]-y[2]),cd:[...c1.map(c=>[h,...c]),...c2.map(c=>[a,...c])].sort((x,y)=>x[2]-y[2])};G.last=mine;const d=h==G.me?hg-ag:ag-hg;G.conf=Math.max(0,Math.min(100,G.conf+(d>0?3:d<0?-2:0)));G.fans=Math.max(0,Math.min(100,(G.fans??60)+(d>0?(d>2?4:3):d<0?(d<-2?-4:-3):h==G.me?-1:1)))}}));try{genFeed(G.week)}catch(e){console.error(e)}G.week++;if(G.week>=NW)endSeason();return mine}
@@ -130,28 +121,20 @@ function plv(){const t=G.T[G.me],o='PDMF',val={pos:p=>o.indexOf(p.pos),n:p=>p.n,
  rows=t.pl.slice().sort((a,b)=>{const va=val[ks](a),vb=val[ks](b),c=typeof va=='string'?va.localeCompare(vb):va-vb;return c*dr||o.indexOf(a.pos)-o.indexOf(b.pos)||b.ovr-a.ovr||a.n.localeCompare(b.n)}),
  th=(k,l,c)=>`<th class="${c}${ks==k?' on':''}" data-s="${k}">${l}${ks==k?(dr>0?' ▲':' ▼'):''}</th>`;
  return `<div class="pn ptb"><table class="plt"><thead><tr>${th('pos','Posición','')}${th('n','Nombre','')}${th('pj','Jug.','n')}${th('g','Goles','n')}${th('a','Asist.','n')}</tr></thead><tbody>${rows.map(p=>`<tr><td class="ppo ${p.pos}" title="${(p.alt||[]).length?'También: '+p.alt.join(', '):''}">${PL(p)}</td><td class="nm">${p.n}</td><td class="n">${p.pj|0}</td><td class="n">${p.g|0}</td><td class="n">${p.a|0}</td></tr>`).join('')}</tbody></table></div><p class="sm mu">Toca la leyenda de arriba para ordenar (otra vez para invertir). Las estadísticas se reinician cada temporada.</p>`}
-function sqv(){const t=G.T[G.me];xi(t);const sp=slots(t.form),fsp=roles(t),inb=new Set(t.bn),inx=new Set(t.lu),ln=p=>p.n.split(' ').slice(1).join(' ')||p.n;
+function sqv(){const t=G.T[G.me];xi(t);const sp=slots(t.form),fsp=fslots(t.form),inb=new Set(t.bn),inx=new Set(t.lu),ln=p=>p.n.split(' ').slice(1).join(' ')||p.n;
  const fb=p=>{const f=p.fa|0;return `<i class="fb" title="Cansancio ${f}%"><u class="${f>66?'hi':f>33?'md':'lo'}" style="width:${Math.max(6,f)}%"></u></i>`};
- const card=i=>{const p=t.pl[t.lu[i]];return `<div class="sl fit${S.pk=='x:'+i?' pk':''}" style="--fc:${FC(p,fsp[i])}" data-l="x:${i}"><span class="ps slp ${FGR(fsp[i])}">${fsp[i]}</span><span class="ov">${Math.round(ef(p))}</span><b>${ln(p)}</b>${fb(p)}</div>`};
+ const card=i=>{const p=t.pl[t.lu[i]];return `<div class="sl fit${S.pk=='x:'+i?' pk':''}" style="--fc:${FC(p,fsp[i])}" draggable="true" data-l="x:${i}"><span class="ps slp ${FGR(fsp[i])}">${fsp[i]}</span><span class="ov">${Math.round(ef(p))}</span><b>${ln(p)}</b>${fb(p)}</div>`};
  const row=(i,l)=>{const p=t.pl[i];return `<div class="pr${S.pk==l?' pk':''}" draggable="true" data-l="${l}"><span class="ps ${p.pos}">${PL(p)}</span><span class="pnm">${p.n}</span><span class="mu sm">${p.age}a${(p.alt||[]).length?' · '+p.alt.join('/'):''}</span><b>${Math.round(ef(p))}</b>${fb(p)}</div>`};
  const rs=t.pl.map((p,i)=>i).filter(i=>!inx.has(i)&&!inb.has(i)).sort((a,b)=>'PDMF'.indexOf(t.pl[a].pos)-'PDMF'.indexOf(t.pl[b].pos)||t.pl[b].ovr-t.pl[a].ovr);
- return `<div class="pn sqh"><label>Formación <select id="fm">${Object.keys(FORM).map(f=>`<option ${f==t.form?'selected':''}>${f}</option>`).join('')}</select></label><button id="au" class="${t.man?'':'p'}">Auto</button><span class="mu sm">Media del once <b>${Math.round(str(t).o)}</b> · Arrastra un jugador sobre otro (o toca dos) para intercambiarlos · Arrástralo un poco hacia delante, atrás o a los lados para cambiar su posición (MC → MP / MCD / II / ID, EI → II, lateral → CT…) · Barra = cansancio (verde fresco, rojo agotado): los cansados rinden menos · Rojo = fuera de posición</span></div>
-<div class="g2 sq"><div class="pn pit gr">${pitch(fsp,card)}</div><div><div class="pn zn" data-z="b"><h3>Banquillo <small>${t.bn.length}/7</small></h3>${t.bn.map((i,j)=>row(i,'b:'+j)).join('')||'<p class="mu sm">Arrastra aquí jugadores</p>'}</div><div class="pn zn" data-z="r"><h3>Reservas</h3>${rs.map(i=>row(i,'r:'+i)).join('')}</div></div></div>`}
+ return `<div class="pn sqh"><label>Formación <select id="fm">${Object.keys(FORM).map(f=>`<option ${f==t.form?'selected':''}>${f}</option>`).join('')}</select></label><button id="au" class="${t.man?'':'p'}">Auto</button><span class="mu sm">Media del once <b>${Math.round(str(t).o)}</b> · Arrastra o toca dos jugadores para intercambiarlos · Barra = cansancio (verde fresco, rojo agotado): los cansados rinden menos · Rojo = fuera de posición</span></div>
+<div class="g2 sq"><div class="pn pit">${['F','M','D','P'].map(c=>`<div class="rw">${sp.map((s,i)=>s==c?card(i):'').join('')}</div>`).join('')}</div><div><div class="pn zn" data-z="b"><h3>Banquillo <small>${t.bn.length}/7</small></h3>${t.bn.map((i,j)=>row(i,'b:'+j)).join('')||'<p class="mu sm">Arrastra aquí jugadores</p>'}</div><div class="pn zn" data-z="r"><h3>Reservas</h3>${rs.map(i=>row(i,'r:'+i)).join('')}</div></div></div>`}
 const gl=(t,l)=>{const [k,v]=l.split(':'),n=+v;return k=='x'?t.lu[n]:k=='b'?t.bn[n]:n},sl=(t,l,val)=>{const [k,v]=l.split(':'),n=+v;if(k=='x')t.lu[n]=val;else if(k=='b')t.bn[n]=val};
 function mv(a,b){const t=G.T[G.me];if(!a||!b||a==b)return;const va=gl(t,a),vb=gl(t,b);sl(t,a,vb);sl(t,b,va);t.man=true;save()}
 function zone(a,z){const t=G.T[G.me],[k,v]=a.split(':'),n=+v;if(z=='b'&&k=='r'&&t.bn.length<7)t.bn.push(n);else if(z=='r'&&k=='b')t.bn.splice(n,1);else return;t.man=true;save()}
 function sqBind(){document.querySelectorAll('[data-l^="x:"],[data-l^="b:"],[data-l^="r:"]').forEach(e=>{const l=e.dataset.l;
- e.onclick=()=>{if(S.nc)return;if(S.pk&&S.pk!=l){mv(S.pk,l);S.pk=null}else S.pk=S.pk==l?null:l;render()};
+ e.onclick=()=>{if(S.pk&&S.pk!=l){mv(S.pk,l);S.pk=null}else S.pk=S.pk==l?null:l;render()};
  e.ondragstart=ev=>{ev.dataTransfer.setData('text/plain',l);S.pk=null};e.ondragover=ev=>ev.preventDefault();
  e.ondrop=ev=>{ev.preventDefault();ev.stopPropagation();mv(ev.dataTransfer.getData('text/plain'),l);render()}});
- document.querySelectorAll('.sl[data-l^="x:"]').forEach(e=>{const l=e.dataset.l;e.onpointerdown=ev=>{if(ev.button)return;const x0=ev.clientX,y0=ev.clientY;let on=false;
-  const mm=q=>{const dx=q.clientX-x0,dy=q.clientY-y0;if(!on&&Math.hypot(dx,dy)<7)return;if(!on){on=true;e.classList.add('drg')}e.style.transform='translate('+dx+'px,'+dy+'px)'},
-  end=q=>{removeEventListener('pointermove',mm);removeEventListener('pointerup',end);removeEventListener('pointercancel',end);if(!on)return;S.nc=1;setTimeout(()=>S.nc=0,60);
-   const dx=q.clientX-x0,dy=q.clientY-y0;e.style.pointerEvents='none';const el=document.elementFromPoint(q.clientX,q.clientY);e.style.pointerEvents='';
-   const tg=el&&el.closest('[data-l]'),zn=el&&el.closest('[data-z]');
-   if(tg&&tg!=e){mv(l,tg.dataset.l);S.pk=null}else if(!zn&&q.type=='pointerup'){nudge(+l.slice(2),dx,dy);S.pk=null}
-   render()};
-  addEventListener('pointermove',mm);addEventListener('pointerup',end);addEventListener('pointercancel',end)}});
  document.querySelectorAll('[data-z]').forEach(e=>{e.ondragover=ev=>ev.preventDefault();e.ondrop=ev=>{ev.preventDefault();zone(ev.dataTransfer.getData('text/plain'),e.dataset.z);render()};e.onclick=ev=>{if(ev.target==e&&S.pk){zone(S.pk,e.dataset.z);S.pk=null;render()}}});
  $('#fm').onchange=()=>{const t=G.T[G.me];t.form=$('#fm').value;auto(t);save();render()};
  $('#au').onclick=()=>{const t=G.T[G.me];t.man=false;auto(t);S.pk=null;save();render()}}
