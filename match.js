@@ -226,3 +226,142 @@ q('#lvsb').onclick=()=>{if(fin||subs>=5)return;pz=1;
    q('#lvsb').textContent='Cambios ('+(5-subs)+')';if(subs>=5)q('#lvsb').disabled=true;o.classList.remove('sbo');pn.remove();pz=0;last=performance.now()}};
  draw()};
 requestAnimationFrame(frame)}
+
+
+/* ===== INTRO DE PARTIDO (estilo retransmisión) =====
+   bcIntro(m,start): escudos → clasificación → alineación local → alineación visitante → saque inicial.
+   Se avanza tocando la pantalla (o con Enter/espacio); "Saltar" va directo al partido. Al terminar llama a start().
+   Uso (ya enganchado en playMatch de game.js):  bcIntro(m,()=>liveMatch(m,done)) */
+
+/* Clasificación de la liga ANTES del partido (simWeek ya ha sumado esta jornada, así que se resta) → [{id,pj,dg,pts}] ordenada */
+function bcTable(lg,rd){try{
+ const sub={};G.res.filter(r=>r[0]==rd&&r[1]==lg).forEach(([,,h,a,hg,ag])=>[[h,hg,ag],[a,ag,hg]].forEach(([id,f,c])=>{const s=sub[id]=sub[id]||{pj:0,gf:0,gc:0,pts:0};s.pj++;s.gf+=f;s.gc+=c;s.pts+=f>c?3:f==c?1:0}));
+ const r=G.T.filter(t=>t.lg==lg).map(t=>{const s=sub[t.id]||{pj:0,gf:0,gc:0,pts:0},gf=t.gf-s.gf,gc=t.gc-s.gc;return{id:t.id,pj:t.pj-s.pj,gf,gc,dg:gf-gc,pts:t.pts-s.pts}});
+ if(!r.length||r.some(x=>x.pj<0||x.pts<0))return null;
+ return r.sort((x,y)=>y.pts-x.pts||y.dg-x.dg||y.gf-x.gf)}catch(e){return null}}
+
+/* Filas del campo de arriba (delanteros) a abajo (portero); cada fila es una lista de índices de alineación, de izquierda a derecha */
+function bcRows(t){
+ xi(t);const sp=slots(t.form),fs=typeof fslots=='function'?fslots(t.form):[],g={F:[],M:[],D:[],P:[]};
+ t.lu.forEach((id,i)=>{const c=g[sp[i]]?sp[i]:t.pl[id].pos;(g[c]||g.M).push(i)});
+ const nums=(String(t.form||'').split(' ')[0].match(/\d/g)||[]).map(Number),mids=nums.slice(1,-1);let mr=[g.M.slice()];
+ if(mids.length>1&&nums[0]==g.D.length&&nums[nums.length-1]==g.F.length&&mids.reduce((s,x)=>s+x,0)==g.M.length){
+  const rk=i=>{const f=String(fs[i]||'');return /^MCD/.test(f)?0:/^(MCO|MP|MO)/.test(f)?2:1},so=g.M.slice().sort((x,y)=>rk(x)-rk(y));let k=0;
+  mr=mids.map(n=>so.slice(k,k+=n).sort((x,y)=>x-y))}
+ return [g.F,...mr.slice().reverse(),g.D,g.P].filter(r=>r.length)}
+/* dorsales: p.num (se asignan en game.js con assignNums) */
+function bcNums(t){if(assignNums(t))save();return t.lu.map(id=>t.pl[id].num)}
+
+function bcCss(){if(document.getElementById('bcsty'))return;const st=document.createElement('style');st.id='bcsty';st.textContent=`
+#bc{position:fixed;inset:0;z-index:30;overflow:hidden;display:flex;flex-direction:column;color:#fff;cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;
+ font-family:'Barlow Condensed',sans-serif;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+ background:radial-gradient(900px 480px at 50% -8%,rgba(255,255,255,.09),transparent),repeating-linear-gradient(115deg,transparent 0 26px,rgba(255,255,255,.03) 26px 52px),#050912}
+#bc.out{animation:bcOut .45s forwards;pointer-events:none}@keyframes bcOut{to{opacity:0;transform:scale(1.06)}}
+#bc .bc-pg{display:flex;gap:4px;padding:10px 14px 0;position:relative;z-index:6}
+#bc .bc-pg i{flex:1;height:3px;background:rgba(255,255,255,.22);border-radius:2px;overflow:hidden}
+#bc .bc-pg b{display:block;height:100%;width:0;background:#fff}#bc .bc-pg i.d b{width:100%}#bc .bc-pg i.on b{animation:bcFill var(--t) linear forwards}
+@keyframes bcFill{to{width:100%}}
+#bc .bc-top{display:flex;justify-content:space-between;align-items:center;padding:8px 14px 0;font-size:13px;letter-spacing:.14em;text-transform:uppercase;opacity:.75;position:relative;z-index:6}
+#bc .bc-sk{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:999px;padding:3px 12px;font:700 14px 'Barlow Condensed',sans-serif;letter-spacing:.1em;text-transform:uppercase}
+#bc .bc-st{position:relative;flex:1;min-height:0}
+#bc .bc-sc{position:absolute;inset:0;display:flex;flex-direction:column;animation:bcIn .4s both}@keyframes bcIn{from{opacity:0}to{opacity:1}}
+#bc .bc-wp{position:absolute;inset:0;z-index:5;pointer-events:none;overflow:hidden}
+#bc .bc-wp::before,#bc .bc-wp::after{content:"";position:absolute;top:0;bottom:0;left:0;width:125%;transform:skewX(-14deg) translateX(-115%)}
+#bc .bc-wp::before{background:linear-gradient(120deg,#17419a,#2f7bff)}#bc .bc-wp::after{background:linear-gradient(240deg,#a8231d,#ff5a4f)}
+#bc .bc-wp.go::before{animation:bcW .62s cubic-bezier(.65,0,.35,1)}#bc .bc-wp.go::after{animation:bcW .62s .09s cubic-bezier(.65,0,.35,1)}
+@keyframes bcW{from{transform:skewX(-14deg) translateX(-115%)}to{transform:skewX(-14deg) translateX(115%)}}
+/* escena 1: escudos */
+#bc .bc-bg{position:absolute;top:0;bottom:0;width:62%;opacity:.9}
+#bc .bc-bg.l{left:-12%;background:linear-gradient(120deg,#17419a,#2f7bff);animation:bcPl .7s cubic-bezier(.2,.9,.2,1) both}
+#bc .bc-bg.r{right:-12%;background:linear-gradient(240deg,#a8231d,#ff5a4f);animation:bcPr .7s cubic-bezier(.2,.9,.2,1) both}
+@keyframes bcPl{from{transform:skewX(-12deg) translateX(-115%)}to{transform:skewX(-12deg)}}@keyframes bcPr{from{transform:skewX(-12deg) translateX(115%)}to{transform:skewX(-12deg)}}
+#bc .bc-c{position:relative;z-index:2;margin:auto;width:100%;max-width:760px;padding:16px;text-align:center}
+#bc .bc-lg{display:flex;justify-content:center;align-items:center;gap:12px;font-size:22px;letter-spacing:.14em;text-transform:uppercase;animation:bcUp .5s .45s both}
+#bc .bc-lg .lgl{height:56px;width:auto}
+#bc .bc-t{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:6px;margin:18px 0}
+#bc .bc-tm{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0}
+#bc .bc-tm b{font-size:clamp(22px,5.4vw,40px);line-height:1;text-transform:uppercase;text-shadow:0 3px 14px rgba(0,0,0,.6)}
+#bc .bc-tm.l{animation:bcSl .65s .3s cubic-bezier(.2,1.4,.4,1) both}#bc .bc-tm.r{animation:bcSr .65s .4s cubic-bezier(.2,1.4,.4,1) both}
+#bc .bc-cr{filter:drop-shadow(0 8px 18px rgba(0,0,0,.6));animation:bcFl 3.2s 1.2s ease-in-out infinite}
+#bc .bc-cr .cr{width:clamp(90px,26vw,160px)!important;height:auto!important}
+#bc .bc-vs{font-size:clamp(44px,11vw,90px);font-weight:700;font-style:italic;color:var(--hi);text-shadow:0 0 26px var(--hi);animation:bcVs .5s .8s cubic-bezier(.2,1.8,.4,1) both}
+@keyframes bcUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes bcSl{from{opacity:0;transform:translateX(-100px) scale(.7)}to{opacity:1;transform:none}}@keyframes bcSr{from{opacity:0;transform:translateX(100px) scale(.7)}to{opacity:1;transform:none}}
+@keyframes bcVs{from{opacity:0;transform:scale(.2) rotate(-12deg)}to{opacity:1;transform:none}}@keyframes bcFl{50%{transform:translateY(-7px)}}
+/* escena 2: clasificación */
+#bc .bc-tt{display:flex;align-items:center;gap:14px;margin:16px 14px 0;animation:bcHd .55s cubic-bezier(.2,.9,.2,1) both}
+#bc .bc-tt .lgl{height:56px;width:auto}#bc .bc-tt small{display:block;font-size:14px;letter-spacing:.2em;text-transform:uppercase;opacity:.8}
+#bc .bc-tt b{font-size:clamp(32px,9vw,48px);line-height:1;text-transform:uppercase;letter-spacing:.03em}
+#bc .bc-tb{display:flex;flex-direction:column;gap:5px;margin:14px;max-width:640px;align-self:center;width:calc(100% - 28px)}
+#bc .bc-th,#bc .bc-r{display:grid;grid-template-columns:30px 32px 1fr 32px 42px 44px;align-items:center;gap:8px;padding:6px 12px 6px 8px}
+#bc .bc-th{font-size:13px;letter-spacing:.14em;opacity:.65}
+#bc .bc-r{background:rgba(255,255,255,.08);border-left:4px solid rgba(255,255,255,.2);clip-path:polygon(0 0,100% 0,calc(100% - 14px) 100%,0 100%);font-size:20px;animation:bcRow .5s var(--d) cubic-bezier(.2,.9,.2,1) both}
+#bc .bc-r em{font-style:normal;font-weight:700;opacity:.8;text-align:center}#bc .bc-r b{font-weight:700;text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#bc .bc-r span .cr{width:26px!important;height:26px!important;object-fit:contain}
+#bc .bc-r i,#bc .bc-th span:nth-child(n+4){font-style:normal;text-align:right}#bc .bc-r strong{text-align:right;color:var(--hi);font-size:24px}
+#bc .bc-r.h{background:linear-gradient(90deg,rgba(47,123,255,.6),rgba(47,123,255,.14));border-left-color:#2f7bff}
+#bc .bc-r.a{background:linear-gradient(90deg,rgba(255,77,67,.6),rgba(255,77,67,.14));border-left-color:#ff4d43}
+#bc .bc-gp{text-align:center;opacity:.45;letter-spacing:.6em;line-height:.5;font-size:22px}
+@keyframes bcRow{from{opacity:0;transform:translateX(-46px)}to{opacity:1;transform:none}}
+/* escenas 3 y 4: alineaciones */
+#bc .bc-lu{display:flex;flex-direction:column;height:100%}
+#bc .bc-hd{display:flex;align-items:center;gap:12px;margin:12px 14px 0;padding:8px 16px 8px 10px;background:linear-gradient(100deg,var(--c),color-mix(in srgb,var(--c) 40%,#000));border-radius:4px 22px 4px 22px;box-shadow:0 8px 24px rgba(0,0,0,.5);animation:bcHd .55s cubic-bezier(.2,.9,.2,1) both}
+#bc .bc-hd small{display:block;font-size:13px;letter-spacing:.2em;text-transform:uppercase;opacity:.85}
+#bc .bc-hd b{display:block;font-size:clamp(24px,7vw,36px);line-height:1;text-transform:uppercase;letter-spacing:.03em}
+#bc .bc-hcr .cr{width:50px!important;height:auto!important;filter:drop-shadow(0 3px 6px rgba(0,0,0,.5))}
+#bc .bc-fm{margin-left:auto;font-size:clamp(28px,8vw,42px);font-weight:700;color:var(--hi);text-shadow:0 2px 0 rgba(0,0,0,.4)}
+@keyframes bcHd{from{opacity:0;transform:translateX(-60px)}to{opacity:1;transform:none}}
+#bc .bc-pit{position:relative;flex:1;min-height:0;margin:10px 14px;border-radius:10px;overflow:hidden;background:repeating-linear-gradient(0deg,#15612f 0 10%,#1a7338 10% 20%);box-shadow:0 10px 30px rgba(0,0,0,.5),inset 0 0 0 2px rgba(255,255,255,.5);animation:bcIn .6s .15s both}
+#bc .bc-pit::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 45%,transparent 50%,rgba(0,0,0,.45));pointer-events:none}
+#bc .bc-pit i{position:absolute;border:2px solid rgba(255,255,255,.45)}
+#bc .bc-hl{left:0;right:0;top:50%;height:0;border-width:2px 0 0!important}
+#bc .bc-cc{left:50%;top:50%;width:26%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%}
+#bc .bc-bx{left:26%;right:26%;height:14%}#bc .bc-bx.t{top:-2px;border-top:0}#bc .bc-bx.b{bottom:-2px;border-bottom:0}
+#bc .bc-pl{position:absolute;z-index:2;width:21%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:3px;animation:bcPop .55s var(--d) cubic-bezier(.2,1.5,.4,1) both}
+#bc .bc-pl u{text-decoration:none;display:grid;place-items:center;width:clamp(28px,8vw,38px);aspect-ratio:1;border-radius:50%;background:var(--c);border:2px solid #fff;font:700 clamp(15px,4.4vw,20px)/1 'Barlow Condensed',sans-serif;box-shadow:0 3px 10px rgba(0,0,0,.55)}
+#bc .bc-pl span{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:rgba(5,9,18,.9);border-left:3px solid var(--hi);padding:1px 6px;font:700 clamp(12px,3.4vw,15px)/1.3 'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.03em;transform:skewX(-8deg)}
+#bc .bc-pl em{font-style:normal;color:var(--hi);margin-right:5px}
+@keyframes bcPop{from{opacity:0;transform:translate(-50%,-30%) scale(.2)}to{opacity:1;transform:translate(-50%,-50%)}}
+#bc .bc-bn{display:flex;flex-wrap:wrap;align-items:center;gap:3px 12px;margin:0 14px 12px;padding:7px 12px;background:rgba(255,255,255,.07);border-top:2px solid var(--c);font-size:14px;text-transform:uppercase;letter-spacing:.04em;animation:bcUp .5s .9s both}
+#bc .bc-bn b{color:var(--hi);letter-spacing:.14em}
+/* escena 5: saque inicial */
+#bc .bc-ko{margin:auto;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px}
+#bc .bc-ko b{font-size:clamp(38px,11vw,72px);line-height:1;text-transform:uppercase;font-style:italic;text-shadow:0 0 26px var(--hi);animation:bcVs .5s both}
+#bc .bc-kc{display:flex;align-items:center;gap:18px}#bc .bc-kc .cr{width:clamp(60px,18vw,96px)!important;height:auto!important}
+#bc .bc-kc span{font-size:clamp(34px,9vw,54px);animation:bcSpin 1.2s linear infinite}@keyframes bcSpin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){#bc *{animation:none!important}#bc .bc-pg i.on b{width:100%}#bc .bc-wp{display:none}}`;document.head.appendChild(st)}
+
+function bcIntro(m,start){
+ bcCss();
+ const [rd,lg,h,a]=m.r,ids=[h,a],T=ids.map(i=>G.T[i]),COL=['#2f7bff','#ff4d43'],
+  sn=n=>{const p=String(n).split(' ');return p.length>1?p.slice(1).join(' '):n},
+  esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])),
+  jr=Number.isFinite(rd)?' · Jornada '+(rd+1):'',fm=t=>String(t.form||'').split(' ')[0];
+ const rows=bcTable(lg,rd),pi=rows?rows.findIndex(r=>r.id==h):-1,qi=rows?rows.findIndex(r=>r.id==a):-1,keep=new Set();
+ [pi,qi].forEach(i=>{if(i>=0)for(let k=i-1;k<=i+1;k++)if(k>=0&&k<rows.length)keep.add(k)});
+ const S1=()=>`<div class="bc-bg l"></div><div class="bc-bg r"></div><div class="bc-c"><div class="bc-lg">${lgl(lg,56)}<span>Liga ${lg}${jr}</span></div>
+  <div class="bc-t">${[0,1].map(s=>`<div class="bc-tm ${s?'r':'l'}"><span class="bc-cr">${crest(ids[s],150)}</span><b>${esc(T[s].n)}</b>${form5(ids[s],rd)}</div>`).join('<div class="bc-vs">VS</div>')}</div></div>`;
+ const S2=()=>{let body='',prev=-1,n=0;[...keep].sort((x,y)=>x-y).forEach(k=>{const r=rows[k];if(prev>=0&&k>prev+1)body+='<div class="bc-gp">···</div>';prev=k;
+   body+=`<div class="bc-r${r.id==h?' h':r.id==a?' a':''}" style="--d:${(.2+n++*.07).toFixed(2)}s"><em>${k+1}</em><span>${crest(r.id,26)}</span><b>${esc(G.T[r.id].n)}</b><i>${r.pj}</i><i>${r.dg>0?'+'+r.dg:r.dg}</i><strong>${r.pts}</strong></div>`});
+  return `<div class="bc-tt">${lgl(lg,56)}<div><small>Liga ${lg}${jr}</small><b>Clasificación</b></div></div><div class="bc-tb"><div class="bc-th"><span></span><span></span><span>Equipo</span><span>PJ</span><span>DG</span><span>PTS</span></div>${body}</div>`};
+ const LU=s=>{const t=T[s],rw=bcRows(t),N=bcNums(t),R=rw.length;
+  const pl=rw.map((r,k)=>r.map((li,j)=>{const p=t.pl[t.lu[li]],x=(j+1)/(r.length+1)*100,y=R>1?11+k*78/(R-1):50;
+   return `<div class="bc-pl" style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%;--d:${(.35+(R-1-k)*.2+j*.07).toFixed(2)}s"><u>${N[li]}</u><span><em>${Math.round(ef(p))}</em>${esc(sn(p.n))}</span></div>`}).join('')).join('');
+  const bn=(t.bn||[]).slice(0,8).map(i=>t.pl[i]).filter(Boolean).map(p=>`<span>${esc(sn(p.n))}</span>`).join('');
+  return `<div class="bc-lu" style="--c:${COL[s]}"><div class="bc-hd"><span class="bc-hcr">${crest(ids[s],54)}</span><div><small>${s?'Visitante':'Local'} · Alineación</small><b>${esc(t.n)}</b></div><div class="bc-fm">${fm(t)}</div></div>
+   <div class="bc-pit"><i class="bc-hl"></i><i class="bc-cc"></i><i class="bc-bx t"></i><i class="bc-bx b"></i>${pl}</div><div class="bc-bn"><b>Banquillo</b>${bn}</div></div>`};
+ const S5=()=>`<div class="bc-ko"><div class="bc-kc">${crest(h,96)}<span>⚽</span>${crest(a,96)}</div><b>¡Empieza el partido!</b></div>`;
+ const sc=[{h:S1,d:3600},...(keep.size?[{h:S2,d:4300}]:[]),{h:()=>LU(0),d:5600},{h:()=>LU(1),d:5600},{h:S5,d:1700}];
+ const o=document.createElement('div');o.id='bc';
+ o.innerHTML=`<div class="bc-pg">${sc.map(()=>'<i><b></b></i>').join('')}</div><div class="bc-top"><span>Toca para avanzar</span><button class="bc-sk" type="button">Saltar ⏭</button></div><div class="bc-st"></div><div class="bc-wp"></div>`;
+ document.body.appendChild(o);
+ const st=o.querySelector('.bc-st'),wp=o.querySelector('.bc-wp'),pg=[...o.querySelectorAll('.bc-pg i')];let tm=0,fin=0,lt=0,sw=0;
+ const kd=e=>{if(e.key=='Enter'||e.key==' '||e.key=='ArrowRight'){e.preventDefault();nx()}else if(e.key=='Escape')end()};
+ function end(){if(fin)return;fin=1;clearTimeout(tm);clearTimeout(sw);document.removeEventListener('keydown',kd);try{start()}finally{o.classList.add('out');setTimeout(()=>o.remove(),480)}}
+ function go(k){if(fin)return;clearTimeout(tm);if(k>=sc.length)return end();lt=Date.now();
+  const put=()=>{st.innerHTML='<div class="bc-sc">'+sc[k].h()+'</div>';pg.forEach((e,j)=>{e.className=j<k?'d':j==k?'on':'';e.style.setProperty('--t',sc[k].d+'ms')})};
+  if(!k)put();else{wp.classList.remove('go');void wp.offsetWidth;wp.classList.add('go');sw=setTimeout(()=>{if(!fin)put()},310)}
+  cur=k;tm=setTimeout(()=>go(k+1),sc[k].d+(k?310:0))}
+ let cur=0;const nx=()=>{if(Date.now()-lt>450)go(cur+1)};
+ o.addEventListener('click',e=>{if(e.target.closest('.bc-sk'))end();else nx()});document.addEventListener('keydown',kd);
+ go(0)}

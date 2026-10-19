@@ -18,13 +18,25 @@ fmPick=t=>{const ks=Object.keys(FORM),bs=[...new Set(ks.map(f=>f.split(' ')[0]))
 
 FC=(p,s)=>{const h=Math.max(0,Math.min(145,(fit(p,s)-.78)/.2*145));return `hsl(${Math.round(h)},80%,50%)`};/* color según encaje: verde = su posición, amarillo/naranja = parecida, rojo = muy distinta */
 function fixPos(){/* migra partidas antiguas: recupera posiciones de la base de datos o las deduce */G.T.forEach((t,i)=>t.pl.forEach(p=>{if(p.fp)return;const d=D[i]&&D[i].p.find(x=>x[1]==p.n);p.fp=d&&d[6]||FPD[p.pos];p.alt=d&&d[7]||[]}));/* renombra MI/MD antiguos a II/ID */const rn=x=>x=='MI'?'II':x=='MD'?'ID':x;G.T.forEach(t=>t.pl.forEach(p=>{p.fp=rn(p.fp);p.alt=(p.alt||[]).map(rn)}))}
+/* Dorsales: sin repetir en el equipo, al azar pero con lógica por posición (1 portero titular, 2-5 defensas, 6/8/10 medios, 7/9/11 delanteros...).
+   Los mejores jugadores eligen primero los números "nobles"; los menores de 20 años llevan números altos. Se guardan en p.num y no cambian. */
+const NUMT={POR:[[1],[13],[12,25,22],[30,31,40,41]],CT:[[4,5],[3,2,15],[23,12,14,22,24],[26,28,32,34,36]],LD:[[2],[12,22,20],[26,27,29],[33,35]],LI:[[3],[15,17,21],[28,29,31],[34,36]],
+ MCD:[[6,5],[4,14,16],[18,20,24],[26,28,30]],MC:[[8,6,14],[16,18,20,21],[22,24,25],[27,29,33]],MP:[[10],[8,17,21],[14,16,20],[27,32,37]],
+ II:[[11,7,17],[19,21,23],[25,27],[30,34]],ID:[[7,17,11],[19,21,23],[25,27],[30,34]],EI:[[11,7,17,19],[21,23,25],[27,29],[31,35]],ED:[[7,17,11,19],[21,23,25],[27,29],[31,35]],DC:[[9],[19,18,20],[10,24,25],[27,30,32,38]]};
+function assignNums(t){const used=new Set();let ch=false;
+ t.pl.forEach(p=>{if(Number.isInteger(p.num)&&p.num>=1&&p.num<=99&&!used.has(p.num))used.add(p.num);else if(p.num!=null){delete p.num;ch=true}});
+ t.pl.filter(p=>p.num==null).sort((a,b)=>b.ovr-a.ovr).forEach(p=>{
+  let ti=NUMT[p.fp||FPD[p.pos]]||NUMT[FPD[p.pos]];if(p.age<=19)ti=ti.slice(2).concat(ti.slice(0,2));
+  let n=null;for(const tier of ti){const f=tier.filter(x=>!used.has(x));if(f.length){n=f[Math.floor(Math.random()*f.length)];break}}
+  if(n==null){const f=[];for(let x=2;x<=60;x++)if(!used.has(x))f.push(x);n=f.length?f[Math.floor(Math.random()*f.length)]:99}
+  p.num=n;used.add(n);ch=true});return ch}
 const $=s=>document.querySelector(s),R=(a,b)=>a+Math.random()*(b-a),ef=p=>p.ovr*(1-.001*(p.fa|0)),av=a=>a.length?a.reduce((s,p)=>s+ef(p),0)/a.length:50;
 let G=null,S={tab:'home',lg:1,sel:{lg:1,t:null}};
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(G))}catch(e){}};
 const load=()=>{try{return JSON.parse(localStorage.getItem(KEY))}catch(e){return null}};
 const ids=l=>G.T.filter(t=>t.lg==l).map(t=>t.id),nm=i=>G.T[i].n;
 function newGame(name,tid){G={mgr:name,me:tid,season:2027,week:0,conf:60,fans:60,feed:[],fs:0,seen:0,T:D.map((t,i)=>({id:i,n:t.n,c:t.c,lg:t.l,form:FORM[t.f]?t.f:'4-3-3',pl:t.p.map(p=>({n:p[1],nat:p[2],age:p[3],pos:p[0],fp:p[6]||FPD[p[0]],alt:p[7]||[],ovr:p[4],pot:p[5],g:0,a:0,yc:0,pj:0,fa:0}))}))};startSeason();feedStart(1);}
-function startSeason(){G.week=0;G.res=[];G.last=null;G.T.forEach(t=>{t.pts=t.pj=t.gf=t.gc=t.w=t.d=t.l=0;t.pl.forEach(p=>{p.g=0;p.a=0;p.yc=0;p.pj=0;p.fa=0});if(t.id!=G.me||!t.man)auto(t)});G.fx={1:rounds(ids(1)),2:rounds(ids(2))};setObj();save();}
+function startSeason(){G.week=0;G.res=[];G.last=null;G.T.forEach(t=>{t.pts=t.pj=t.gf=t.gc=t.w=t.d=t.l=0;t.pl.forEach(p=>{p.g=0;p.a=0;p.yc=0;p.pj=0;p.fa=0});assignNums(t);if(t.id!=G.me||!t.man)auto(t)});G.fx={1:rounds(ids(1)),2:rounds(ids(2))};setObj();save();}
 function rounds(a){a=a.slice().sort(()=>Math.random()-.5);const n=a.length,m=n-1,H=[];for(let r=0;r<m;r++){const x=[r%2?[a[r],a[m]]:[a[m],a[r]]];for(let k=1;k<n/2;k++){const p=a[(r+k)%m],q=a[(r-k+m)%m];x.push(k%2?[p,q]:[q,p])}H.push(x)}return H.concat(H.map(r=>r.map(([h,b])=>[b,h])))}
 const slots=f=>{const a=FORM[f],o=[];'PDMF'.split('').forEach((c,i)=>{for(let k=0;k<a[i];k++)o.push(c)});return o},mean=a=>a.reduce((s,v)=>s+v,0)/a.length,rt=(p,s)=>ef(p)*fit(p,s);
 function auto(t){const f=FORM[t.form],used=new Set(),lu=[],ix=t.pl.map((p,i)=>i),by=(a,b)=>ef(t.pl[b])-ef(t.pl[a]);
@@ -162,5 +174,5 @@ function rivalView(id,o){o=o||{};const t=G.T[id];if(o.pre&&id!=G.me)auto(t);xi(t
 function modal(h){$('#mdc').innerHTML=h+'<p style="margin:16px 0 0"><button class="p" id="ok">Continuar</button></p>';$('#md').style.display='flex';$('#ok').onclick=()=>{$('#md').style.display='none';if(G.pend){G.pend=0;save()}}}
 function season(){const s=G.sum;modal(`<h2>Fin de temporada ${s.season}</h2><p>Campeón de ${LGN[1]}: <b>${s.champ}</b></p><p>Tu equipo terminó <b>${s.pos}º</b> en ${LGN[s.lg]} y cumplió <b>${s.met}/${s.tot}</b> objetivos.</p><p class="sm">Ascienden: ${s.pro.join(', ')}<br>Descienden: ${s.rel.join(', ')}</p>${s.sc?`<p class="sm">Pichichi de tu liga: ${s.sc[0]} (${s.sc[1]}), ${s.sc[2]} goles</p>`:''}${s.fired?'<p class="ko"><b>La directiva te ha despedido.</b> Empieza una nueva partida.</p>':'<p class="sm mu">Los jugadores han envejecido un año y la nueva temporada está lista.</p>'}`);
  if(s.fired)$('#ok').onclick=()=>{try{localStorage.removeItem(KEY)}catch(e){}location.reload()}}
-function playMatch(){const m=simWeek(),fin=()=>{render();if(G.pend)season()};if(m)matchIntro(m,()=>liveMatch(m,fin));else fin()}
+function playMatch(){const m=simWeek(),fin=()=>{render();if(G.pend)season()};if(m)bcIntro(m,()=>liveMatch(m,fin));else fin()}
 renderStart();
