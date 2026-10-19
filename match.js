@@ -268,7 +268,7 @@ function bcCss(){if(document.getElementById('bcsty'))return;const st=document.cr
 #bc .bc-wp{position:absolute;inset:0;z-index:5;pointer-events:none;overflow:hidden}
 #bc .bc-wp::before,#bc .bc-wp::after{content:"";position:absolute;top:0;bottom:0;left:0;width:125%;transform:skewX(-14deg) translateX(-115%)}
 #bc .bc-wp::before{background:linear-gradient(120deg,#17419a,#2f7bff)}#bc .bc-wp::after{background:linear-gradient(240deg,#a8231d,#ff5a4f)}
-#bc .bc-wp.go::before{animation:bcW .62s cubic-bezier(.65,0,.35,1)}#bc .bc-wp.go::after{animation:bcW .62s .09s cubic-bezier(.65,0,.35,1)}
+#bc .bc-wp.go::before{animation:bcW .46s cubic-bezier(.65,0,.35,1)}#bc .bc-wp.go::after{animation:bcW .46s .07s cubic-bezier(.65,0,.35,1)}
 @keyframes bcW{from{transform:skewX(-14deg) translateX(-115%)}to{transform:skewX(-14deg) translateX(115%)}}
 /* escena 1: escudos */
 #bc .bc-bg{position:absolute;top:0;bottom:0;width:62%;opacity:.9}
@@ -311,15 +311,15 @@ function bcCss(){if(document.getElementById('bcsty'))return;const st=document.cr
 #bc .bc-hcr .cr{width:50px!important;height:auto!important;filter:drop-shadow(0 3px 6px rgba(0,0,0,.5))}
 #bc .bc-fm{margin-left:auto;font-size:clamp(28px,8vw,42px);font-weight:700;color:var(--hi);text-shadow:0 2px 0 rgba(0,0,0,.4)}
 @keyframes bcHd{from{opacity:0;transform:translateX(-60px)}to{opacity:1;transform:none}}
-#bc .bc-pit{position:relative;flex:1;min-height:0;margin:10px 14px;border-radius:10px;overflow:hidden;background:repeating-linear-gradient(0deg,#15612f 0 10%,#1a7338 10% 20%);box-shadow:0 10px 30px rgba(0,0,0,.5),inset 0 0 0 2px rgba(255,255,255,.5);animation:bcIn .6s .15s both}
+#bc .bc-pit{position:relative;flex:1;min-height:0;margin:8px 12px;border-radius:10px;overflow:hidden;background:repeating-linear-gradient(0deg,#15612f 0 10%,#1a7338 10% 20%);box-shadow:0 10px 30px rgba(0,0,0,.5),inset 0 0 0 2px rgba(255,255,255,.5);animation:bcIn .6s .15s both}
 #bc .bc-pit::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 45%,transparent 50%,rgba(0,0,0,.45));pointer-events:none}
 #bc .bc-pit i{position:absolute;border:2px solid rgba(255,255,255,.45)}
 #bc .bc-hl{left:0;right:0;top:50%;height:0;border-width:2px 0 0!important}
 #bc .bc-cc{left:50%;top:50%;width:26%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%}
 #bc .bc-bx{left:26%;right:26%;height:14%}#bc .bc-bx.t{top:-2px;border-top:0}#bc .bc-bx.b{bottom:-2px;border-bottom:0}
-#bc .bc-pl{position:absolute;z-index:2;width:21%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:3px;animation:bcPop .55s var(--d) cubic-bezier(.2,1.5,.4,1) both}
-#bc .bc-pl u{text-decoration:none;display:grid;place-items:center;width:clamp(28px,8vw,38px);aspect-ratio:1;border-radius:50%;background:var(--c);border:2px solid #fff;font:700 clamp(15px,4.4vw,20px)/1 'Barlow Condensed',sans-serif;box-shadow:0 3px 10px rgba(0,0,0,.55)}
-#bc .bc-pl span{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:rgba(5,9,18,.9);border-left:3px solid var(--hi);padding:1px 6px;font:700 clamp(12px,3.4vw,15px)/1.3 'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.03em;transform:skewX(-8deg)}
+#bc .bc-pl{position:absolute;z-index:2;width:var(--w,21%);transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:4px;animation:bcPop .45s var(--d) cubic-bezier(.2,1.5,.4,1) both}
+#bc .bc-pl u{text-decoration:none;display:grid;place-items:center;width:clamp(40px,12vw,56px);aspect-ratio:1;border-radius:50%;background:var(--c);border:2.5px solid #fff;font:700 clamp(20px,6vw,28px)/1 'Barlow Condensed',sans-serif;box-shadow:0 4px 12px rgba(0,0,0,.6)}
+#bc .bc-pl span{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:rgba(5,9,18,.92);border-left:3px solid var(--hi);padding:2px 8px;font:700 clamp(14px,4.2vw,19px)/1.3 'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.03em;transform:skewX(-8deg)}
 #bc .bc-pl em{font-style:normal;color:var(--hi);margin-right:5px}
 @keyframes bcPop{from{opacity:0;transform:translate(-50%,-30%) scale(.2)}to{opacity:1;transform:translate(-50%,-50%)}}
 #bc .bc-bn{display:flex;flex-wrap:wrap;align-items:center;gap:3px 12px;margin:0 14px 12px;padding:7px 12px;background:rgba(255,255,255,.07);border-top:2px solid var(--c);font-size:14px;text-transform:uppercase;letter-spacing:.04em;animation:bcUp .5s .9s both}
@@ -329,6 +329,29 @@ function bcCss(){if(document.getElementById('bcsty'))return;const st=document.cr
 #bc .bc-ko b{font-size:clamp(38px,11vw,72px);line-height:1;text-transform:uppercase;font-style:italic;text-shadow:0 0 26px var(--hi);animation:bcVs .5s both}
 #bc .bc-kc{display:flex;align-items:center;gap:18px}#bc .bc-kc .cr{width:clamp(60px,18vw,96px)!important;height:auto!important}
 #bc .bc-kc span{font-size:clamp(34px,9vw,54px);animation:bcSpin 1.2s linear infinite}@keyframes bcSpin{to{transform:rotate(360deg)}}
+/* v2: ritmo más ágil + escenas 1 y 5 */
+#bc .bc-sc{animation-duration:.3s}
+#bc .bc-lg{animation-delay:.2s}#bc .bc-tm.l{animation-delay:.1s}#bc .bc-tm.r{animation-delay:.2s}#bc .bc-vs{position:relative;animation-delay:.45s}
+#bc .bc-beam{position:absolute;z-index:1;top:-12%;width:42%;height:135%;pointer-events:none;mix-blend-mode:screen;filter:blur(16px);background:linear-gradient(180deg,rgba(255,255,255,.5),transparent 72%);opacity:.18;animation:bcBeam 2.6s ease-in-out infinite}
+#bc .bc-beam.l{left:-6%;transform:rotate(-24deg);transform-origin:top left}#bc .bc-beam.r{right:-6%;transform:rotate(24deg);transform-origin:top right;animation-delay:.9s}
+@keyframes bcBeam{50%{opacity:.4}}
+#bc .bc-role{font-size:14px;letter-spacing:.32em;text-transform:uppercase;opacity:.85}
+#bc .bc-lg{font-size:26px}
+#bc .bc-rk{display:flex;align-items:baseline;gap:6px;background:rgba(5,9,18,.6);border:1px solid rgba(255,255,255,.4);border-radius:999px;padding:0 14px;font-size:22px;animation:bcUp .45s .7s both}
+#bc .bc-rk b{color:var(--hi)}#bc .bc-rk small{font-size:15px;opacity:.85;letter-spacing:.08em}
+#bc .bc-vs i{position:absolute;left:50%;top:50%;width:22px;height:22px;margin:-11px;border-radius:50%;border:3px solid var(--hi);opacity:0;animation:bcRing .8s .6s ease-out both}
+@keyframes bcRing{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(13)}}
+#bc .bc-ko{position:absolute;inset:0;margin:0;justify-content:center;gap:12px;overflow:hidden}
+#bc .bc-fl{position:absolute;inset:0;background:radial-gradient(circle at 50% 42%,rgba(255,255,255,.9),transparent 62%);animation:bcFlash .7s ease-out both}
+@keyframes bcFlash{from{opacity:1}to{opacity:0}}
+#bc .bc-ring{position:absolute;left:50%;top:42%;width:60px;height:60px;margin:-30px;border:3px solid #fff;border-radius:50%;opacity:0;animation:bcRing2 1s .05s ease-out both}#bc .bc-ring.r2{animation-delay:.3s;border-color:var(--hi)}
+@keyframes bcRing2{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(12)}}
+#bc .bc-ball{position:relative;font-size:clamp(64px,19vw,104px);line-height:1;animation:bcVs .5s .05s both;filter:drop-shadow(0 8px 14px rgba(0,0,0,.6))}
+#bc .bc-ball span{display:inline-block;animation:bcSpin 1s linear infinite}
+#bc .bc-ko b{position:relative;animation-delay:.2s}
+#bc .bc-sbug{position:relative;display:flex;align-items:center;gap:12px;margin-top:8px;max-width:94%;background:linear-gradient(90deg,#17419a,#0a1226 50%,#a8231d);border:1px solid rgba(255,255,255,.3);border-radius:4px 18px 4px 18px;padding:6px 16px;font-size:clamp(17px,4.8vw,26px);text-transform:uppercase;box-shadow:0 8px 24px rgba(0,0,0,.5);animation:bcUp .45s .4s both}
+#bc .bc-sbug>span{display:flex;align-items:center;gap:8px;min-width:0}#bc .bc-sbug em{font-style:normal;max-width:24vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#bc .bc-sbug .cr{width:34px!important;height:34px!important;object-fit:contain}#bc .bc-sbug strong{font-size:1.6em;color:var(--hi);line-height:1}#bc .bc-sbug u{text-decoration:none;opacity:.8;font-size:.85em}
 @media(prefers-reduced-motion:reduce){#bc *{animation:none!important}#bc .bc-pg i.on b{width:100%}#bc .bc-wp{display:none}}`;document.head.appendChild(st)}
 
 function bcIntro(m,start){
@@ -339,19 +362,21 @@ function bcIntro(m,start){
   jr=Number.isFinite(rd)?' · Jornada '+(rd+1):'',fm=t=>String(t.form||'').split(' ')[0];
  const rows=bcTable(lg,rd),pi=rows?rows.findIndex(r=>r.id==h):-1,qi=rows?rows.findIndex(r=>r.id==a):-1,keep=new Set();
  [pi,qi].forEach(i=>{if(i>=0)for(let k=i-1;k<=i+1;k++)if(k>=0&&k<rows.length)keep.add(k)});
- const S1=()=>`<div class="bc-bg l"></div><div class="bc-bg r"></div><div class="bc-c"><div class="bc-lg">${lgl(lg,56)}<span>Liga ${lg}${jr}</span></div>
-  <div class="bc-t">${[0,1].map(s=>`<div class="bc-tm ${s?'r':'l'}"><span class="bc-cr">${crest(ids[s],150)}</span><b>${esc(T[s].n)}</b>${form5(ids[s],rd)}</div>`).join('<div class="bc-vs">VS</div>')}</div></div>`;
+ const rk=s=>{const i=s?qi:pi;return rows&&i>=0?`<div class="bc-rk"><b>${i+1}º</b><small>${rows[i].pts} pts</small></div>`:''};
+ const S1=()=>`<div class="bc-beam l"></div><div class="bc-beam r"></div><div class="bc-bg l"></div><div class="bc-bg r"></div><div class="bc-c"><div class="bc-lg">${lgl(lg,60)}<span>Liga ${lg}${jr}</span></div>
+  <div class="bc-t">${[0,1].map(s=>`<div class="bc-tm ${s?'r':'l'}"><small class="bc-role">${s?'Visitante':'Local'}</small><span class="bc-cr">${crest(ids[s],150)}</span><b>${esc(T[s].n)}</b>${rk(s)}${form5(ids[s],rd)}</div>`).join('<div class="bc-vs"><i></i>VS</div>')}</div></div>`;
  const S2=()=>{let body='',prev=-1,n=0;[...keep].sort((x,y)=>x-y).forEach(k=>{const r=rows[k];if(prev>=0&&k>prev+1)body+='<div class="bc-gp">···</div>';prev=k;
    body+=`<div class="bc-r${r.id==h?' h':r.id==a?' a':''}" style="--d:${(.2+n++*.07).toFixed(2)}s"><em>${k+1}</em><span>${crest(r.id,26)}</span><b>${esc(G.T[r.id].n)}</b><i>${r.pj}</i><i>${r.dg>0?'+'+r.dg:r.dg}</i><strong>${r.pts}</strong></div>`});
   return `<div class="bc-tt">${lgl(lg,56)}<div><small>Liga ${lg}${jr}</small><b>Clasificación</b></div></div><div class="bc-tb"><div class="bc-th"><span></span><span></span><span>Equipo</span><span>PJ</span><span>DG</span><span>PTS</span></div>${body}</div>`};
  const LU=s=>{const t=T[s],rw=bcRows(t),N=bcNums(t),R=rw.length;
-  const pl=rw.map((r,k)=>r.map((li,j)=>{const p=t.pl[t.lu[li]],x=(j+1)/(r.length+1)*100,y=R>1?11+k*78/(R-1):50;
-   return `<div class="bc-pl" style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%;--d:${(.35+(R-1-k)*.2+j*.07).toFixed(2)}s"><u>${N[li]}</u><span><em>${Math.round(ef(p))}</em>${esc(sn(p.n))}</span></div>`}).join('')).join('');
+  const pl=rw.map((r,k)=>r.map((li,j)=>{const p=t.pl[t.lu[li]],n=r.length,lo=n==2?28:n==3?19:n==4?14:11,sp=n>1?(100-2*lo)/(n-1):40,x=n>1?lo+j*sp:50,y=R>1?9+k*82/(R-1):50,w=Math.min(34,sp*1.06);
+   return `<div class="bc-pl" style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%;--w:${w.toFixed(1)}%;--d:${(.25+(R-1-k)*.14+j*.05).toFixed(2)}s"><u>${N[li]}</u><span><em>${Math.round(ef(p))}</em>${esc(sn(p.n))}</span></div>`}).join('')).join('');
   const bn=(t.bn||[]).slice(0,8).map(i=>t.pl[i]).filter(Boolean).map(p=>`<span>${esc(sn(p.n))}</span>`).join('');
   return `<div class="bc-lu" style="--c:${COL[s]}"><div class="bc-hd"><span class="bc-hcr">${crest(ids[s],54)}</span><div><small>${s?'Visitante':'Local'} · Alineación</small><b>${esc(t.n)}</b></div><div class="bc-fm">${fm(t)}</div></div>
    <div class="bc-pit"><i class="bc-hl"></i><i class="bc-cc"></i><i class="bc-bx t"></i><i class="bc-bx b"></i>${pl}</div><div class="bc-bn"><b>Banquillo</b>${bn}</div></div>`};
- const S5=()=>`<div class="bc-ko"><div class="bc-kc">${crest(h,96)}<span>⚽</span>${crest(a,96)}</div><b>¡Empieza el partido!</b></div>`;
- const sc=[{h:S1,d:3600},...(keep.size?[{h:S2,d:4300}]:[]),{h:()=>LU(0),d:5600},{h:()=>LU(1),d:5600},{h:S5,d:1700}];
+ const S5=()=>`<div class="bc-ko"><div class="bc-fl"></div><i class="bc-ring"></i><i class="bc-ring r2"></i><div class="bc-ball"><span>⚽</span></div><b>¡Empieza el partido!</b>
+  <div class="bc-sbug"><span>${crest(h,34)}<em>${esc(T[0].n)}</em></span><strong>0 - 0</strong><span class="r"><em>${esc(T[1].n)}</em>${crest(a,34)}</span><u>0'</u></div></div>`;
+ const sc=[{h:S1,d:2900},...(keep.size?[{h:S2,d:3200}]:[]),{h:()=>LU(0),d:4200},{h:()=>LU(1),d:4200},{h:S5,d:2000}];
  const o=document.createElement('div');o.id='bc';
  o.innerHTML=`<div class="bc-pg">${sc.map(()=>'<i><b></b></i>').join('')}</div><div class="bc-top"><span>Toca para avanzar</span><button class="bc-sk" type="button">Saltar ⏭</button></div><div class="bc-st"></div><div class="bc-wp"></div>`;
  document.body.appendChild(o);
@@ -360,8 +385,8 @@ function bcIntro(m,start){
  function end(){if(fin)return;fin=1;clearTimeout(tm);clearTimeout(sw);document.removeEventListener('keydown',kd);try{start()}finally{o.classList.add('out');setTimeout(()=>o.remove(),480)}}
  function go(k){if(fin)return;clearTimeout(tm);if(k>=sc.length)return end();lt=Date.now();
   const put=()=>{st.innerHTML='<div class="bc-sc">'+sc[k].h()+'</div>';pg.forEach((e,j)=>{e.className=j<k?'d':j==k?'on':'';e.style.setProperty('--t',sc[k].d+'ms')})};
-  if(!k)put();else{wp.classList.remove('go');void wp.offsetWidth;wp.classList.add('go');sw=setTimeout(()=>{if(!fin)put()},310)}
-  cur=k;tm=setTimeout(()=>go(k+1),sc[k].d+(k?310:0))}
- let cur=0;const nx=()=>{if(Date.now()-lt>450)go(cur+1)};
+  if(!k)put();else{wp.classList.remove('go');void wp.offsetWidth;wp.classList.add('go');sw=setTimeout(()=>{if(!fin)put()},230)}
+  cur=k;tm=setTimeout(()=>go(k+1),sc[k].d+(k?230:0))}
+ let cur=0;const nx=()=>{if(Date.now()-lt>300)go(cur+1)};
  o.addEventListener('click',e=>{if(e.target.closest('.bc-sk'))end();else nx()});document.addEventListener('keydown',kd);
  go(0)}
