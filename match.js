@@ -83,7 +83,7 @@ ev.sort((x,y)=>x.min-y.min);
 /* ---- pantalla ---- */
 if(!document.getElementById('lvhd')){const st=document.createElement('style');st.id='lvhd';st.textContent=`
 #lv .lvtop{position:relative;overflow:hidden;isolation:isolate;padding:12px 14px 14px;border-radius:16px;border:1px solid rgba(255,255,255,.2);
- background:radial-gradient(120% 140% at 50% 0%,rgba(255,255,255,.24) 0%,rgba(255,255,255,0) 58%),linear-gradient(180deg,rgba(0,0,0,0) 45%,rgba(0,0,0,.32) 100%),linear-gradient(104deg,var(--c0,var(--ac)) 0 49.5%,rgba(255,255,255,.6) 49.5% 50.5%,var(--c1,var(--ac)) 50.5% 100%);
+ background:radial-gradient(120% 140% at 50% 0%,rgba(255,255,255,.24) 0%,rgba(255,255,255,0) 58%),linear-gradient(180deg,rgba(0,0,0,0) 45%,rgba(0,0,0,.32) 100%),linear-gradient(135deg,var(--lc),color-mix(in srgb,var(--lc) 62%,#000));
  box-shadow:0 8px 24px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.28),inset 0 -3px 0 rgba(0,0,0,.18)}
 #lv .lvtop>*{position:relative;z-index:2}
 #lv .lvtop>.lvbg{position:absolute;z-index:0;left:50%;top:50%;height:185%;width:auto;max-width:none;transform:translate(-50%,-50%);opacity:.2;pointer-events:none;
@@ -97,7 +97,7 @@ if(!document.getElementById('lvhd')){const st=document.createElement('style');st
 #lv .lvmid .lvmin{background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.28);box-shadow:0 2px 6px rgba(0,0,0,.3);letter-spacing:.05em}
 #lv .lvtm .cr{filter:drop-shadow(0 3px 7px rgba(0,0,0,.5))}
 #lv .lvtm b{text-shadow:0 2px 4px rgba(0,0,0,.45);text-transform:uppercase;letter-spacing:.03em}`;document.head.appendChild(st)}
-const o=document.createElement('div');o.id='lv';if(m.cc)o.classList.add('cc');tcSet(o,ids);
+const o=document.createElement('div');o.id='lv';if(m.cc)o.classList.add('cc');tcSet(o,ids);o.style.setProperty('--lc',({1:'#d62828',2:'#3fb4ff',3:'#1e63e9'})[m.cc?3:m.r[1]]||'#d62828');
 const cr=(i,s)=>crest(i,s),crv=s=>s==1-mine?`<span class="rvc" data-rv="${ids[s]}" role="button" tabindex="0" title="Ver alineación de ${T[s].n}">${cr(ids[s],54)}</span>`:cr(ids[s],54);
 o.innerHTML=`<div class="lvc"><div class="lvtop"><img class="lvbg" src="${lgi(m.r[1])}" alt="" onerror="this.style.display='none'"><div class="lvtm">${crv(0)}${form5(ids[0],m.r[0])}<b>${T[0].n}</b></div>
 <div class="lvmid"><div>${lgl(m.r[1],96)}</div><div class="sc" id="lvs">0 - 0</div><div class="lvmin" id="lvm">0'</div></div>
