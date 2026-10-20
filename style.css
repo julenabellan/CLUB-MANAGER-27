@@ -72,7 +72,7 @@ button.p{transition:filter .15s}button.p:hover{filter:brightness(1.1)}
 #lvf{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:8px;padding:4px 2px}
 .lm{display:flex;align-items:center;gap:8px;max-width:88%;background:var(--pn);border:1px solid var(--ln);border-radius:12px;padding:8px 12px;animation:jump .45s cubic-bezier(.2,1.5,.4,1);box-shadow:0 2px 8px rgba(0,0,0,.08)}
 .lm small{display:block;color:var(--mu);font-weight:600}.lm em{color:var(--mu);font-style:normal;font-size:13px}
-.lm.l0{align-self:flex-start;border-left:4px solid #2f7bff}.lm.l1{align-self:flex-end;border-right:4px solid #ff5a4f;flex-direction:row-reverse;text-align:right}
+.lm.l0{align-self:flex-start;border-left:4px solid var(--c0,#2f7bff)}.lm.l1{align-self:flex-end;border-right:4px solid var(--c1,#ff5a4f);flex-direction:row-reverse;text-align:right}
 .lm.l2{align-self:center;max-width:100%;text-align:center;background:transparent;border-style:dashed;box-shadow:none;color:var(--mu)}
 .lm.g{font:700 clamp(18px,4vw,24px)/1.15 'Barlow Condensed',sans-serif;background:color-mix(in srgb,var(--ok) 16%,var(--pn));border-color:var(--ok)}
 .lm.gm{background:color-mix(in srgb,var(--hi) 28%,var(--pn));border-color:var(--hi)}
@@ -502,8 +502,8 @@ body.tcm #mn>*{animation:none}
 @media(max-width:640px){.seg button{font-size:13px;gap:6px}.seg button .lgl{height:28px!important}}
 #mi{position:fixed;inset:0;z-index:30;overflow:hidden;background:#050912;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;cursor:pointer}
 .mi-p{position:absolute;top:0;bottom:0;width:62%}
-.mi-p.l{left:-12%;background:linear-gradient(120deg,#17419a,#2f7bff);animation:miL .7s cubic-bezier(.2,.9,.2,1) both}
-.mi-p.r{right:-12%;background:linear-gradient(240deg,#a8231d,#ff5a4f);animation:miR .7s cubic-bezier(.2,.9,.2,1) both}
+.mi-p.l{left:-12%;background:linear-gradient(120deg,color-mix(in srgb,var(--c0,#2f7bff) 55%,#000),var(--c0,#2f7bff));animation:miL .7s cubic-bezier(.2,.9,.2,1) both}
+.mi-p.r{right:-12%;background:linear-gradient(240deg,color-mix(in srgb,var(--c1,#ff5a4f) 55%,#000),var(--c1,#ff5a4f));animation:miR .7s cubic-bezier(.2,.9,.2,1) both}
 @keyframes miL{from{transform:skewX(-12deg) translateX(-115%)}to{transform:skewX(-12deg)}}
 @keyframes miR{from{transform:skewX(-12deg) translateX(115%)}to{transform:skewX(-12deg)}}
 .mi-c{position:relative;z-index:2;width:100%;max-width:760px;padding:16px;text-align:center}
@@ -601,3 +601,17 @@ body.tcm #mn>*{animation:none}
 .bgs.in{color:var(--ok);border-color:var(--ok)}.bgs.out{color:var(--bad);border-color:var(--bad)}
 .rvb .bdr{display:inline-flex;gap:4px;align-items:center;margin-left:4px}
 .rvb .pr.outt{opacity:.6}.rvb .pr em{color:var(--bad);font-style:normal;font-size:12px;font-weight:700;margin-left:4px}
+
+/* ===== colores de equipo =====
+   --c0 = color del local, --c1 = color del visitante. Los fija JS (tcSet en data.js) a partir de COLORES (data.js).
+   Se usan en: cabecera del marcador, tarjetas de acciones, goles, presentación previa y barridos (ver match.js). */
+.lm.l0{background:color-mix(in srgb,var(--c0,var(--pn)) 14%,var(--pn))}
+.lm.l1{background:color-mix(in srgb,var(--c1,var(--pn)) 14%,var(--pn))}
+.lm.g.l0{background:color-mix(in srgb,var(--c0,var(--ok)) 32%,var(--pn));border-color:var(--c0,var(--ok))}
+.lm.g.l1{background:color-mix(in srgb,var(--c1,var(--ok)) 32%,var(--pn));border-color:var(--c1,var(--ok))}
+.lm.g.gm{box-shadow:0 0 0 2px var(--hi),0 2px 12px rgba(0,0,0,.25)}
+/* destello del marcador con el color del equipo que marca */
+@keyframes lvgl{0%,100%{box-shadow:0 8px 24px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.28),inset 0 -3px 0 rgba(0,0,0,.18)}30%{box-shadow:0 0 0 3px var(--gc),0 0 44px 8px var(--gc),inset 0 1px 0 rgba(255,255,255,.28),inset 0 -3px 0 rgba(0,0,0,.18)}}
+#lv .lvtop.gl0{--gc:var(--c0);animation:lvgl 1.5s ease-out}
+#lv .lvtop.gl1{--gc:var(--c1);animation:lvgl 1.5s ease-out}
+@media(prefers-reduced-motion:reduce){#lv .lvtop.gl0,#lv .lvtop.gl1{animation:none}}

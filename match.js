@@ -83,7 +83,7 @@ ev.sort((x,y)=>x.min-y.min);
 /* ---- pantalla ---- */
 if(!document.getElementById('lvhd')){const st=document.createElement('style');st.id='lvhd';st.textContent=`
 #lv .lvtop{position:relative;overflow:hidden;isolation:isolate;padding:12px 14px 14px;border-radius:16px;border:1px solid rgba(255,255,255,.2);
- background:radial-gradient(120% 140% at 50% 0%,color-mix(in srgb,var(--ac) 88%,#fff) 0%,var(--ac) 38%,color-mix(in srgb,var(--ac) 50%,#000) 100%);
+ background:radial-gradient(120% 140% at 50% 0%,rgba(255,255,255,.24) 0%,rgba(255,255,255,0) 58%),linear-gradient(180deg,rgba(0,0,0,0) 45%,rgba(0,0,0,.32) 100%),linear-gradient(104deg,var(--c0,var(--ac)) 0 49.5%,rgba(255,255,255,.6) 49.5% 50.5%,var(--c1,var(--ac)) 50.5% 100%);
  box-shadow:0 8px 24px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.28),inset 0 -3px 0 rgba(0,0,0,.18)}
 #lv .lvtop>*{position:relative;z-index:2}
 #lv .lvtop>.lvbg{position:absolute;z-index:0;left:50%;top:50%;height:185%;width:auto;max-width:none;transform:translate(-50%,-50%);opacity:.2;pointer-events:none;
@@ -97,7 +97,7 @@ if(!document.getElementById('lvhd')){const st=document.createElement('style');st
 #lv .lvmid .lvmin{background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.28);box-shadow:0 2px 6px rgba(0,0,0,.3);letter-spacing:.05em}
 #lv .lvtm .cr{filter:drop-shadow(0 3px 7px rgba(0,0,0,.5))}
 #lv .lvtm b{text-shadow:0 2px 4px rgba(0,0,0,.45);text-transform:uppercase;letter-spacing:.03em}`;document.head.appendChild(st)}
-const o=document.createElement('div');o.id='lv';if(m.cc)o.classList.add('cc');
+const o=document.createElement('div');o.id='lv';if(m.cc)o.classList.add('cc');tcSet(o,ids);
 const cr=(i,s)=>crest(i,s),crv=s=>s==1-mine?`<span class="rvc" data-rv="${ids[s]}" role="button" tabindex="0" title="Ver alineación de ${T[s].n}">${cr(ids[s],54)}</span>`:cr(ids[s],54);
 o.innerHTML=`<div class="lvc"><div class="lvtop"><img class="lvbg" src="${lgi(m.r[1])}" alt="" onerror="this.style.display='none'"><div class="lvtm">${crv(0)}${form5(ids[0],m.r[0])}<b>${T[0].n}</b></div>
 <div class="lvmid"><div>${lgl(m.r[1],96)}</div><div class="sc" id="lvs">0 - 0</div><div class="lvmin" id="lvm">0'</div></div>
@@ -127,7 +127,7 @@ function fire(e){if(e.k=='sub'){pause=hold(.35);const ix=rl.indexOf(e.ia);if(ix>
   say(e.min,e.s,`🔄 Cambio en ${T[e.s].n}: sale <b>${sn(e.out)}</b>, entra <b>${sn(e.inn)}</b>`,'sub');return}
  const t=fill(deck[e.k=='goal'?gk(e):e.k](),e);
  if(e.k=='goal'){sc[e.s]++;sh[e.s]++;pause=hold(1.8);bd(e.s,e.wf).g++;gl[e.s].push(`${e.min}' ${e.who}${e.as?' <i>(as. '+e.as+')</i>':''}`);q('#lg'+e.s).innerHTML=gl[e.s].join('<br>');
-  say(e.min,e.s,`${ICON.goal} ${t}`,'g'+(e.s==mine?' gm':''));q('#lvs').classList.remove('flash');void q('#lvs').offsetWidth;q('#lvs').classList.add('flash')}
+  say(e.min,e.s,`${ICON.goal} ${t}`,'g'+(e.s==mine?' gm':''));q('#lvs').classList.remove('flash');void q('#lvs').offsetWidth;q('#lvs').classList.add('flash');const tp=q('.lvtop');tp.classList.remove('gl0','gl1');void tp.offsetWidth;tp.classList.add('gl'+e.s)}
  else{if(SHOT.includes(e.k))sh[e.s]++;if(e.k=='corner')co[e.s]++;if(e.k=='foul')fo[e.s]++;if(e.k=='fapre')fo[1-e.s]++;if(e.k=='card'){yc[e.s]++;bd(e.s,e.wf).y=1}pause=hold(.35);say(e.min,e.s,`${e.k=='card'?'<i class="cdk"></i>':ICON[e.k]} ${t}`,e.k=='card'?'y':'')}}
 /* ---- resumen final ---- */
 function recap(){
@@ -267,13 +267,13 @@ function bcCss(){if(document.getElementById('bcsty'))return;const st=document.cr
 #bc .bc-sc{position:absolute;inset:0;display:flex;flex-direction:column;animation:bcIn .4s both}@keyframes bcIn{from{opacity:0}to{opacity:1}}
 #bc .bc-wp{position:absolute;inset:0;z-index:5;pointer-events:none;overflow:hidden}
 #bc .bc-wp::before,#bc .bc-wp::after{content:"";position:absolute;top:0;bottom:0;left:0;width:125%;transform:skewX(-14deg) translateX(-115%)}
-#bc .bc-wp::before{background:linear-gradient(120deg,#17419a,#2f7bff)}#bc .bc-wp::after{background:linear-gradient(240deg,#a8231d,#ff5a4f)}
+#bc .bc-wp::before{background:linear-gradient(120deg,color-mix(in srgb,var(--c0,#2f7bff) 55%,#000),var(--c0,#2f7bff))}#bc .bc-wp::after{background:linear-gradient(240deg,color-mix(in srgb,var(--c1,#ff4d43) 55%,#000),var(--c1,#ff4d43))}
 #bc .bc-wp.go::before{animation:bcW .46s cubic-bezier(.65,0,.35,1)}#bc .bc-wp.go::after{animation:bcW .46s .07s cubic-bezier(.65,0,.35,1)}
 @keyframes bcW{from{transform:skewX(-14deg) translateX(-115%)}to{transform:skewX(-14deg) translateX(115%)}}
 /* escena 1: escudos */
 #bc .bc-bg{position:absolute;top:0;bottom:0;width:62%;opacity:.9}
-#bc .bc-bg.l{left:-12%;background:linear-gradient(120deg,#17419a,#2f7bff);animation:bcPl .7s cubic-bezier(.2,.9,.2,1) both}
-#bc .bc-bg.r{right:-12%;background:linear-gradient(240deg,#a8231d,#ff5a4f);animation:bcPr .7s cubic-bezier(.2,.9,.2,1) both}
+#bc .bc-bg.l{left:-12%;background:linear-gradient(120deg,color-mix(in srgb,var(--c0,#2f7bff) 55%,#000),var(--c0,#2f7bff));animation:bcPl .7s cubic-bezier(.2,.9,.2,1) both}
+#bc .bc-bg.r{right:-12%;background:linear-gradient(240deg,color-mix(in srgb,var(--c1,#ff4d43) 55%,#000),var(--c1,#ff4d43));animation:bcPr .7s cubic-bezier(.2,.9,.2,1) both}
 @keyframes bcPl{from{transform:skewX(-12deg) translateX(-115%)}to{transform:skewX(-12deg)}}@keyframes bcPr{from{transform:skewX(-12deg) translateX(115%)}to{transform:skewX(-12deg)}}
 #bc .bc-c{position:relative;z-index:2;margin:auto;width:100%;max-width:760px;padding:16px;text-align:center}
 #bc .bc-lg{display:flex;justify-content:center;align-items:center;gap:12px;font-size:22px;letter-spacing:.14em;text-transform:uppercase;animation:bcUp .5s .45s both}
@@ -299,8 +299,8 @@ function bcCss(){if(document.getElementById('bcsty'))return;const st=document.cr
 #bc .bc-r em{font-style:normal;font-weight:700;opacity:.8;text-align:center}#bc .bc-r b{font-weight:700;text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #bc .bc-r span .cr{width:26px!important;height:26px!important;object-fit:contain}
 #bc .bc-r i,#bc .bc-th span:nth-child(n+4){font-style:normal;text-align:right}#bc .bc-r strong{text-align:right;color:var(--hi);font-size:24px}
-#bc .bc-r.h{background:linear-gradient(90deg,rgba(47,123,255,.6),rgba(47,123,255,.14));border-left-color:#2f7bff}
-#bc .bc-r.a{background:linear-gradient(90deg,rgba(255,77,67,.6),rgba(255,77,67,.14));border-left-color:#ff4d43}
+#bc .bc-r.h{background:linear-gradient(90deg,color-mix(in srgb,var(--c0,#2f7bff) 60%,transparent),color-mix(in srgb,var(--c0,#2f7bff) 14%,transparent));border-left-color:var(--c0,#2f7bff)}
+#bc .bc-r.a{background:linear-gradient(90deg,color-mix(in srgb,var(--c1,#ff4d43) 60%,transparent),color-mix(in srgb,var(--c1,#ff4d43) 14%,transparent));border-left-color:var(--c1,#ff4d43)}
 #bc .bc-gp{text-align:center;opacity:.45;letter-spacing:.6em;line-height:.5;font-size:22px}
 @keyframes bcRow{from{opacity:0;transform:translateX(-46px)}to{opacity:1;transform:none}}
 /* escenas 3 y 4: alineaciones */
@@ -364,7 +364,7 @@ function bcCcCss(){if(document.getElementById('bccsty'))return;const st=document
 #bc.bcx .bc-top{letter-spacing:.2em;font-weight:600}
 #bc.bcx .bc-sk,#bc.bcx .bc-pl u,#bc.bcx .bc-pl span,#bc.bcx .bc-fm{font-family:inherit}
 #bc.bcx .bc-sk{border-color:var(--hi);color:var(--hi);background:rgba(0,240,224,.08);font-size:12px;font-weight:700}
-#bc.bcx .bc-wp::before{background:linear-gradient(120deg,#055b66,#00f0e0)}#bc.bcx .bc-wp::after{background:linear-gradient(240deg,#9a5d00,#ffc233)}
+#bc.bcx .bc-wp::before{background:linear-gradient(120deg,color-mix(in srgb,var(--c0,#00f0e0) 55%,#000),var(--c0,#00f0e0))}#bc.bcx .bc-wp::after{background:linear-gradient(240deg,color-mix(in srgb,var(--c1,#ffc233) 55%,#000),var(--c1,#ffc233))}
 /* escena 1: bloques escalonados */
 #bc .cx-c{position:relative;z-index:2;margin:auto;width:100%;max-width:560px;padding:14px 18px;display:flex;flex-direction:column;gap:12px}
 #bc .cx-lg{display:flex;align-items:center;gap:14px;animation:bcUp .5s .1s both}
@@ -372,8 +372,8 @@ function bcCcCss(){if(document.getElementById('bccsty'))return;const st=document
 #bc .cx-lg small{display:block;font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--gd)}
 #bc .cx-lg b{display:block;font-size:clamp(26px,7.5vw,38px);line-height:1.02;letter-spacing:.06em;text-transform:uppercase;color:#fff;text-shadow:0 0 22px rgba(0,240,224,.7)}
 #bc .cx-lg em{display:inline-block;margin-top:6px;font-style:normal;font-size:13px;letter-spacing:.14em;text-transform:uppercase;padding:3px 10px;border:1px solid var(--hi);color:var(--hi);border-radius:999px}
-#bc .cx-t{display:flex;align-items:center;gap:14px;padding:10px 16px;border-radius:6px 28px 6px 28px;background:linear-gradient(100deg,rgba(0,240,224,.28),rgba(0,240,224,.04));border:1px solid rgba(0,240,224,.55);box-shadow:0 10px 28px rgba(0,0,0,.5),0 0 22px rgba(0,240,224,.15)}
-#bc .cx-t.r{flex-direction:row-reverse;text-align:right;border-radius:28px 6px 28px 6px;background:linear-gradient(260deg,rgba(255,194,51,.3),rgba(255,194,51,.04));border-color:rgba(255,194,51,.65);box-shadow:0 10px 28px rgba(0,0,0,.5),0 0 22px rgba(255,194,51,.15)}
+#bc .cx-t{display:flex;align-items:center;gap:14px;padding:10px 16px;border-radius:6px 28px 6px 28px;background:linear-gradient(100deg,color-mix(in srgb,var(--c0,#00f0e0) 55%,transparent),color-mix(in srgb,var(--c0,#00f0e0) 8%,transparent));border:1px solid var(--c0,#00f0e0);box-shadow:0 10px 28px rgba(0,0,0,.5),0 0 22px color-mix(in srgb,var(--c0,#00f0e0) 35%,transparent)}
+#bc .cx-t.r{flex-direction:row-reverse;text-align:right;border-radius:28px 6px 28px 6px;background:linear-gradient(260deg,color-mix(in srgb,var(--c1,#ffc233) 55%,transparent),color-mix(in srgb,var(--c1,#ffc233) 8%,transparent));border-color:var(--c1,#ffc233);box-shadow:0 10px 28px rgba(0,0,0,.5),0 0 22px color-mix(in srgb,var(--c1,#ffc233) 35%,transparent)}
 #bc .cx-t.l{animation:bcSl .6s .25s cubic-bezier(.2,1.3,.4,1) both}#bc .cx-t.r{animation:bcSr .6s .4s cubic-bezier(.2,1.3,.4,1) both}
 #bc .cx-cr{flex:none;filter:drop-shadow(0 6px 14px rgba(0,0,0,.6));animation:bcFl 3.2s 1.2s ease-in-out infinite}
 #bc .cx-cr .cr{width:clamp(78px,24vw,120px)!important;height:auto!important}
@@ -433,7 +433,7 @@ function bcFit(r){r.querySelectorAll('.bc-pl span').forEach(e=>{let f=parseFloat
 
 function bcIntro(m,start){
  bcCss();
- const [rd,lg,h,a]=m.r,ids=[h,a],T=ids.map(i=>G.T[i]),COL=m.cc?['#00c8bd','#ffb81c']:['#2f7bff','#ff4d43'],
+ const [rd,lg,h,a]=m.r,ids=[h,a],T=ids.map(i=>G.T[i]),COL=[tcol(h,0),tcol(a,1)],
   sn=n=>{const p=String(n).split(' ');return p.length>1?p.slice(1).join(' '):n},
   esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])),
   jr=m.cl?' · '+m.cl:Number.isFinite(rd)?' · Jornada '+(rd+1):'',fm=t=>String(t.form||'').split(' ')[0];
@@ -462,7 +462,7 @@ function bcIntro(m,start){
  const S5=()=>`<div class="bc-ko"><div class="bc-fl"></div><i class="bc-ring"></i><i class="bc-ring r2"></i><div class="bc-ball"><span>⚽</span></div><b>¡Empieza el partido!</b>
   <div class="bc-sbug"><span>${crest(h,34)}<em>${esc(T[0].n)}</em></span><strong>0 - 0</strong><span class="r"><em>${esc(T[1].n)}</em>${crest(a,34)}</span><u>0'</u></div></div>`;
  const sc=[{h:cc?S1c:S1,d:2900},...(cc?(ccd?[{h:S2c,d:3200}]:[]):keep.size?[{h:S2,d:3200}]:[]),{h:()=>LU(0),d:4200},{h:()=>LU(1),d:4200},{h:cc?S5c:S5,d:2000}];
- const o=document.createElement('div');o.id='bc';if(cc)o.classList.add('bcx');
+ const o=document.createElement('div');o.id='bc';if(cc)o.classList.add('bcx');tcSet(o,ids);
  o.innerHTML=`<div class="bc-pg">${sc.map(()=>'<i><b></b></i>').join('')}</div><div class="bc-top"><span>Toca para avanzar</span><button class="bc-sk" type="button">Saltar ⏭</button></div><div class="bc-st"></div><div class="bc-wp"></div>`;
  document.body.appendChild(o);
  const st=o.querySelector('.bc-st'),wp=o.querySelector('.bc-wp'),pg=[...o.querySelectorAll('.bc-pg i')];let tm=0,fin=0,lt=0,sw=0;
