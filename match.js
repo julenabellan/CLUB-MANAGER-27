@@ -99,7 +99,7 @@ if(!document.getElementById('lvhd')){const st=document.createElement('style');st
 #lv .lvtm b{text-shadow:0 2px 4px rgba(0,0,0,.45);text-transform:uppercase;letter-spacing:.03em}`;document.head.appendChild(st)}
 const o=document.createElement('div');o.id='lv';
 const cr=(i,s)=>crest(i,s),crv=s=>s==1-mine?`<span class="rvc" data-rv="${ids[s]}" role="button" tabindex="0" title="Ver alineación de ${T[s].n}">${cr(ids[s],54)}</span>`:cr(ids[s],54);
-o.innerHTML=`<div class="lvc"><div class="lvtop"><img class="lvbg" src="img/LOGO%20${m.r[1]}A.png" alt="" onerror="this.style.display='none'"><div class="lvtm">${crv(0)}${form5(ids[0],m.r[0])}<b>${T[0].n}</b></div>
+o.innerHTML=`<div class="lvc"><div class="lvtop"><img class="lvbg" src="${lgi(m.r[1])}" alt="" onerror="this.style.display='none'"><div class="lvtm">${crv(0)}${form5(ids[0],m.r[0])}<b>${T[0].n}</b></div>
 <div class="lvmid"><div>${lgl(m.r[1],96)}</div><div class="sc" id="lvs">0 - 0</div><div class="lvmin" id="lvm">0'</div></div>
 <div class="lvtm r">${crv(1)}${form5(ids[1],m.r[0])}<b>${T[1].n}</b></div>
 <div class="lvg"><div id="lg0"></div><div id="lg1" class="r"></div></div></div>
@@ -359,15 +359,15 @@ function bcIntro(m,start){
  const [rd,lg,h,a]=m.r,ids=[h,a],T=ids.map(i=>G.T[i]),COL=['#2f7bff','#ff4d43'],
   sn=n=>{const p=String(n).split(' ');return p.length>1?p.slice(1).join(' '):n},
   esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])),
-  jr=Number.isFinite(rd)?' · Jornada '+(rd+1):'',fm=t=>String(t.form||'').split(' ')[0];
+  jr=m.cl?' · '+m.cl:Number.isFinite(rd)?' · Jornada '+(rd+1):'',fm=t=>String(t.form||'').split(' ')[0];
  const rows=bcTable(lg,rd),pi=rows?rows.findIndex(r=>r.id==h):-1,qi=rows?rows.findIndex(r=>r.id==a):-1,keep=new Set();
  [pi,qi].forEach(i=>{if(i>=0)for(let k=i-1;k<=i+1;k++)if(k>=0&&k<rows.length)keep.add(k)});
  const rk=s=>{const i=s?qi:pi;return rows&&i>=0?`<div class="bc-rk"><b>${i+1}º</b><small>${rows[i].pts} pts</small></div>`:''};
- const S1=()=>`<div class="bc-beam l"></div><div class="bc-beam r"></div><div class="bc-bg l"></div><div class="bc-bg r"></div><div class="bc-c"><div class="bc-lg">${lgl(lg,60)}<span>Liga ${lg}${jr}</span></div>
+ const S1=()=>`<div class="bc-beam l"></div><div class="bc-beam r"></div><div class="bc-bg l"></div><div class="bc-bg r"></div><div class="bc-c"><div class="bc-lg">${lgl(lg,60)}<span>${lg==3?'Champions Cup':'Liga '+lg}${jr}</span></div>
   <div class="bc-t">${[0,1].map(s=>`<div class="bc-tm ${s?'r':'l'}"><small class="bc-role">${s?'Visitante':'Local'}</small><span class="bc-cr">${crest(ids[s],150)}</span><b>${esc(T[s].n)}</b>${rk(s)}${form5(ids[s],rd)}</div>`).join('<div class="bc-vs"><i></i>VS</div>')}</div></div>`;
  const S2=()=>{let body='',prev=-1,n=0;[...keep].sort((x,y)=>x-y).forEach(k=>{const r=rows[k];if(prev>=0&&k>prev+1)body+='<div class="bc-gp">···</div>';prev=k;
    body+=`<div class="bc-r${r.id==h?' h':r.id==a?' a':''}" style="--d:${(.2+n++*.07).toFixed(2)}s"><em>${k+1}</em><span>${crest(r.id,26)}</span><b>${esc(G.T[r.id].n)}</b><i>${r.pj}</i><i>${r.dg>0?'+'+r.dg:r.dg}</i><strong>${r.pts}</strong></div>`});
-  return `<div class="bc-tt">${lgl(lg,56)}<div><small>Liga ${lg}${jr}</small><b>Clasificación</b></div></div><div class="bc-tb"><div class="bc-th"><span></span><span></span><span>Equipo</span><span>PJ</span><span>DG</span><span>PTS</span></div>${body}</div>`};
+  return `<div class="bc-tt">${lgl(lg,56)}<div><small>${lg==3?'Champions Cup':'Liga '+lg}${jr}</small><b>Clasificación</b></div></div><div class="bc-tb"><div class="bc-th"><span></span><span></span><span>Equipo</span><span>PJ</span><span>DG</span><span>PTS</span></div>${body}</div>`};
  const LU=s=>{const t=T[s],rw=bcRows(t),N=bcNums(t),R=rw.length;
   const pl=rw.map((r,k)=>r.map((li,j)=>{const p=t.pl[t.lu[li]],n=r.length,lo=n==2?28:n==3?19:n==4?14:11,sp=n>1?(100-2*lo)/(n-1):40,x=n>1?lo+j*sp:50,y=R>1?9+k*82/(R-1):50,w=Math.min(34,sp*1.06);
    return `<div class="bc-pl" style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%;--w:${w.toFixed(1)}%;--d:${(.25+(R-1-k)*.14+j*.05).toFixed(2)}s"><u>${N[li]}</u><span><em>${Math.round(ef(p))}</em>${esc(sn(p.n))}</span></div>`}).join('')).join('');
