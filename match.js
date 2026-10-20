@@ -354,15 +354,96 @@ function bcCss(){if(document.getElementById('bcsty'))return;const st=document.cr
 #bc .bc-sbug .cr{width:34px!important;height:34px!important;object-fit:contain}#bc .bc-sbug strong{font-size:1.6em;color:var(--hi);line-height:1}#bc .bc-sbug u{text-decoration:none;opacity:.8;font-size:.85em}
 @media(prefers-reduced-motion:reduce){#bc *{animation:none!important}#bc .bc-pg i.on b{width:100%}#bc .bc-wp{display:none}}`;document.head.appendChild(st)}
 
+
+/* ===== INTRO DE LA CHAMPIONS CUP: misma estructura que la de liga, otra disposición, tipografía, textos y colores ===== */
+function bcCcCss(){if(document.getElementById('bccsty'))return;const st=document.createElement('style');st.id='bccsty';st.textContent=`
+#bc.bcx{--hi:#00f0e0;--gd:#ffc233;font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;font-weight:700;
+ background:radial-gradient(760px 420px at 50% -6%,rgba(0,240,224,.26),transparent),radial-gradient(520px 360px at 105% 105%,rgba(255,194,51,.16),transparent),radial-gradient(1.5px 1.5px at 18px 22px,rgba(255,255,255,.7),transparent),radial-gradient(1px 1px at 70px 64px,rgba(255,255,255,.5),transparent),radial-gradient(1.5px 1.5px at 104px 12px,rgba(150,255,255,.8),transparent),#03061a;
+ background-size:auto,auto,120px 90px,120px 90px,120px 90px}
+#bc.bcx .bc-pg b{background:linear-gradient(90deg,#00f0e0,#ffc233)}
+#bc.bcx .bc-top{letter-spacing:.2em;font-weight:600}
+#bc.bcx .bc-sk,#bc.bcx .bc-pl u,#bc.bcx .bc-pl span,#bc.bcx .bc-fm{font-family:inherit}
+#bc.bcx .bc-sk{border-color:var(--hi);color:var(--hi);background:rgba(0,240,224,.08);font-size:12px;font-weight:700}
+#bc.bcx .bc-wp::before{background:linear-gradient(120deg,#055b66,#00f0e0)}#bc.bcx .bc-wp::after{background:linear-gradient(240deg,#9a5d00,#ffc233)}
+/* escena 1: bloques escalonados */
+#bc .cx-c{position:relative;z-index:2;margin:auto;width:100%;max-width:560px;padding:14px 18px;display:flex;flex-direction:column;gap:12px}
+#bc .cx-lg{display:flex;align-items:center;gap:14px;animation:bcUp .5s .1s both}
+#bc .cx-lg .lgl{height:76px;width:auto;max-width:34%;object-fit:contain;filter:drop-shadow(0 0 14px var(--hi))}
+#bc .cx-lg small{display:block;font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--gd)}
+#bc .cx-lg b{display:block;font-size:clamp(26px,7.5vw,38px);line-height:1.02;letter-spacing:.06em;text-transform:uppercase;color:#fff;text-shadow:0 0 22px rgba(0,240,224,.7)}
+#bc .cx-lg em{display:inline-block;margin-top:6px;font-style:normal;font-size:13px;letter-spacing:.14em;text-transform:uppercase;padding:3px 10px;border:1px solid var(--hi);color:var(--hi);border-radius:999px}
+#bc .cx-t{display:flex;align-items:center;gap:14px;padding:10px 16px;border-radius:6px 28px 6px 28px;background:linear-gradient(100deg,rgba(0,240,224,.28),rgba(0,240,224,.04));border:1px solid rgba(0,240,224,.55);box-shadow:0 10px 28px rgba(0,0,0,.5),0 0 22px rgba(0,240,224,.15)}
+#bc .cx-t.r{flex-direction:row-reverse;text-align:right;border-radius:28px 6px 28px 6px;background:linear-gradient(260deg,rgba(255,194,51,.3),rgba(255,194,51,.04));border-color:rgba(255,194,51,.65);box-shadow:0 10px 28px rgba(0,0,0,.5),0 0 22px rgba(255,194,51,.15)}
+#bc .cx-t.l{animation:bcSl .6s .25s cubic-bezier(.2,1.3,.4,1) both}#bc .cx-t.r{animation:bcSr .6s .4s cubic-bezier(.2,1.3,.4,1) both}
+#bc .cx-cr{flex:none;filter:drop-shadow(0 6px 14px rgba(0,0,0,.6));animation:bcFl 3.2s 1.2s ease-in-out infinite}
+#bc .cx-cr .cr{width:clamp(78px,24vw,120px)!important;height:auto!important}
+#bc .cx-t>div{min-width:0;flex:1}
+#bc .cx-t small{display:block;font-size:12px;letter-spacing:.3em;text-transform:uppercase;opacity:.85}
+#bc .cx-t b{display:block;font-size:clamp(20px,5.6vw,30px);line-height:1.1;text-transform:uppercase;letter-spacing:.03em;overflow-wrap:anywhere}
+#bc .cx-vs{display:flex;align-items:center;gap:12px;animation:bcVs .5s .6s cubic-bezier(.2,1.8,.4,1) both}
+#bc .cx-vs span{flex:1;height:2px;background:linear-gradient(90deg,transparent,var(--hi),transparent)}
+#bc .cx-vs b{font-size:clamp(26px,7vw,40px);font-weight:800;color:var(--gd);letter-spacing:.2em;text-shadow:0 0 18px var(--gd)}
+/* escena 2: grupo / resultado de la ida */
+#bc .cx-g{margin:auto;width:calc(100% - 28px);max-width:520px;display:flex;flex-direction:column;gap:9px}
+#bc .cx-gh{text-align:center;margin-bottom:4px;animation:bcUp .5s both}
+#bc .cx-gh small{display:block;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--gd)}
+#bc .cx-gh b{display:block;font-size:clamp(30px,9vw,46px);letter-spacing:.08em;text-transform:uppercase;text-shadow:0 0 22px rgba(0,240,224,.7)}
+#bc .cx-gr{display:grid;grid-template-columns:26px 28px minmax(0,1fr) 30px 40px 40px;gap:8px;align-items:center;padding:9px 12px;border-radius:4px 16px 4px 16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);font-size:17px;animation:bcRow .5s var(--d,.1s) cubic-bezier(.2,.9,.2,1) both}
+#bc .cx-gr b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-transform:uppercase;font-size:16px}
+#bc .cx-gr em{font-style:normal;color:var(--hi);text-align:center}#bc .cx-gr i{font-style:normal;text-align:right}#bc .cx-gr strong{text-align:right;color:var(--gd);font-size:20px}
+#bc .cx-gr .cr{width:26px!important;height:26px!important;object-fit:contain}
+#bc .cx-gr.h{border-color:var(--hi);background:linear-gradient(90deg,rgba(0,240,224,.34),rgba(0,240,224,.06))}
+#bc .cx-gr.a{border-color:var(--gd);background:linear-gradient(90deg,rgba(255,194,51,.34),rgba(255,194,51,.06))}
+#bc .cx-gr.hd{background:none;border:0;font-size:12px;letter-spacing:.14em;opacity:.65;padding-top:0;padding-bottom:0;animation:none}
+#bc .cx-gr.hd span:nth-child(n+4){text-align:right}
+#bc .cx-id{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;padding:16px 12px;border-radius:6px 28px 6px 28px;background:rgba(255,255,255,.06);border:1px solid var(--hi);animation:bcUp .5s .2s both}
+#bc .cx-id>div{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;text-align:center}
+#bc .cx-id b{font-size:clamp(15px,4.4vw,22px);text-transform:uppercase;overflow-wrap:anywhere}
+#bc .cx-id strong{font-size:clamp(34px,10vw,52px);color:var(--gd);text-shadow:0 0 18px var(--gd)}
+#bc .cx-cap{text-align:center;font-size:12px;letter-spacing:.3em;text-transform:uppercase;opacity:.7;margin:0}
+/* alineaciones */
+#bc.bcx .bc-hd{border-radius:20px 4px 20px 4px;border:1px solid rgba(255,255,255,.25);background:linear-gradient(100deg,var(--c),color-mix(in srgb,var(--c) 35%,#020512))}
+#bc.bcx .bc-hd b{letter-spacing:.06em;font-weight:800}#bc.bcx .bc-hd small{letter-spacing:.26em}
+#bc.bcx .bc-fm{color:#fff;font-weight:800}
+#bc.bcx .bc-pit{background:repeating-linear-gradient(90deg,#0a3b45 0 12.5%,#0d4752 12.5% 25%);box-shadow:0 10px 30px rgba(0,0,0,.5),inset 0 0 0 2px rgba(0,240,224,.55)}
+#bc.bcx .bc-pit i{border-color:rgba(0,240,224,.45)}
+#bc.bcx .bc-pl u{border-radius:14px;border-color:var(--gd)}
+#bc.bcx .bc-pl span{border-left:0;border-bottom:2px solid var(--gd);transform:none;background:rgba(2,6,26,.92);font-weight:700}
+#bc.bcx .bc-pl em{color:var(--gd)}
+#bc.bcx .bc-bn{border-top-color:var(--gd)}#bc.bcx .bc-bn b{color:var(--gd)}
+/* saque inicial */
+#bc.bcx .bc-ko b{font-style:normal;letter-spacing:.1em;font-weight:800;font-size:clamp(28px,8vw,52px);color:#fff;text-shadow:0 0 26px var(--hi)}
+#bc .cx-lh .lgl{height:clamp(80px,22vw,120px);width:auto;filter:drop-shadow(0 0 22px var(--hi));animation:bcVs .5s .05s both}
+#bc .cx-sb{position:relative;display:flex;align-items:center;gap:12px;margin-top:6px;max-width:94%;background:linear-gradient(90deg,rgba(0,240,224,.5),#050a22 50%,rgba(255,194,51,.5));border:1px solid rgba(255,255,255,.3);border-radius:18px 4px 18px 4px;padding:6px 16px;font-size:clamp(15px,4.4vw,22px);text-transform:uppercase;letter-spacing:.04em;box-shadow:0 8px 24px rgba(0,0,0,.5);animation:bcUp .45s .4s both}
+#bc .cx-sb>span{display:flex;align-items:center;gap:8px;min-width:0}#bc .cx-sb em{font-style:normal;max-width:24vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#bc .cx-sb .cr{width:34px!important;height:34px!important;object-fit:contain}#bc .cx-sb strong{font-size:1.5em;color:var(--gd);line-height:1}
+`;document.head.appendChild(st)}
+
+/* datos de la Champions Cup previos al partido (ccSimDay ya lo ha simulado, así que se excluye) */
+function bcCC(h,a){try{const c=G.cc,k=c.k-1,s=CCS[k];
+ if(s.st=='gr'){const g=c.gr.g.findIndex(x=>x.includes(h)),t={};c.gr.g[g].forEach(i=>t[i]={id:i,pj:0,gf:0,gc:0,pts:0});
+  c.res.filter(r=>r.st=='gr'&&r.g==g&&r.k!=k).forEach(r=>[[r.h,r.hg,r.ag],[r.a,r.ag,r.hg]].forEach(([i,f,e])=>{const x=t[i];x.pj++;x.gf+=f;x.gc+=e;x.pts+=f>e?3:f==e?1:0}));
+  return{st:'gr',g:'ABCDEFGH'[g],rows:Object.values(t).map(x=>({...x,dg:x.gf-x.gc})).sort((x,y)=>y.pts-x.pts||y.dg-x.dg||y.gf-x.gf||x.id-y.id)}}
+ if(s.leg&&s.st!='fi'){const T=s.st=='po'?c.po:c.ko[s.st],t=T.find(x=>(x.a==h&&x.b==a)||(x.a==a&&x.b==h));if(t&&t.l[0])return{st:'ko',h:t.a,a:t.b,l:t.l[0]}}
+}catch(e){}return null}
+
 function bcIntro(m,start){
  bcCss();
- const [rd,lg,h,a]=m.r,ids=[h,a],T=ids.map(i=>G.T[i]),COL=['#2f7bff','#ff4d43'],
+ const [rd,lg,h,a]=m.r,ids=[h,a],T=ids.map(i=>G.T[i]),COL=m.cc?['#00c8bd','#ffb81c']:['#2f7bff','#ff4d43'],
   sn=n=>{const p=String(n).split(' ');return p.length>1?p.slice(1).join(' '):n},
   esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])),
   jr=m.cl?' · '+m.cl:Number.isFinite(rd)?' · Jornada '+(rd+1):'',fm=t=>String(t.form||'').split(' ')[0];
  const rows=bcTable(lg,rd),pi=rows?rows.findIndex(r=>r.id==h):-1,qi=rows?rows.findIndex(r=>r.id==a):-1,keep=new Set();
  [pi,qi].forEach(i=>{if(i>=0)for(let k=i-1;k<=i+1;k++)if(k>=0&&k<rows.length)keep.add(k)});
  const rk=s=>{const i=s?qi:pi;return rows&&i>=0?`<div class="bc-rk"><b>${i+1}º</b><small>${rows[i].pts} pts</small></div>`:''};
+ const cc=!!m.cc,ccd=cc?bcCC(h,a):null;let neu=0;if(cc){bcCcCss();try{neu=CCS[G.cc.k-1].st=='fi'}catch(e){}}
+ const S1c=()=>`<div class="cx-c"><div class="cx-lg">${lgl(3,76)}<div><small>Temporada ${G.season}</small><b>Champions Cup</b><em>${esc(m.cl||'')}</em></div></div>
+  ${[0,1].map(s=>`<div class="cx-t ${s?'r':'l'}"><span class="cx-cr">${crest(ids[s],120)}</span><div><small>${neu?'Campo neutral':s?'Visitante':'Local'}</small><b>${esc(T[s].n)}</b>${form5(ids[s])}</div></div>`).join('<div class="cx-vs"><span></span><b>VS</b><span></span></div>')}</div>`;
+ const S2c=()=>{if(!ccd)return'';const hl=id=>id==h?' h':id==a?' a':'';
+  if(ccd.st=='gr')return `<div class="cx-g"><div class="cx-gh"><small>${esc(m.cl||'')}</small><b>Grupo ${ccd.g}</b></div><div class="cx-gr hd"><span></span><span></span><span>Equipo</span><span>PJ</span><span>DG</span><span>PTS</span></div>${ccd.rows.map((r,k)=>`<div class="cx-gr${hl(r.id)}" style="--d:${(.2+k*.08).toFixed(2)}s"><em>${k+1}</em><span>${crest(r.id,26)}</span><b>${esc(G.T[r.id].n)}</b><i>${r.pj}</i><i>${r.dg>0?'+'+r.dg:r.dg}</i><strong>${r.pts}</strong></div>`).join('')}</div>`;
+  return `<div class="cx-g"><div class="cx-gh"><small>${esc(m.cl||'')}</small><b>Eliminatoria</b></div><div class="cx-id"><div>${crest(ccd.h,64)}<b>${esc(G.T[ccd.h].n)}</b></div><strong>${ccd.l[0]} - ${ccd.l[1]}</strong><div>${crest(ccd.a,64)}<b>${esc(G.T[ccd.a].n)}</b></div></div><p class="cx-cap">Resultado de la ida</p></div>`};
+ const S5c=()=>`<div class="bc-ko"><div class="bc-fl"></div><i class="bc-ring"></i><i class="bc-ring r2"></i><div class="cx-lh">${lgl(3,110)}</div><b>¡Arranca la Champions!</b>
+  <div class="cx-sb"><span>${crest(h,34)}<em>${esc(T[0].n)}</em></span><strong>0 - 0</strong><span class="r"><em>${esc(T[1].n)}</em>${crest(a,34)}</span></div></div>`;
  const S1=()=>`<div class="bc-beam l"></div><div class="bc-beam r"></div><div class="bc-bg l"></div><div class="bc-bg r"></div><div class="bc-c"><div class="bc-lg">${lgl(lg,60)}<span>${lg==3?'Champions Cup':'Liga '+lg}${jr}</span></div>
   <div class="bc-t">${[0,1].map(s=>`<div class="bc-tm ${s?'r':'l'}"><small class="bc-role">${s?'Visitante':'Local'}</small><span class="bc-cr">${crest(ids[s],150)}</span><b>${esc(T[s].n)}</b>${rk(s)}${form5(ids[s],rd)}</div>`).join('<div class="bc-vs"><i></i>VS</div>')}</div></div>`;
  const S2=()=>{let body='',prev=-1,n=0;[...keep].sort((x,y)=>x-y).forEach(k=>{const r=rows[k];if(prev>=0&&k>prev+1)body+='<div class="bc-gp">···</div>';prev=k;
@@ -376,8 +457,8 @@ function bcIntro(m,start){
    <div class="bc-pit"><i class="bc-hl"></i><i class="bc-cc"></i><i class="bc-bx t"></i><i class="bc-bx b"></i>${pl}</div><div class="bc-bn"><b>Banquillo</b>${bn}</div></div>`};
  const S5=()=>`<div class="bc-ko"><div class="bc-fl"></div><i class="bc-ring"></i><i class="bc-ring r2"></i><div class="bc-ball"><span>⚽</span></div><b>¡Empieza el partido!</b>
   <div class="bc-sbug"><span>${crest(h,34)}<em>${esc(T[0].n)}</em></span><strong>0 - 0</strong><span class="r"><em>${esc(T[1].n)}</em>${crest(a,34)}</span><u>0'</u></div></div>`;
- const sc=[{h:S1,d:2900},...(keep.size?[{h:S2,d:3200}]:[]),{h:()=>LU(0),d:4200},{h:()=>LU(1),d:4200},{h:S5,d:2000}];
- const o=document.createElement('div');o.id='bc';
+ const sc=[{h:cc?S1c:S1,d:2900},...(cc?(ccd?[{h:S2c,d:3200}]:[]):keep.size?[{h:S2,d:3200}]:[]),{h:()=>LU(0),d:4200},{h:()=>LU(1),d:4200},{h:cc?S5c:S5,d:2000}];
+ const o=document.createElement('div');o.id='bc';if(cc)o.classList.add('bcx');
  o.innerHTML=`<div class="bc-pg">${sc.map(()=>'<i><b></b></i>').join('')}</div><div class="bc-top"><span>Toca para avanzar</span><button class="bc-sk" type="button">Saltar ⏭</button></div><div class="bc-st"></div><div class="bc-wp"></div>`;
  document.body.appendChild(o);
  const st=o.querySelector('.bc-st'),wp=o.querySelector('.bc-wp'),pg=[...o.querySelectorAll('.bc-pg i')];let tm=0,fin=0,lt=0,sw=0;

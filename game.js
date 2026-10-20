@@ -176,6 +176,6 @@ function modal(h){$('#mdc').innerHTML=h+'<p style="margin:16px 0 0"><button clas
 function season(){const s=G.sum;modal(`<h2>Fin de temporada ${s.season}</h2><p>Campeón de ${LGN[1]}: <b>${s.champ}</b></p>${s.cc?`<p>Campeón de la <b>Champions Cup</b>: <b>${s.cc}</b></p>`:''}<p>Tu equipo terminó <b>${s.pos}º</b> en ${LGN[s.lg]} y cumplió <b>${s.met}/${s.tot}</b> objetivos.</p><p class="sm">Ascienden: ${s.pro.join(', ')}<br>Descienden: ${s.rel.join(', ')}</p>${s.sc?`<p class="sm">Pichichi de tu liga: ${s.sc[0]} (${s.sc[1]}), ${s.sc[2]} goles</p>`:''}${s.fired?'<p class="ko"><b>La directiva te ha despedido.</b> Empieza una nueva partida.</p>':'<p class="sm mu">Los jugadores han envejecido un año y la nueva temporada está lista.</p>'}`);
  if(s.fired)$('#ok').onclick=()=>{try{localStorage.removeItem(KEY)}catch(e){}location.reload()}}
 function playMatch(){const fin=()=>{render();if(G.pend)season()},c=ccPlayNext();
- if(c){bcIntro(c,()=>liveMatch(c,()=>{const h=ccAfter(c);fin();if(h)modal(h)}));return}
+ if(c){bcIntro(c,()=>liveMatch(c,()=>{ccAfter(c);fin()}));return}
  const m=simWeek();if(m)bcIntro(m,()=>liveMatch(m,fin));else fin()}
 renderStart();
