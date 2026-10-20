@@ -65,13 +65,27 @@ function ccSimDay(k,live){const c=G.cc,s=CCS[k],fx=ccFix(k),mf=fx.find(f=>f[0]==
  if(s.st!='gr'&&(s.leg||s.st=='fi'))(s.st=='po'?c.po:c.ko[s.st]).forEach(ccResolve);
  if(s.st=='fi')c.w=c.ko.fi[0].w;c.k=k+1;ccNews(k,mine,rs);return mine}
 /* partidos que tocan antes de la jornada de liga actual: los que no juega tu equipo se simulan solos; devuelve la jornada de tu equipo (si la hay) */
-function ccDue(){const c=ccEns();if(c.skip)return null;let ch=0;
+function ccDue(){const c=ccEns();if(c.skip)return null;ccPrev();let ch=0;
  while(c.k<CCS.length&&CCS[c.k].an<=G.week){const fx=ccFix(c.k);if(fx.some(f=>f[0]==G.me||f[1]==G.me)){if(ch)save();return c.k}ccSimDay(c.k,false);ch=1}
  if(ch)save();return null}
-function ccNext(){try{const k=ccDue();if(k==null)return null;const f=ccFix(k).find(x=>x[0]==G.me||x[1]==G.me);return{m:[f[0],f[1]],lbl:CCS[k].lb,neu:CCS[k].st=='fi'}}catch(e){console.error(e);return null}}
+function ccNext(){try{const k=ccDue();if(k==null)return null;const f=ccFix(k).find(x=>x[0]==G.me||x[1]==G.me);return{m:[f[0],f[1]],lbl:CCST[CCS[k].st],neu:CCS[k].st=='fi'}}catch(e){console.error(e);return null}}
 function ccPlayNext(){try{const k=ccDue();if(k==null)return null;ccBk=G.wsc;const m=ccSimDay(k,true);save();return m}catch(e){console.error(e);return null}}
 function ccFinish(){const c=G.cc;if(!c||c.skip)return;while(c.k<CCS.length)ccSimDay(c.k,false)}
 const ccChamp=()=>G.cc&&G.cc.w!=null?G.T[G.cc.w].n:null;
+/* vista previa del sorteo: acabada la previa, los grupos se sortean ya desde la jornada 7 de liga (aunque se jueguen más tarde) */
+function ccPrev(){try{const c=ccEns();if(c.skip||c.gr||c.k<2||G.week<6)return;ccGrInit();save()}catch(e){console.error(e)}}
+/* calendario general: partidos de tu equipo en la Champions Cup, listos para insertar antes de su jornada de liga */
+function ccCalRows(n){const out={r:{},due:0};try{ccPrev();const c=ccEns(),me=G.me;if(c.skip)return out;
+ const alive=ccPath().s!='e',pt=c.po.find(t=>t.a==me||t.b==me),gi=c.gr?c.gr.g.findIndex(g=>g.includes(me)):-1,dueK=c.w==null&&c.k<CCS.length&&CCS[c.k].an<=G.week?c.k:-1;
+ CCS.forEach((s,k)=>{let f=null,ph=0;
+  if(s.st=='po'){if(!pt)return;f=s.leg?[pt.b,pt.a]:[pt.a,pt.b]}
+  else if(s.st=='gr'){if(c.gr){if(gi<0)return;f=c.gr.fx[gi][s.md].find(x=>x[0]==me||x[1]==me)}else if(alive)ph=1;else return}
+  else{const T=c.ko[s.st];if(T){const t=T.find(x=>x.a==me||x.b==me);if(!t)return;f=s.leg?[t.b,t.a]:[t.a,t.b]}else if(alive)ph=1;else return}
+  const done=c.res.find(r=>r.k==k&&(r.h==me||r.a==me)),h=f?f[0]==me:0,o=f?(h?f[1]:f[0]):null;
+  let res='—',cl='';if(done){const d=done.h==me?done.hg-done.ag:done.ag-done.hg;res=done.hg+' - '+done.ag;cl=d>0?'ok':d<0?'ko':''}
+  const isDue=k==dueK;if(isDue)out.due=1;
+  const w=Math.min(s.an,n);out.r[w]=(out.r[w]||'')+`<tr class="ccr${isDue?' me':''}"><td>🏆</td><td>${ph?'':s.st=='fi'?'Neutral':h?'Casa':'Fuera'}</td><td>${ph?'<span class="mu">Por definir</span>':`<span class="tn">${crest(o,22)}${nm(o)}</span>`}<small class="ccl">${s.lb}</small></td><td class="n ${cl}"><b>${res}</b></td></tr>`})
+ }catch(e){console.error(e)}return out}
 /* ---- estado de tu equipo ---- */
 function ccPath(){const c=ccEns(),me=G.me;if(c.skip)return{t:'La Champions Cup empieza la próxima temporada.',s:'n'};
  const pt=c.po.find(t=>t.a==me||t.b==me);
@@ -116,17 +130,17 @@ function ccBox(t){if(!t)return `<div class="bkm ph"><div><i></i><span>Por defini
  return `<div class="bkm${me?' me':''}">${row(t.a,0)}${row(t.b,1)}${t.pen?'<small>penaltis</small>':t.et?'<small>prórroga</small>':!t.w&&t.l.length==2&&t.l[0]?'<small>tras la ida</small>':''}</div>`}
 function ccBracket(){const c=G.cc,cols=[['r16','Octavos',8],['qf','Cuartos',4],['sf','Semifinales',2],['fi','Final',1]],ch=c.w!=null;
  return `${ch?`<div class="ccch">${crest(c.w,64)}<div><small>Campeón</small><b>${nm(c.w)}</b></div><img src="img/CC.png" alt="" onerror="this.style.display='none'"></div>`:''}<div class="bkw"><div class="bk">${cols.map(([s,n,k])=>{const T=ccKo(s)||Array.from({length:k},()=>null);return `<div class="bkc"><div class="bkh">${n}</div><div class="bkb">${T.map((t,i)=>`<div class="bks ${i%2?'o':'e'}">${ccBox(t)}</div>`).join('')}</div></div>`}).join('')}</div></div><p class="sm mu">Desliza el cuadro hacia los lados. Ida y vuelta; si sigue el empate: prórroga y penaltis. Final a partido único en campo neutral.</p>`}
-function ccView(){const c=ccEns(),nxS=c.skip?null:CCS[c.k],cur=c.skip?'po':c.k<2?'po':c.k<8?'gr':'ko',sec=['po','gr','ko'].includes(S.cck)?S.cck:cur,P=ccPath();
+function ccView(){ccPrev();const c=ccEns(),nxS=c.skip?null:CCS[c.k],cur=c.skip?'po':c.k<2?'po':c.k<8?'gr':'ko',sec=['po','gr','ko'].includes(S.cck)?S.cck:cur,P=ccPath();
  const stg=['po','gr','r16','qf','sf','fi'],nmS=['Previa','Grupos','Octavos','Cuartos','Semis','Final'],cs=c.skip?-1:c.k>=15?6:stg.indexOf(CCS[c.k].st),
   steps=`<div class="cst">${stg.map((s,i)=>`<div class="cstp ${i<cs?'d':i==cs?'n':''}"><b>${i==5?'🏆':i<cs?'✓':i+1}</b><small>${nmS[i]}</small></div>`).join('')}</div>`,
   head=`<div class="ccb"><img src="img/CC.png" alt="" onerror="this.style.display='none'"><div><h2>Champions Cup</h2><span class="mu sm">Temporada ${G.season}${c.skip?'':c.w!=null?' · Terminada':' · '+CCST[CCS[Math.min(c.k,14)].st]}</span></div></div>`;
  if(c.skip)return head+`<div class="pn"><p>${P.t}</p><p class="sm mu">Participan los 44 equipos: los 24 de la ${LGN[2]} juegan una ronda previa y se unen a los 20 de la ${LGN[1]}.</p></div>`;
- const my=c.res.filter(r=>r.h==G.me||r.a==G.me),st=`<div class="pn ccst ${P.s}"><h3>Tu camino</h3><p class="ccp2"><b>${P.t}</b></p>${nxS&&c.w==null?`<p class="sm mu">Próxima jornada: ${nxS.lb} · antes de la jornada ${nxS.an+1} de liga</p>`:''}${my.length?`<div class="ccm">${my.map(r=>{const h=r.h==G.me,d=h?r.hg-r.ag:r.ag-r.hg,o=h?r.a:r.h;return `<div><small>${CCS[r.k].lb.replace('Fase de grupos · ','')}</small><span class="tn">${crest(o,18)}${nm(o)}</span><b class="${d>0?'ok':d<0?'ko':''}">${r.hg} - ${r.ag}</b></div>`}).join('')}</div>`:''}</div>`;
+ const my=c.res.filter(r=>r.h==G.me||r.a==G.me),st=`<div class="pn ccst ${P.s}"><h3>Tu camino</h3><p class="ccp2"><b>${P.t}</b></p>${nxS&&c.w==null?`<p class="sm mu">Próxima jornada: ${nxS.lb} · antes de la jornada ${nxS.an+1} de liga</p>`:''}${my.length?`<div class="ccm">${my.map(r=>{const h=r.h==G.me,d=h?r.hg-r.ag:r.ag-r.hg,o=h?r.a:r.h;return `<div><small>${CCS[r.k].lb.replace('Fase de grupos · ','')}</small><span class="tn">${crest(o,18)}<span class="ccn">${nm(o)}</span></span><b class="${d>0?'ok':d<0?'ko':''}">${r.hg} - ${r.ag}</b></div>`}).join('')}</div>`:''}</div>`;
  const sts={po:c.k>=2?'Completada':'En juego',gr:!c.gr?'Pendiente':c.k>=8?'Completados':'En juego',ko:c.k<8?'Pendiente':c.w!=null?'Completado':'En juego'},
  tabs=`<div class="cck">${[['po','🎟️','Previa'],['gr','👥','Grupos'],['ko','🏆','Cuadro']].map(([k,ic,l])=>`<button data-cck="${k}" class="${sec==k?'on':''}"><span class="ci">${ic}</span><b>${l}</b><small>${sts[k]}</small></button>`).join('')}</div>`;
  let b='';
  if(sec=='po')b=`<div class="pn"><h3>Ronda previa</h3><p class="sm mu">Los 24 equipos de la ${LGN[2]} juegan ida y vuelta. Pasan 12 y se unen a los 20 de la ${LGN[1]}.</p>${c.po.map(ccTieRow).join('')}</div>`;
- else if(sec=='gr'){if(!c.gr)b=`<div class="pn"><p>El sorteo de grupos se hará al terminar la ronda previa.</p><p class="sm mu">32 equipos (20 de la ${LGN[1]} + 12 de la previa) en 8 grupos de 4, ida y vuelta. Pasan los 2 primeros.</p></div>`;
+ else if(sec=='gr'){if(!c.gr)b=`<div class="pn"><p>El sorteo de grupos se hará tras la ronda previa, a partir de la jornada 7 de liga.</p><p class="sm mu">32 equipos (20 de la ${LGN[1]} + 12 de la previa) en 8 grupos de 4, ida y vuelta. Pasan los 2 primeros.</p></div>`;
   else{const mg=c.gr.g.findIndex(g=>g.includes(G.me)),ord=[...Array(8).keys()].sort((x,y)=>(y==mg)-(x==mg)||x-y);
    b=`<div class="g2">${ord.map(g=>{const t=ccGT(g);return `<div class="pn sx ccg${g==mg?' mine':''}"><h3>Grupo ${CCL[g]}</h3><table><tr><th>#</th><th>Equipo</th><th class="n">PJ</th><th class="n">DG</th><th class="n">Pts</th></tr>${t.map((x,i)=>`<tr class="${x.id==G.me?'me':''}"><td class="${i<2?'ccq':''}">${i+1}</td><td><span class="tn">${crest(x.id,22)}<span class="tnm">${nm(x.id)}</span></span></td><td class="n">${x.pj}</td><td class="n">${x.gf-x.gc}</td><td class="n"><b>${x.pts}</b></td></tr>`).join('')}</table></div>`}).join('')}</div><p class="sm mu">Se clasifican los 2 primeros de cada grupo (puntos, diferencia de goles y goles a favor).</p>`}}
  else b=ccBracket();
@@ -163,7 +177,9 @@ function ccStats(){const c=ccEns(),pl=G.T.flatMap(t=>t.pl.map(p=>({p,t}))),
 @media(prefers-reduced-motion:reduce){.cstp.n b{animation:none;box-shadow:0 0 12px var(--cc)}}
 .ccst{border-left:4px solid var(--cc)}.ccst.e{border-left-color:var(--bad)}.ccst.w{background:color-mix(in srgb,var(--cc) 18%,var(--pn));box-shadow:0 0 16px color-mix(in srgb,var(--cc) 45%,transparent)}
 .ccst h3{color:var(--ccd)}.ccp2{margin:4px 0}
-.ccm{display:grid;gap:4px;margin-top:8px}.ccm>div{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.6fr) auto;gap:8px;align-items:center;font-size:14px;border-top:1px solid var(--ln);padding-top:4px}.ccm small{color:var(--mu)}.ccm .tn{min-width:0}
+.ccm{display:grid;gap:4px;margin-top:8px}.ccm>div{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.6fr) auto;gap:8px;align-items:center;font-size:14px;border-top:1px solid var(--ln);padding-top:4px}.ccm small{color:var(--mu)}.ccm .tn{display:flex;align-items:center;gap:6px;min-width:0}.ccm .tn>:not(.ccn){flex:none}.ccm .ccn{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ccm small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ccm>div>b{white-space:nowrap}
+tr.ccr td:first-child{box-shadow:inset 3px 0 0 var(--cc)}.ccl{display:block;font-size:11px;color:var(--mu);margin-top:1px}
+.nx .nxh h3{white-space:nowrap;flex:none}.nx .nxh>span{white-space:nowrap}
 /* selector de sección */
 .cck{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 12px}
 .cck button{display:flex;flex-direction:column;align-items:center;gap:1px;padding:10px 4px;border-radius:4px 14px 4px 14px;border:1px solid var(--ccl);background:var(--pn);min-width:0}
