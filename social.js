@@ -1,6 +1,7 @@
 /* ===== Redes sociales del universo Superstar (estilo X / Twitter) =====
+   v2: declaraciones y entrevistas por tipo de gol/situación, prensa rival y directiva, personas reales con roles (fan/crit/neu) y comentarios que reaccionan al tema de cada publicación.
    Cada jornada se generan publicaciones de prensa, datos, mercado, ligas, clubes y aficionados.
-   Imágenes esperadas en /img: MARCA.png, JORGE.png, OPTA.png, TRANSFER.png, FD.png, SKY.png, HERTZ.png, LOGO 1A.png, LOGO 2A.png,
+   Imágenes esperadas en /img: MARCA.png, JORGE.png, OPTA.png, TRANSFER.png, FD.png, SKY.png, HERTZ.png, SERGIO.png, LOGO 1A.png, LOGO 2A.png,
    ST1..ST3.png (MVP, jugador del mes, hat-trick), ST4.png y ST4-2.png (portería a 0) */
 const ACC={
  marca:{n:'MARCA',h:'marca',img:'MARCA.png',m:1.6,f:'4,8 M',c:'prensa'},
@@ -11,7 +12,8 @@ const ACC={
  l2:{n:'Liga Superstar 2',h:'Superstar2',img:'LOGO 2A.png',m:.6,f:'890 K',c:'prensa'},
  fd:{n:'FD SPORTS',h:'FDSports',img:'FD.png',m:1.5,f:'7,8 M',c:'fd'},
  sky:{n:'Sky Sports',h:'SkySports',img:'SKY.png',m:1.7,f:'9,4 M',c:'sky'},
- hertz:{n:'HERTZ',h:'hertz',img:'HERTZ.png',m:1.3,f:'5,2 M',c:'prensa'}};
+ hertz:{n:'HERTZ',h:'hertz',img:'HERTZ.png',m:1.3,f:'5,2 M',c:'prensa'},
+ sergio:{n:'Sergio Navarro',h:'SergioNavarro',img:'SERGIO.png',m:1.0,f:'1,4 M',c:'prensa'}};
 /* imágenes stock de los eventos nuevos (si una no existe, la tarjeta se muestra sin foto) */
 const IMG={cs:['ST4.png','ST4-2.png'],iv:[]};
 const FF=[['all','Todo'],['my','Mi club'],['prensa','Noticias'],['fich','Fichajes'],['datos','Datos'],['club','Clubes'],['fan','Afición']];
@@ -37,94 +39,256 @@ const fdSk=(id,k)=>{const f={v:d=>d>0,d:d=>d<0,u:d=>d>=0,w:d=>d<=0}[k],a=G.res.f
 function fdAdd(a,tx,o={}){const ac=a?ACC[a]:null,mm=(ac?ac.m:(o.m??.2))*(o.big?2.6:1)*R(.55,1.45),lk=Math.round(mm*R(2500,8000));
  FT+=Math.floor(R(5,34));const q=FT%1440,tm=String(Math.floor(q/60)).padStart(2,'0')+':'+String(q%60).padStart(2,'0');
  const p={i:++G.fs,w:FW,tm,tx,c:o.c||(ac?ac.c:'fan'),lk,rt:Math.round(lk*R(.1,.28)),rp:Math.round(lk*R(.03,.11)),vw:Math.round(lk*R(14,30))};
- if(a)p.a=a;if(o.k)p.k=o.k;if(o.per!=null)p.per=o.per;if(o.big||o.top)p.tp=1;if(o.cr!=null)p.cr=o.cr;if(o.fn){p.fn=o.fn;p.fh=o.fh}if(o.card)p.card=o.card;if(o.my)p.my=1;
+ if(a)p.a=a;if(o.k)p.k=o.k;if(o.per!=null)p.per=o.per;if(o.big||o.top)p.tp=1;if(o.cr!=null)p.cr=o.cr;if(o.fn){p.fn=o.fn;p.fh=o.fh}if(o.card)p.card=o.card;if(o.my)p.my=1;if(o.pn)p.pn=o.pn;if(o.pt!=null)p.pt=o.pt;if(o.sn)p.sn=o.sn;if(o.qk)p.qk=o.qk;
  G.feed.push(p);if(G.feed.length>160)G.feed.splice(0,G.feed.length-160);return p}
 const fdClub=(c,tx,o={})=>fdAdd(null,tx,{...o,k:'club',c:'club',cr:c,m:o.m??.2,my:o.my||c==G.me});
 function fdFan(c,tx,o={}){const C=G.T[c].n,s=fslug(C),y=1890+(c*37)%100,nu=(c*13)%90+10,
- pl=[[`Ultras ${C}`,`Ultras${s}`],[`${C} Forever`,`${s}Forever`],[`Grada ${C}`,`Grada${s}`],[`${C} desde ${y}`,`${s}${y}`],[`El Barrio de ${C}`,`Barrio${s}`],[`Peña ${C} ${nu}`,`Pena${s}${nu}`]][((c+(o.v|0))*7)%6];
+ pl=[[`Afición ${C}`,`Aficion${s}`],[`Sentimiento ${C}`,`Sentimiento${s}`],[`Grada ${C}`,`Grada${s}`],[`${C} desde ${y}`,`${s}${y}`],[`Socios del ${C}`,`Socios${s}`],[`Peña ${C} ${nu}`,`Pena${s}${nu}`]][((c+(o.v|0))*7)%6];
  return fdAdd(null,tx,{...o,k:'fan',c:'fan',cr:c,fn:pl[0],fh:pl[1],m:o.m??.05})}
 const FANS={
- w3:['¡QUÉ BARBARIDAD! {s}. Hoy sí hemos visto al equipo de nuestros sueños 🔥','{rv} ni se ha enterado. {s}. Para enmarcarlo 😎','Una paliza de las que hacen afición. ¡Gracias, {m}! #{t}'],
- w:['Tres puntos de oro. {m} sabe lo que hace 💪','Sufrir, pero ganar. Así se hacen las ligas #{t}','Victoria y a seguir. ¡Esta afición no se cansa! ❤️','{s}. Se dice rápido, se disfruta mucho 🙌'],
- e:['Un punto que sabe a poco. Hay que ser más fiables.','Empate sin alma. Toca dar un paso adelante, {m}.','{s}. Ni fu ni fa... y así no se ganan las ligas.'],
- l:['Así no. Hoy ha sido un partido para olvidar 😡','Pitos merecidos. Hay que revisar muchas cosas, {m}.','Duele, pero seguimos. Esta camiseta no se abandona 💔','{s}. A levantar la cabeza. #{t}'],
- l3:['VERGÜENZA. {s}. No hay palabras 🤬','Hoy el equipo no ha salido al campo. Inaceptable, {m}.','Que alguien nos explique qué ha pasado hoy... {s} 😶']};
+ w3:['{s}. Esto es lo que queremos ver cada semana 🔥 #{t}','Goleada y a dormir feliz. Gracias, equipo. {s}.','{rv} no ha tenido ni una opción. Qué manera de jugar.','Llevábamos tiempo sufriendo y hoy por fin se ha disfrutado. {s}.','Si el equipo juega así, la grada se llena sola. #{t}','Partido redondo. Enhorabuena, {m}, esto se ve desde la grada.','{s}. De los partidos que dan ganas de volver el próximo fin de semana.'],
+ w:['Tres puntos y a seguir. #{t}','Se sufrió, pero se ganó. Eso vale mucho en una liga larga.','{s}. Seguimos sumando.','No fue el mejor partido, pero los tres puntos valen igual. Gracias, equipo.','Victoria y a pensar ya en el siguiente. Buen trabajo, {m}.','Salimos del campo con la voz hecha polvo y una sonrisa. {s} #{t}'],
+ e:['Un punto que sabe a poco, pero suma. #{t}','{s}. Se ha competido, pero faltó acierto.','Empate. Queríamos ganar, aunque tampoco es para dramatizar.','Hoy no tocó. A trabajar la semana, {m}.','Mucho querer y poco poder en el último pase. Hay que afinar.','{s}. Dos puntos que se nos escapan, pero seguimos ahí.'],
+ l:['Duele. Pero esto se arregla trabajando, {m}.','{s}. Hoy el rival fue mejor. Toca revisar.','Derrota. A levantar la cabeza, que la temporada es larga. #{t}','Mala tarde, no hay otra. A ver si el próximo partido nos devuelve la sonrisa.','El equipo ha dado la cara, pero no ha sido suficiente.','{s}. Nos vamos tristes, pero el escudo no se abandona. #{t}'],
+ l3:['{s}. Un resultado que cuesta explicar. {m}, hay que dar la cara.','Se nos ha ido el partido de las manos. No hay excusas. #{t}','Hoy no hemos estado. Que sirva de aviso: hay muchas cosas que corregir.','Mala noche. Pero seguimos aquí, como siempre. #{t}','{s}. Hay que revisar todo, desde la alineación hasta la actitud.','Salgo del estadio sin palabras. Toca hablar en el vestuario y mirarnos al espejo.']};
 function fdReact(c,r,v){const d=r[2]==c?r[4]-r[5]:r[5]-r[4],k=d>=3?'w3':d>0?'w':d==0?'e':d<=-3?'l3':'l',mine=c==G.me,
  s=`${G.T[r[2]].n} ${r[4]}-${r[5]} ${G.T[r[3]].n}`;
  let x=fpk(FANS[k]).replace(/\{s\}/g,s).replace(/\{rv\}/g,G.T[r[2]==c?r[3]:r[2]].n).replace(/\{m\}/g,mine?G.mgr:'míster').replace(/\{t\}/g,fslug(G.T[c].n));
  if(mine&&d<0&&G.fans<30)x+=' #DirectivaOut';
- return fdFan(c,x,{my:mine,v:v|0})}
-/* ---------- cuentas random con foto (CARA1..CARA6.png en /img; CARA6 es mujer): haters, fans y tonterías ---------- */
+ return fdFan(c,x,{my:mine,v:v|0,sn:k})}
+/* ---------- cuentas de personas con foto (CARA1..CARA9.png en /img; CARA3 es un señor mayor y CARA6 una mujer) ----------
+   role: 'fan' (apoya, con matices) · 'crit' (exigente, con argumentos) · 'neu' (analiza con calma)
+   rs: reacción al resultado del club del jugador (w3 goleada · w victoria · e empate · l derrota · l3 derrota abultada) · r: opiniones sueltas · cx: comentarios genéricos
+   Marcadores: {s} resultado · {rv} rival · {m} míster · {c} club · {t} hashtag del club · {ms} hashtag del míster · {pos} puesto en liga · {nx} próximo rival · {gl} máximo goleador del club */
 const PER=[
- {n:'Paco el Cuñao',h:'PacoElCunao',img:'CARA1.png',role:'hater',
-  rs:{w3:['{s}. Bueno, el rival ha puesto once conos y así cualquiera, {m}.','Goleada, vale. Ya veremos cuando toque un rival de verdad.'],
-   w:['Ganar así no vale, {m}. Menudo sufrimiento. Yo lo hago mejor desde el sofá.','Tres puntos, sí. Juego, ninguno. Y no me digáis que no. #{t}'],
-   e:['Empate. Como siempre. {m}, ¿alguien te ha dicho que se juega para ganar?','{s}. Otro partido para no recordar.'],
-   l:['{m}, dimisión. Lo dije en la jornada 1 y lo repito hoy. #{ms}Out','{s}. Con un amigo mío de entrenador esto no pasaba.'],
-   l3:['VERGÜENZA. {s}. {m}, haz las maletas 🧳 #{ms}Out','Que me devuelvan el abono. {s} 🤡']},
-  r:['Opinión impopular: esta táctica es de otra época. No, no os voy a decir cuál.','Yo no digo nada, pero la alineación de hoy parece hecha por el cuñado de alguien.','Cada semana lo mismo en el {c}. Cada semana. Y aquí sigo yo, diciéndolo.']},
- {n:'Jordi',h:'JordiUltra',img:'CARA2.png',role:'fan',
-  rs:{w3:['¡¡QUÉ NOCHE!! {s}. Hoy lloro de alegría ❤️🔥 #{t}','{m}, ERES UN DIOS. {s}. ¡Vamos {c}!'],
-   w:['Tres puntos y a la cama feliz. ¡Vamos {c}! 💪','Sufrido, pero lo hemos sacado. {c} hasta la muerte #{t}'],
-   e:['Un punto es un punto, pero el próximo vamos a por todas. ¡Confío en {m}!','Hoy no ha salido, pero la afición siempre está ahí. #{t}'],
-   l:['Cabeza alta, equipo. Mañana más fuertes. Yo no me voy a ningún lado 💔','Hoy duele, pero {m} sabe lo que hace. Confianza total.'],
-   l3:['Nos ha tocado sufrir, pero seguimos aquí. ¡Esta camiseta no se abandona! 💔','Un mal día lo tiene cualquiera. ¡Arriba {c}! #{t}']},
-  r:['Ya tengo la bufanda lista para el próximo partido 🧣 #{t}','Si me veis llorar en la grada es de emoción. #{t}','Otro día más soñando con ver al {c} campeón 🏆']},
- {n:'AbueloFutbol',h:'AbueloFutbol',img:'CARA3.png',role:'tonto',
-  rs:{w3:['{s}. Esto no lo vi ni en el 82. Y mira que yo estuve en el 82.'],w:['Ganamos, nieto. Ganamos. Pásame las gafas, que quiero ver la tabla.'],e:['Empate. En mis tiempos también se empataba, pero con más bigote.'],l:['Hemos perdido. Me voy a por un cafelito, que esto no se arregla con nada.'],l3:['{s}. Me voy a dormir la siesta y mañana lo hablamos.']},
-  r:['En mis tiempos los balones pesaban como ladrillos y nadie se quejaba.','Hoy he vuelto a perder las gafas. Estaban en la frente. Igual que el defensa de ayer.','Mi nieto dice que hay "tácticas". Yo solo conozco dos: meter gol y no meterse uno.','Le he dicho al camarero que el {c} gana la liga. Me ha dado un cortado de consolación.','He ido al campo con el transistor por si acaso. Por si acaso, lo que sea.','Antes se jugaba a las cuatro y se cenaba a las nueve. Ahora no sé ni a qué hora es el partido.']},
- {n:'Maldini14',h:'Maldini14',img:'CARA4.png',role:'fan',
-  rs:{w3:['¡¡Qué exhibición!! {s}. Así se defiende y así se ataca 🔥 #{t}','{m}, esto es fútbol de otro planeta. #{t}'],
-   w:['Tres puntos y la defensa ordenada. Eso es fútbol, amigos 💪 #{t}','Victoria. Lo bonito es ganar, pero lo importante es no encajar 🧱'],
-   e:['Un punto. Ojalá la defensa hubiera estado más fina, pero seguimos.','No se ha ganado, pero el equipo ha peleado cada balón. #{t}'],
-   l:['Toca aprender. Hay que cerrar atrás y volver con fuerza 💔','Partido cruel, pero {m} tiene mi confianza. #{t}'],
-   l3:['Hoy ha costado. Pero la afición del {c} no se rinde nunca. #{t}','{s}. A analizar los errores y a mejorar, que para eso estamos.']},
-  r:['Un buen central vale más que tres delanteros. Lo digo yo, que soy del {c} 🧱','Viendo vídeos de tácticas a las 3 de la mañana. Normal. #{t}','Cuando el {c} defiende bien, da gusto verlo. Más claro, imposible.','El 14 siempre en el corazón. Y el {c}, también ❤️']},
- {n:'Sergio',h:'SergioTodoMal',img:'CARA5.png',role:'hater',
-  rs:{w3:['{s}. Mucho gol, pero el {rv} ha puesto un equipo de cartón. Y el {c} tampoco es para tirar cohetes.'],
-   w:['Ganar, ganar... El {c} y el {rv} dan igual, todos son malísimos.'],
-   e:['Empate. Normal: los dos equipos son igual de malos.'],
-   l:['{s}. El {c} perdiendo y el {rv} ganando: no sé quién me da más pena.'],
-   l3:['{s}. Qué asco de fútbol. Y qué asco de todos los clubes, ya puestos.']},
-  r:['El {x} es el club más sobrevalorado de esta liga. Y no, no hay debate.','Todos los clubes son iguales: mucho escudo y poco fútbol. Empezando por el {x}.','Hoy me he levantado odiando al {x} y al {y}. Por si acaso, mañana también.','Que alguien me explique qué le ve la gente al {x}. En serio.','Mi lista de clubes que me caen mal: el {x}, el {y} y todos los demás.']},
- {n:'Lore',h:'Lore_random',img:'CARA6.png',role:'tonto',
-  rs:{w3:['Hoy hemos metido un montón de goles. No sé quién ha marcado, pero ha sido bonito 🥳'],w:['¡Ganamos! Mi tío ha gritado tanto que ha asustado al vecino 😂'],e:['Empate. Eso significa que nadie ha perdido, ¿no? Pues perfecto 😌'],l:['Perdimos. Pero las patatas del estadio estaban buenísimas 🍟'],l3:['{s}. Me han dicho que no sonría. Intento no sonreír 🫠']},
-  r:['No sé de fútbol, pero ese del número 9 tiene buena pinta 👀','He ido al estadio solo por las patatas. 10/10 🍟','¿Alguien me explica por qué ese señor de negro pita tanto?','Me han dicho que el míster es {m}. ¿Es el de la corbata? Pues me cae bien.','Mi madre cree que el VAR es una marca de detergente.','Hoy el partido, mañana la vida. Pero primero el café ☕']},
- {n:'David67',h:'David67',img:'CARA7.png',role:'tonto',
-  rs:{w3:['{s}. Esto es un cheat code. Quiero el replay en 4K y con comentarios del director 🎮','Goleada: win-rate del 100%. Perdón, me he emocionado.'],
-   w:['Tres puntos. +3 de experiencia y subida de nivel para el {c} 🎮','{s}. Si esto fuera el Football Manager, acabo de guardar partida con la moral por las nubes.'],
-   e:['Empate. Es como un final neutro de videojuego: ni fu ni fa 🎮','Un punto. El árbol de habilidades del {c} sigue a medias.'],
-   l:['{s}. Esto es un bug, no puede ser. Que alguien reinicie el servidor.','Derrota. Voy a leer las notas del parche: seguro que nerfearon al {c}.'],
-   l3:['{s}. Game over. ¿Continuar? (S/N). Pulso N por precaución.','{s}. Me niego a creer que esto no sea un error de simulación.']},
-  r:['Dato friki: llevo 47 horas viendo vídeos de tácticas. Mi madre dice que salga a la calle. Le he dicho que mi build del {c} no se optimiza sola.','Teoría: el VAR es un NPC que se bugea cuando juega el {x}.','Me ha tocado el portero repetido por tercera vez en el sobre de cromos. Estadísticamente imposible. Sospecho del {x}.','Me he pasado el Football Manager con el {c}: siete temporadas, cero títulos. Seguro que {m} lo haría mejor.','Hoy me han explicado el xG: goles esperados. Yo esperaba que alguien me contestara a las 3 de la mañana. Cosas de friki.','Mi setup de ver partidos: 3 pantallas, 2 pestañas de estadísticas y 0 vida social. Rendimiento óptimo.']},
- {n:'AbdoulMarroc',h:'AbdoulMarroc',img:'CARA8.png',role:'fan',
-  rs:{w3:['¡¡¡ALHAMDULILLAH!!! {s}. ¡Qué noche! Mi familia de Marruecos está mandando mensajes sin parar 🇲🇦❤️ #{t}','{s}. ¡Qué orgullo, {c}! Mi madre ha salido del salón a gritar 😂'],
-   w:['Tres puntos, alhamdulillah. A seguir. ¡Vamos {c}! 💪 #{t}','Victoria con humildad, y a por la siguiente, {m} 🙏'],
-   e:['Un punto. Hay que mejorar, pero confío en el equipo. Inshallah el próximo lo ganamos #{t}','Empate. Cabeza arriba, que la liga es larga 🙌'],
-   l:['Hoy no tocaba. Cabeza alta y a seguir, {c}. Hay que mantener la fe 🙏','Derrota dura, pero el equipo lo ha dado todo. Inshallah el próximo.'],
-   l3:['{s}. Un mal día lo tiene cualquiera. A trabajar más y a levantarse, {c} #{t}','Hoy duele, pero la afición no se mueve de aquí. ¡Vamos, {c}!']},
-  r:['Después de comer, té con menta y partido del {c}. Plan perfecto 🍵⚽','Mi primo dice que el {c} no tiene nada que hacer. Le he apostado un tajín. Veremos quién ríe 😏','Cuando juega el {c}, mi familia de Marruecos conecta la videollamada. Somos catorce mirando un móvil 😂','Domingo, familia y {c}. No necesito más ❤️','Mi madre me ha dicho que lleve bufanda al partido. Hay 28 grados. Pero obedezco 🧣','Quien dice que el fútbol no une es que no ha visto mi grupo de WhatsApp familiar discutiendo la alineación.']},
- {n:'Nacho',h:'Nacho_Regional',img:'CARA9.png',role:'hater',
-  rs:{w3:['{s}. Se nota la diferencia de nivel. Aun así, contra rivales así hay que mantener la concentración, {m}.','Goleada, pero ojo: yo en amateur aprendí que un 5-0 se convierte en 5-3 si te relajas.'],
-   w:['Tres puntos, bien. Pero el equipo concede demasiado atrás. Con mi entrenador de amateur eso no pasaba 🧐','Ganar sin brillar. Y ya sabemos cómo acaba eso a la larga.'],
-   e:['Empate. Faltó intensidad en la segunda parte. Lo digo con cariño.','Un punto y poco más. Me recuerda a mis partidos de regional: mucho correr y poco peligro.'],
-   l:['Perder duele y lo sé de primera mano. Pero faltó intensidad desde el minuto 1, {m}.','{s}. Se perdió la segunda jugada en cada balón. Cosas básicas.'],
-   l3:['{s}. Colgué las botas hace poco, pero esto lo veo desde dentro: aquí falló la actitud 😕','Lo digo con respeto: un partido así hay que analizarlo con calma. Así no se compite, {m}.']},
-  r:['Jugué en regional hasta hace poco. Os aseguro que sufrir con un 4-4-2 sin ritmo es un arte.','Colgué las botas con 23 años, pero el ojo no se me ha ido: ese lateral siempre llega tarde.','Hay jugadores que corren mucho y otros que corren con sentido. La diferencia se ve en la segunda parte.','Mi consejo desde la grada: más presión tras pérdida. Lo aprendí a base de entrenadores que gritaban mucho.','Echo de menos los vestuarios de amateur: olor a linimento, bromas pesadas y bocata de tortilla después. Eso no lo da la Superstar.','Este {c} me recuerda a mi último equipo: mucha ilusión y poco orden. Pero ilusión sobra ❤️']}];
-const perV=c=>{const me=G.T[G.me],tn=G.T.map(t=>t.n),x=fpk(tn),y=fpk(tn.filter(n=>n!=x));return{c:me.n,m:G.mgr,ms:fslug(G.mgr),t:fslug(me.n),s:c?c.s:'',rv:c?c.rv:'',x,y}};
-function perPost(i,k,V,my){const P=PER[i],pl=k&&P.rs[k]&&P.rs[k].length?P.rs[k]:P.r;let x=fpk(pl);Object.keys(V).forEach(q=>{x=x.split('{'+q+'}').join(V[q])});return fdAdd(null,x,{k:'per',c:'fan',per:i,my:my,m:.06})}
+ {n:'Paco Ruiz',h:'PacoRuiz61',img:'CARA1.png',role:'crit',
+  rs:{w3:['{s}. Muy bien, pero lo que me interesa es cómo se ha defendido, no solo cuántos goles hemos metido.','Goleada. Ahora a ver si lo repetimos contra un rival que no se deje.'],
+   w:['Tres puntos, pero el equipo ha pasado demasiado rato sin el balón. Eso, tarde o temprano, se paga.','Ganar es lo que cuenta. Pero hoy ha habido más suerte que fútbol, {m}.'],
+   e:['Empate que se veía venir: poco peligro arriba y los cambios, tarde otra vez.','{s}. Dos puntos perdidos, y lo digo sin dramatismo.'],
+   l:['{s}. Desde el minuto 20 se veía que no íbamos a competir el partido. {m}, hay que cambiar algo.','No voy a pedir dimisiones. Pero explicaciones, sí. #{t}'],
+   l3:['{s}. Esto no es un mal día: es un problema de planteamiento y de plantilla.','Hacía años que no veía al {c} tan roto. Esto hay que arreglarlo ya.']},
+  r:['Llevo treinta años de socio y lo que más me cansa no es perder, es perder sin entender el plan.','Los cambios llegan siempre quince minutos tarde. Lo llevo diciendo toda la temporada.','Hoy he releído la alineación tres veces. Sigo sin ver al pivote que necesitamos.','Estamos en el puesto {pos}. Para unos es mucho, para otros poco. Yo creo que todavía no hemos visto el techo del equipo.','Cuando el equipo juega bien, {m} tiene razón. Cuando no, también hay que decirlo. Es lo mínimo.'],
+  cx:['Yo lo veo un poco distinto, la verdad.','Hasta que no se vea en el campo, no me lo creo.','Con todo el respeto: eso ya lo dijeron en otras temporadas.']},
+ {n:'Jordi Casas',h:'JordiCasas9',img:'CARA2.png',role:'fan',
+  rs:{w3:['{s}. En el tercero se me ha puesto la piel de gallina. Qué manera de jugar. #{t}','Noche de las que enganchan. Gracias, equipo. {s}.'],
+   w:['Tres puntos y a la cama con una sonrisa. Hoy tocaba sufrir un poco, pero se ha ganado. #{t}','Ganar jugando regular es lo que hacen los equipos grandes. Seguimos.'],
+   e:['Un punto. Duele un poco, pero el equipo ha competido. A por el siguiente.','{s}. No es lo que queríamos, pero la liga es larga. #{t}'],
+   l:['Hoy ha dolido. Pero esto va de levantarse, y a este equipo le sobra carácter.','{s}. Toca apretar los dientes y trabajar. Yo sigo creyendo en {m}.'],
+   l3:['Un día para olvidar. Que sirva para aprender y que el próximo partido lo demostremos.','Me duele, no voy a mentir. Pero la camiseta se defiende también en los días malos.']},
+  r:['Ya estoy contando los días para el siguiente partido en casa. #{t}','Llevé a mi hermana pequeña al estadio por primera vez. Ahora quiere camiseta. Un fichaje de cantera 😄','Hoy toca ver la repetición del partido con calma. Siempre se aprende algo.','El ambiente en la grada cuando el equipo aprieta es insuperable. #{t}'],
+  cx:['Yo de verdad creo que lo del equipo va a más. #{t}','Eso es lo que me gusta leer.','Que nadie se baje del barco ahora.']},
+ {n:'Manolo Ibáñez',h:'ManoloIbanez',img:'CARA3.png',role:'neu',
+  rs:{w3:['{s}. Hacía tiempo que no veía al equipo tan suelto. Que no se suban las cabezas, eso sí.'],
+   w:['Ganar sufriendo también enseña. Lo que cuenta es sumar.'],
+   e:['Un empate no es nada malo si se aprende de él.'],
+   l:['Hemos perdido. Cuando llevas tantos años en el campo, aprendes que una derrota no define una temporada.'],
+   l3:['{s}. Un resultado duro. Pero este equipo ya ha sabido levantarse antes; ahora toca hacerlo otra vez.']},
+  r:['Hoy se oía más a los jóvenes que a los de siempre. Antes era al revés, pero está bien que vengan.','Llevo cuarenta años de abonado. Lo que más me gusta sigue siendo llegar una hora antes y ver el campo vacío.','Un equipo se construye desde atrás. Aunque ahora todo el mundo mire a los delanteros.','He visto entrenadores ir y venir. {m} tiene tiempo, creo: los proyectos no se miden en dos jornadas.','Cuando el {c} compite, se nota en cómo vuelve la gente a casa: más hablada, menos callada.'],
+  cx:['Esto ya lo he visto otras veces; casi siempre termina bien si hay paciencia.','Hay que mirar la temporada entera, no solo un partido.','Cosas del fútbol. Un día se gana y otro se aprende.']},
+ {n:'Dani Vera',h:'DaniVera_',img:'CARA4.png',role:'neu',
+  rs:{w3:['{s}. Lo mejor: la presión tras pérdida. El rival no ha podido salir limpio ni una vez.','{s}. Dominio claro en los dos tercios del campo. Ahora, a mantenerlo. #{t}'],
+   w:['Victoria con un patrón claro: bloque medio, salidas rápidas y control tras el descanso. Eso es de equipo con plan. #{t}','Tres puntos. El partido se ha decidido por pequeños detalles en las áreas.'],
+   e:['Empate. Más posesión que peligro: falta el último pase.','{s}. Muchos metros ganados, pocas ocasiones claras. Hay que afinar.'],
+   l:['{s}. Mucho espacio entre líneas y el rival lo ha explotado. Es corregible.','Derrota. La salida de balón ha fallado en los momentos clave; pasa por entrenar más ese patrón.'],
+   l3:['{s}. Más que el resultado, preocupa cómo se ha roto el equipo en transición. Hay trabajo táctico por delante.']},
+  r:['Me fijo en lo que no sale en la tele: las coberturas. Un equipo se explica por ellas.','Los datos de ocasiones ayudan, pero no lo cuentan todo. A veces un partido se gana en un córner bien trabajado.','Mi opinión: el {c} tiene mejor plantilla de lo que dice la tabla. Dependerá de cómo gestionemos el calendario.','Para el partido ante {nx}: si el rival presiona alto, la clave estará en el pivote y en cómo salga el central.','Cuando el lateral del lado débil no cierra al interior, se abre una vía. Hoy la he vuelto a ver en otro partido.'],
+  cx:['Lo importante es cómo se ha llegado a eso, no solo el resultado.','Hay que mirar el partido entero, no un solo momento.','Los datos dicen algo parecido, aunque con matices.']},
+ {n:'Sergio Molina',h:'SergioMolina_',img:'CARA5.png',role:'crit',
+  rs:{w3:['{s}. Resultado engañoso: el rival ha jugado mal. Hay que ver al equipo ante rivales que sí aprieten.'],
+   w:['Tres puntos, pero el nivel de la liga está tan igualado que cualquier ventaja parece enorme.'],
+   e:['Empate lógico: los dos han jugado a no perder.'],
+   l:['{s}. Se pierde por errores no forzados. Eso no es mala suerte.'],
+   l3:['{s}. Esto pasa cuando no se renueva la plantilla a tiempo.']},
+  r:['Me gustaría ver más cantera en el {c} y menos fichajes de última hora.','Pagar traspasos caros por un nombre sin mirar el encaje táctico: el mal de muchos clubes.','Cada vez me creo menos las palabras de las ruedas de prensa y más los números del campo.','El problema de esta liga no son los entrenadores: son los calendarios y la planificación de los clubes.'],
+  cx:['Habrá que ver si dura.','Eso se dice fácil. Otra cosa es hacerlo.','Prefiero esperar a ver más partidos antes de opinar.']},
+ {n:'Lorena Díaz',h:'LorenaDiaz_',img:'CARA6.png',role:'fan',
+  rs:{w3:['¡Qué noche! Mi padre ha vuelto a ser un niño en la grada. {s}. #{t}'],
+   w:['Tres puntos. Hoy hemos salido del estadio contentos y con la voz hecha polvo 😅 #{t}'],
+   e:['Hoy no ha podido ser, pero la grada ha cantado hasta el final y eso también cuenta.'],
+   l:['Derrota que duele. Pero se vuelve el siguiente fin de semana, que para eso somos aficionados.'],
+   l3:['{s}. Se nos ha hecho larga la tarde, pero el escudo no se abandona.']},
+  r:['Entre semana trabajo y los fines de semana, estadio. Mi rutina favorita. #{t}','Mi sobrino de seis años ya se sabe la alineación de memoria. Futuro ojeador, sin duda.','Lo que más me gusta del {c} es cómo se junta la afición en las malas. Ahí se ve quién es de verdad.','Para el partido ante {nx} ya tengo entradas. A ver si el ambiente acompaña.'],
+  cx:['Qué bien da leer esto.','Totalmente de acuerdo.','Yo también lo vi así desde la grada.']},
+ {n:'David Ortega',h:'DavidOrtega_',img:'CARA7.png',role:'neu',
+  rs:{w3:['{s}. Una goleada sube mucho la confianza, pero conviene no sacar conclusiones con una sola muestra.','{s}. Buen dato para el equipo, aunque la liga se juega a largo plazo.'],
+   w:['Victoria ajustada. En un campeonato largo, estos partidos suelen decidir la temporada.','Tres puntos. Lo mejor: el equipo mantiene el orden cuando el partido se complica.'],
+   e:['Empate. Con los datos en la mano, el partido ha estado equilibrado.','{s}. Un punto que, según cómo salgan los próximos partidos, puede valer más o menos.'],
+   l:['{s}. Una derrota no hace una crisis; dos seguidas, sí. Vamos a ver la próxima jornada.','Derrota. Los números de las últimas semanas dicen que el equipo no está mal, pero hoy no ha estado fino.'],
+   l3:['{s}. Un resultado así mueve la tabla y la moral. Lo importante es cómo reaccione el equipo la semana que viene.']},
+  r:['Con el calendario que viene, la plantilla va a necesitar rotaciones. Eso también se prepara.','Me gustan los equipos que mejoran poco a poco. Los saltos de repente suelen durar poco.','Mi análisis rápido de la jornada: la liga está muy igualada y cada punto cuenta el doble.','{gl} está siendo clave en el ataque del {c}. Ojo a cómo se gestiona su carga de partidos.'],
+  cx:['Interesante lectura, aunque yo miraría también el contexto.','Faltan datos para sacar conclusiones.','Depende de cómo se mire, pero tiene sentido.']},
+ {n:'Yassine Amrani',h:'YassineAmrani_',img:'CARA8.png',role:'fan',
+  rs:{w3:['Qué noche. {s}. Mañana en el trabajo me van a oír hablar de este partido todo el día. #{t}'],
+   w:['Tres puntos y buen ambiente. Vamos, {c}. #{t}','Victoria con humildad y a por la siguiente, {m}. 🙏'],
+   e:['Un punto. Hay que mejorar, pero confío en el equipo. El próximo lo ganamos. #{t}','Empate. Cabeza arriba, que la liga es larga.'],
+   l:['Hoy no tocaba. Cabeza alta y a seguir, {c}. Hay que mantener la fe.','Derrota dura, pero el equipo lo ha dado todo.'],
+   l3:['{s}. Un mal día lo tiene cualquiera. A trabajar más y a levantarse, {c}. #{t}','Hoy duele, pero la afición no se mueve de aquí.']},
+  r:['Después del trabajo, a ver el partido con los compañeros. Plan perfecto.','Domingo, familia y {c}. No necesito más ❤️','Quien dice que el fútbol no une es que no ha visto mi grupo de WhatsApp discutiendo la alineación.','Este año el {c} puede dar guerra. Se nota en el vestuario y en la grada. #{t}'],
+  cx:['Así se habla.','Ánimo, equipo. Yo estoy con vosotros.','Gracias por compartirlo.']},
+ {n:'Nacho Peña',h:'NachoPena_',img:'CARA9.png',role:'crit',
+  rs:{w3:['{s}. Se nota la diferencia de nivel. Aun así, contra rivales así hay que mantener la concentración, {m}.','Goleada, pero ojo: un 5-0 se convierte en 5-3 si te relajas.'],
+   w:['Tres puntos, bien. Pero el equipo concede demasiado atrás.','Ganar sin brillar. Y ya sabemos cómo acaba eso a la larga.'],
+   e:['Empate. Faltó intensidad en la segunda parte. Lo digo con cariño.','Un punto y poco más. Mucho correr y poco peligro.'],
+   l:['Perder duele y lo sé de primera mano. Pero faltó intensidad desde el minuto uno, {m}.','{s}. Se perdió la segunda jugada en cada balón. Cosas básicas.'],
+   l3:['{s}. Colgué las botas hace poco y esto lo veo desde dentro: aquí falló la actitud.','Lo digo con respeto: un partido así hay que analizarlo con calma. Así no se compite, {m}.']},
+  r:['Jugué en categorías regionales hasta hace poco. Os aseguro que sufrir con un equipo sin ritmo es un aprendizaje.','Hay jugadores que corren mucho y otros que corren con sentido. La diferencia se ve en la segunda parte.','Mi consejo desde la grada: más presión tras pérdida. Lo aprendí a base de entrenadores exigentes.','Este {c} me recuerda a mi último equipo: mucha ilusión y poco orden. Pero ilusión sobra ❤️'],
+  cx:['Desde dentro del vestuario se ve distinto.','Lo básico: intensidad y orden.','Respeto, pero no coincido.']},
+ {n:'David Roldán',h:'DavidRoldan_',img:'CARA10.png',role:'fan',
+  rs:{w3:['{s}. ¡Qué tarde más buena! Mis hijos gritando, yo sin voz y todos felices. #{t}','Goleada y a invitar a los de la grada a una ronda. Qué bien se siente esto 😄'],
+   w:['Tres puntos y a casa de buen humor. Así da gusto volver a trabajar el lunes. #{t}','Ganar siempre sienta bien. Y ganar con esta gente al lado, mejor.'],
+   e:['Un punto. No pasa nada, que la tarde ha sido buena igualmente. A por la siguiente.','Empate. Cuando el equipo compite, yo me voy contento. #{t}'],
+   l:['Hoy ha tocado perder. Un abrazo a los de la grada y a seguir, que el próximo fin de semana volvemos.','Derrota, pero con la cabeza alta. {m} y los chicos tienen todo mi apoyo.'],
+   l3:['{s}. Ha dolido, no lo voy a negar. Pero uno quiere al equipo en las buenas y en las malas.','Mala tarde. Mañana será otro día. A ver si el próximo partido nos devuelve la sonrisa. #{t}']},
+  r:['Primer café del lunes y ya estoy comentando el partido con el vecino. Así se vive el fútbol.','Me ha encantado ver a tanta gente joven en el estadio. El futuro del {c} está en buenas manos.','Mi mujer sabe cuándo ha ganado el {c} por mi humor en la cena. Y tiene razón.','Para el partido ante {nx} llevo bocadillos para toda la peña. Hay que cuidar al equipo y a la afición 😄'],
+  cx:['Qué buen rollo da leer esto.','Todo con calma, que la liga es larga.','Eso, eso. Y a disfrutarlo.']}];
+const fdFill=(x,V)=>{Object.keys(V).forEach(q=>{x=x.split('{'+q+'}').join(V[q])});return x.replace(/\{\w+\}/g,'')};
+const perV=c=>{const me=G.T[G.me],tn=G.T.map(t=>t.n).filter(n=>n!=me.n),x=fpk(tn),y=fpk(tn.filter(n=>n!=x));let pos='',nx='el próximo rival',gl='nuestro nueve';
+ try{pos=myPos()}catch(e){}
+ try{const f=((G.fx[me.lg]||[])[c?FW+1:G.week]||[]).find(q=>q.includes(G.me));if(f)nx=G.T[f[0]==G.me?f[1]:f[0]].n}catch(e){}
+ try{const p=me.pl.slice().sort((a,b)=>(b.g|0)-(a.g|0))[0];if(p&&(p.g|0)>0)gl=p.n}catch(e){}
+ return{c:me.n,m:G.mgr,ms:fslug(G.mgr),t:fslug(me.n),s:c?c.s:'',rv:c?c.rv:'el rival',x,y,pos,nx,gl}};
+function perPost(i,k,V,my){const P=PER[i],pl=k&&P.rs[k]&&P.rs[k].length?P.rs[k]:P.r;return fdAdd(null,fdFill(fpk(pl),V),{k:'per',c:'fan',per:i,my:my,m:.06,sn:k||'z'})}
 const perGrp=r=>PER.map((p,i)=>i).filter(i=>PER[i].role==r);
-function fdPersonas(c){const V=perV(c),k=!c?null:c.d>=3?'w3':c.d>0?'w':c.d==0?'e':c.d<=-3?'l3':'l',neg=c&&c.d<0,pos=c&&c.d>0;
- if(c){if(Math.random()<(neg?.8:c.d==0?.55:.4))perPost(fpk(perGrp('hater')),k,V,1);if(Math.random()<(neg?.4:pos?.8:.5))perPost(fpk(perGrp('fan')),k,V,1)}
- if(Math.random()<.65)perPost(fpk(perGrp('tonto')),Math.random()<.35?k:null,V,0);
- if(Math.random()<.5)perPost(4,null,V,0)}
+function fdPersonas(c){const V=perV(c),k=!c?null:c.d>=3?'w3':c.d>0?'w':c.d==0?'e':c.d<=-3?'l3':'l',neg=c&&c.d<0,pos=c&&c.d>0,used=[],
+ go=(r,kk,my)=>{const g=perGrp(r).filter(i=>!used.includes(i));if(!g.length)return;const i=fpk(g);used.push(i);perPost(i,kk,V,my)};
+ if(c){if(Math.random()<(neg?.75:c.d==0?.5:.35))go('crit',k,1);if(Math.random()<(neg?.45:pos?.8:.5))go('fan',k,1);if(Math.random()<.5)go('neu',k,1)}
+ if(Math.random()<.45)go('neu',null,0);
+ if(Math.random()<.3)go('crit',null,0)}
+
 /* ---------- comentarios (respuestas) con like + tweets destacados ---------- */
 const fdTop=p=>p.tp||p.lk>=4000;
 const fdAvP=P=>`<span class="av br per"><i>${fesc(P.n[0])}</i><img src="img/${P.img}" alt="" onerror="this.parentNode.classList.add('nf');this.remove()"></span>`;
-const REP={fan:['¡Así se habla! 👏','Esto es el {c}, señores. Que nadie lo olvide.','Yo estoy con vosotros hasta el final ❤️','Qué grande. Sin discusión.','Ahí, ahí. Seguimos. 💪'],
- hater:['Ya, ya... y luego pasa lo que pasa.','Eso lo dices tú. Los números no mienten, {m}.','Sobrevalorado. Lo digo desde hace meses.','Y yo soy el rey de España 🙄','Tanto bombo para tan poco.'],
- tonto:['Yo vine solo a ver si había pizza 🍕','Primera vez que entro aquí y ya me he perdido.','¿Esto cuenta para la quiniela?','Mi perro ha leído esto y ha ladrado. Ahí lo dejo.','Like por si acaso 👍']};
-function fdGenCm(p){const V=perV(null),out=[];fsh(['fan','hater','tonto']).slice(0,Math.random()<.5?2:3).forEach(r=>{const c=perGrp(r).filter(i=>i!==p.per),i=fpk(c.length?c:perGrp(r));let x=fpk(REP[r]);Object.keys(V).forEach(q=>{x=x.split('{'+q+'}').join(V[q])});out.push({per:i,tx:x,lk:Math.round(R(0,320))})});return out}
+/* Comentarios: cada publicación se clasifica por tema (fdTopic) y las respuestas salen del banco REP[tema.matiz] según el rol de quien comenta.
+   Marcadores: {pn} jugador de la publicación · {tm} su club · {s} resultado · {rv} rival · {c} tu club · {m} míster · {nx} próximo rival · {pos} puesto · {t} hashtag */
+const REP={
+ 'res.w3':{fan:['Qué manera de jugar. Se ha visto presión, ritmo y gol. #{t}','Los hemos pasado por encima. Esto se celebra en casa y en el bar 🍻','Hace una semana nadie decía esto. Que siga la racha, {m}.'],
+  crit:['Muy bien, pero ojo: contra {rv} era fácil que pasara. La prueba de verdad vendrá con rivales más fuertes.','Goleada merecida. Aun así, me quedo con lo que hay que mejorar atrás.'],
+  neu:['{s} cuenta una historia clara: dominio total. La pregunta es si se puede repetir.','Partido redondo. Lo que más me ha gustado: el equipo no ha dejado de correr ni con el partido resuelto.']},
+ 'res.w':{fan:['Tres puntos que valen oro. Se ha sufrido y por eso se disfruta más.','Ganar así también es de equipo grande. Vamos {c} 💪','Gracias por empujar hasta el final, equipo.'],
+  crit:['Se ha ganado, vale, pero ha habido demasiados momentos de sufrimiento.','Tres puntos sí, pero que no se maquille lo que no ha funcionado.'],
+  neu:['Victoria corta pero merecida si miras las ocasiones. Esto suma.','Se gana también cuando no se juega bien. Eso se valora a final de temporada.']},
+ 'res.e':{fan:['Un punto es un punto. A seguir.','El equipo ha competido. Cabeza arriba.'],
+  crit:['Dos puntos perdidos, así de simple. Hay que ser más claros arriba.','Con empates así no se llega lejos. Hay que ganar partidos como este.'],
+  neu:['Empate justo por lo visto: los dos han tenido su parte.','Todo lo que sume suma. Pero que no se vuelva costumbre.']},
+ 'res.l':{fan:['Hoy duele, pero esto es largo. A levantarse.','Orgulloso de cómo ha peleado el equipo, aunque no haya valido. #{t}','No se pierde la fe por un partido, {m}.'],
+  crit:['{s}. No se puede perder así. Algo hay que cambiar, {m}.','Hay que reconocerlo: el rival ha estado mejor en casi todo. Toca revisar.'],
+  neu:['Derrota con matices: se puede corregir.','Un tropiezo no hace una crisis. Veremos cómo reacciona el equipo la semana que viene.']},
+ 'res.l3':{fan:['Qué dolor. Pero este equipo ya ha demostrado carácter antes; vamos a ver si lo vuelve a hacer.','Hoy el equipo no ha estado, pero no pienso soltar la bufanda.'],
+  crit:['Esto ya no es un mal día. {m}, hay que dar explicaciones.','Resultado impropio del {c}. La directiva debería tomar nota.'],
+  neu:['Un resultado así rompe cualquier análisis. Más que táctica, aquí ha fallado la cabeza.','Primero toca digerirlo. Después, análisis frío: errores individuales, ajustes de bloque y confianza.']},
+ 'res.o':{fan:['Qué partido tan loco. La liga está más abierta que nunca.','Resultados así hacen que la liga sea impredecible. Me gusta.'],
+  crit:['El resultado dice más del perdedor que del ganador.','Cuando un equipo pierde así, hay que mirar al banquillo.'],
+  neu:['Importante cómo queda la clasificación tras esto. El {c} lo tiene que mirar.','Un {s} cambia la lectura de la jornada, sin duda.']},
+ ht:{fan:['Qué nivel, {pn}. Eso es ser delantero.','Tres goles en un partido no se ven todos los días. Merecido reconocimiento.'],
+  crit:['Muy bien, pero tres goles también dependen del partido. Veremos si lo sostiene.','Los hat-tricks hacen ruido, pero lo importante es la regularidad.'],
+  neu:['Lo que cuenta es cómo se los ha fabricado el equipo. Buena noticia para {tm}.','{tm} tiene a un delantero muy en forma. Habrá que tenerlo en cuenta.']},
+ mvp:{fan:['Merecido. {pn} ha estado enorme en esta jornada.','El MVP no se discute. A seguir así.'],
+  crit:['La nota es alta, pero habría que ver cuánto han ayudado los compañeros.','Las notas siempre se discuten: yo habría puesto otro nombre.'],
+  neu:['{pn} está jugando por encima de la media. Su valor de mercado debería estar subiendo.','Lo bueno de la nota es que cuenta el partido completo, no solo el gol.']},
+ jm:{fan:['Premio merecido: {pn} lleva semanas entre lo mejor de la liga.','Jugador del mes sin discusión.'],
+  crit:['El premio llega por regularidad: si baja una semana, se acaba el cuento.','Muy bien, aunque yo habría mirado otros nombres. Es opinión.'],
+  neu:['Un mes entero es muestra suficiente para decir que está en un gran momento.','La nota media ayuda a medir, aunque no lo cuenta todo.']},
+ cs:{fan:['{pn} ha sido un muro. Ese cero también es suyo.','Portería a cero y puntos en el bolsillo: eso se aplaude.'],
+  crit:['El cero depende también de que el rival no acierte. Ojo.','Está bien el cero. A ver si se repite cuando el rival apriete más.'],
+  neu:['Un cero no es solo del portero: es del bloque entero.','Dejar la portería a cero cambia el ánimo de la semana.']},
+ gm:{fan:['Qué golazo. Lo he visto tres veces seguidas.','Para enmarcar. ¡HERTZ sabe elegir!'],
+  crit:['Muy bonito, pero yo habría elegido otro.','Un golazo no cambia la liga, pero se agradece verlo.'],
+  neu:['Gol con mucha técnica. Yo también lo habría elegido.','Estos goles son lo que hace especial al fútbol.']},
+ 'iv.w':{fan:['Así habla un jugador de equipo 👏','Me encanta que se dedique la victoria a la grada.'],
+  crit:['Palabras muy bonitas. Lo que quiero ver es que lo demuestre cada semana.','Siempre dicen lo mismo tras ganar. Falta el siguiente partido.'],
+  neu:['Declaración sensata: celebrar sin olvidar al grupo.','Tras ganar es fácil hablar. Lo difícil es mantener la cabeza fría.']},
+ 'iv.e':{fan:['Un punto con gol: hay que quedarse con lo bueno y seguir.','Ánimo. Con esa actitud llegan los puntos.'],
+  crit:['Marcar y no ganar es lo que más me desespera. Hay que cerrar los partidos.','Los goles sirven si se ganan los partidos.'],
+  neu:['Declaración mesurada tras un resultado ni bueno ni malo.','Si el equipo corrige los detalles, esos empates serán victorias.']},
+ 'iv.l':{fan:['Cuando un jugador reconoce el error, da gusto. Estamos con él.','Ánimo, que de esto se sale trabajando.'],
+  crit:['Reconocer no basta: hay que corregir.','Siempre es lo mismo tras perder: "hay que trabajar". Que se note en el campo.'],
+  neu:['Declaración honesta. Falta ver cómo responde el vestuario.','No es fácil dar la cara tras perder. Hay que valorarlo.']},
+ 'iv.mv':{fan:['Qué buen momento de {pn}. Que siga así.','Compromiso total: así se gana a la afición.'],
+  crit:['Ya veremos cuando llegue una oferta si sigue pensando igual.','Hablar de títulos en octubre es fácil. Hablar de ellos en mayo es otra cosa.'],
+  neu:['{pn} transmite confianza, y los jugadores en buen momento suelen estar mejor de cabeza.','El discurso es el habitual, pero encaja con sus números.']},
+ 'iv.cs':{fan:['Un portero que habla así da seguridad a toda la defensa.','Merecido el reconocimiento al cero.'],
+  crit:['Mucho mérito, pero ojo con confiarse.','Un cero no se mantiene solo. Hay que seguir así.'],
+  neu:['Habla de la defensa antes que de él. Detalle de líder.','Un portero tranquilo es medio equipo tranquilo.']},
+ 'iv.coach':{fan:['Buen análisis del míster. Se agradece que hable claro.','Se nota que conoce a sus jugadores.'],
+  crit:['Mucho discurso. Lo que cuenta es el marcador.','Palabras bonitas; veremos si en el campo se confirman.'],
+  neu:['Declaración medida y realista: ni excesos ni victimismo.','Es lo que se espera de un entrenador: analizar sin dar pistas.']},
+ 'iv.bd':{fan:['Se agradece el respaldo. Vamos juntos.','Una directiva que da la cara, bien.'],
+  crit:['El respaldo vale mientras lleguen los resultados, ya sabemos cómo funciona esto.','Eso lo dicen siempre. Quiero ver hechos.'],
+  neu:['Declaración institucional típica: apoyo con matices.','Dependerá de cómo evolucionen los próximos partidos.']},
+ 'iv.pv':{fan:['Ganas de ver este partido. #{t}','Esto va a ser importante. A llenar la grada.'],
+  crit:['En la previa todos son amables. Después se ven las caras.','Todo muy bonito, pero habrá que ver cómo se gestiona la presión del rival.'],
+  neu:['Previa interesante: según cómo llegue cada equipo, puede decidirse en detalles.','Va a ser un partido de pocos espacios, creo.']},
+ mk:{fan:['Si se confirma, sería un fichaje de nivel. Veremos.','Con Jorge de la Mata nunca se sabe, pero algo de verdad suele haber.'],
+  crit:['Rumores, rumores... hasta que no haya oferta oficial, nada.','Siempre suenan los mismos nombres. Que fiche quien tenga que fichar.'],
+  neu:['El valor de {pn} ({tm}) justifica el interés. El resto ya se verá.','Los rumores son parte del mercado: ni los desmiento ni me los creo.']},
+ val:{fan:['{pn} sube por méritos propios.','Lo bonito de que suba el valor es que se nota el trabajo.'],
+  crit:['El valor sube, pero los números no cuentan toda la historia.','Mercado inflado, como siempre.'],
+  neu:['Su valor refleja nivel y edad. Habrá que ver cómo evoluciona.','Transfermarkt siempre da debate: no es oficial, pero orienta.']},
+ xi:{fan:['Once con nivel. Se ve que la jornada ha tenido de todo.','Mi voto sería para otro, pero entiendo el once.'],
+  crit:['Siempre falta alguien. Yo no habría dejado fuera a algún central.','Las notas del once son discutibles: otra jornada y cambia todo.'],
+  neu:['El once ideal es una foto de la jornada, no del campeonato.','Interesante ver cómo se reparten los clubes en el once.']},
+ pr:{fan:['Las predicciones están para romperlas 😄 #{t}','Si el {c} sigue así, nos veremos arriba.'],
+  crit:['Predicciones... hasta que llega un tropiezo y se cae todo.','El porcentaje no vale de nada si no se gana en el campo.'],
+  neu:['Modelo razonable: los puntos se deciden en pequeños márgenes.','La predicción cambia cada semana. Mejor mirar la tendencia que el porcentaje.']},
+ cp:{fan:['Gran duelo de delanteros.','Yo me quedo con el que esté más en forma.'],
+  crit:['Comparativas así valen poco: hay que ver el equipo que tiene detrás cada uno.','Datos bonitos, pero no explican el rendimiento en partidos grandes.'],
+  neu:['Buenas métricas. Edad y valor de mercado cuentan tanto como los goles.','Duelo igualado según los datos; yo miraría más la regularidad.']},
+ yr:{fan:['Cantera con futuro. Da gusto ver a chavales así.','Ojalá el {c} apueste más por jóvenes.'],
+  crit:['Mucho potencial en papel. Luego hay que ver si dan el salto.','Ya hemos visto promesas que se quedan en nada. Prudencia.'],
+  neu:['El potencial es una estimación; lo que decide es el trabajo diario.','Edad y minutos: la clave para el desarrollo.']},
+ rc:{fan:['Récord para la historia, ¡enhorabuena!','Qué bonito ver cómo se baten marcas.'],
+  crit:['Los récords se rompen. Lo que me importa es el título.','Mérito, pero cada época tiene sus condiciones.'],
+  neu:['Interesante el contexto: más partidos, más rotaciones...','Buena marca. Veremos cuánto aguanta.']},
+ tab:{fan:['La liga está más cerrada que nunca. Ánimo, {c}.','Lo que cuenta es el final, no la foto de hoy.'],
+  crit:['La tabla no miente: el {c} está en el puesto {pos}.','Hay que mirar la zona baja con cuidado, nunca se sabe.'],
+  neu:['Faltan muchas jornadas: es una tabla provisional.','Importante cómo se reparten los puntos en los próximos partidos.']},
+ club:{fan:['Gracias por todo, equipo. Seguimos. #{t}','Esta afición no falla.'],
+  crit:['Mucho comunicado. Quiero ver acciones en el campo.','Muy bonito. A ver cómo responde el equipo.'],
+  neu:['Buena comunicación del club.','Tono correcto, sin excesos.']},
+ 'bd.p':{fan:['Si la directiva confía en {m}, yo también.','El respaldo da tranquilidad.'],
+  crit:['Confiar está bien, pero los resultados mandan.','Un blindaje no sirve si luego no se gana.'],
+  neu:['Es lo normal cuando el equipo va bien: dar estabilidad.','La estabilidad es clave en un proyecto.']},
+ 'bd.z':{fan:['Hay que dar tiempo, que esto es largo.','Lo importante es que todos remen en la misma dirección.'],
+  crit:['Las dudas en el palco no son buena señal.','Mejor que decidan pronto, que el vestuario lo nota.'],
+  neu:['Situación intermedia: depende de los próximos resultados.','Ni crisis ni euforia. A esperar.']},
+ 'bd.n':{fan:['Ahora es cuando el equipo necesita unión.','No soltemos al equipo cuando peor está.'],
+  crit:['La situación es complicada. Algo hay que cambiar.','Las reuniones de urgencia no suelen ser buena noticia.'],
+  neu:['Ojalá se resuelva con serenidad.','Lo que decidan debería basarse en datos, no en el ruido de las redes.']},
+ 'op.p':{fan:['Totalmente de acuerdo. Qué orgullo de equipo.','Esto es lo que me gusta leer 💪'],
+  crit:['Con el resultado a favor es fácil opinar así. Veremos en la próxima.','Se disfruta, sí, pero ojo con relajarse.'],
+  neu:['Buena lectura: el equipo ha mostrado cosas buenas. Ahora hay que sostenerlo.','Más allá del resultado, se ve una idea de juego.']},
+ 'op.n':{fan:['Ánimo. Con la afición no se ha acabado nada.','Hoy duele, pero la temporada es larga.'],
+  crit:['Dices lo que muchos pensamos.','Hay motivo de enfado, pero hay que ser constructivo.'],
+  neu:['Las críticas ayudan si se hacen con datos.','Entiendo el enfado, pero conviene mirar el contexto: calendario, cansancio, lesiones.']},
+ 'op.z':{fan:['Muy buen punto.','Eso mismo pensaba yo.'],
+  crit:['Yo lo veo un poco distinto, la verdad.','Esa opinión es discutible.'],
+  neu:['Es una lectura interesante.','Depende de cómo se mire, pero tiene sentido.']},
+ an:{fan:['Buen análisis. Se nota que ve los partidos enteros.','Totalmente de acuerdo con la lectura.'],
+  crit:['Mucho esquema, pero el fútbol se decide en detalles que no caben en una pizarra.','Yo habría puesto el foco en otra cosa.'],
+  neu:['Coincide con lo que dicen los números.','Interesante el matiz. Habrá que ver si se mantiene en las próximas jornadas.']},
+ gen:{fan:['Buena noticia para la liga.','Así me gusta.'],crit:['Veremos cuánto dura.','Habrá que ver más para opinar.'],neu:['Interesante, aunque con matices.','Conviene mirarlo con perspectiva.']}};
+const QMAP={w:'w',e:'e',pe:'w',fa:'w',co:'w',late:'w',ht:'w',l:'l',mv:'mv',g:'mv',cs:'cs',coach:'coach',bd:'bd',pv:'pv'};
+function fdTopic(p){const tx=p.tx||'',c=p.card||{},h=c.h||'';
+ if(p.qk)return{t:'iv.'+(QMAP[p.qk]||'w')};
+ if(p.a=='sergio')return{t:'an'};
+ if(p.per!=null||p.k=='fan'){const s=p.sn||'z';return{t:'op.'+(s=='w3'||s=='w'?'p':s=='l'||s=='l3'?'n':'z')}}
+ if(c.t=='ph'){if(/HAT/.test(h))return{t:'ht'};if(/MVP/.test(h))return{t:'mvp'};if(/MES/.test(h))return{t:'jm'};if(/PORTER/.test(h))return{t:'cs'}}
+ if(/GOL DEL MES/.test(tx))return{t:'gm'};
+ if(c.t=='xi')return{t:'xi'};if(c.t=='pr')return{t:'pr'};if(c.t=='cp')return{t:'cp'};if(c.t=='yr')return{t:'yr'};if(c.t=='rc')return{t:'rc'};
+ if(c.t=='v')return{t:p.a=='jorge'?'mk':'val'};
+ if(/CLASIFICACI/.test(tx))return{t:'tab'};
+ if(/directiva|palco|destituye|ambiente/i.test(tx)&&p.a!='opta'){const f=G.conf;return{t:'bd.'+(f>60?'p':f>=35?'z':'n')}}
+ if(c.t=='r'){const me=G.me,m=c.h==me||c.a==me;if(!m)return{t:'res.o'};const d=c.h==me?c.hg-c.ag:c.ag-c.hg;return{t:'res.'+(d>=3?'w3':d>0?'w':d==0?'e':d<=-3?'l3':'l')}}
+ if(p.k=='club')return{t:'club'};
+ return{t:'gen'}}
+function fdGenCm(p){const tp=fdTopic(p),V=perV(null),cd=p.card||{},me=G.me;
+ V.pn=p.pn||cd.n&&cd.t=='ph'&&cd.n||cd.pn||'el jugador';
+ const tid=cd.cr!=null?cd.cr:p.pt!=null?p.pt:p.cr;V.tm=tid!=null&&G.T[tid]?G.T[tid].n:V.c;
+ if(cd.t=='r'&&G.T[cd.h]&&G.T[cd.a]){V.s=`${G.T[cd.h].n} ${cd.hg}-${cd.ag} ${G.T[cd.a].n}`;V.rv=G.T[cd.h==me?cd.a:cd.a==me?cd.h:cd.a].n}
+ const bk=REP[tp.t]||REP.gen,out=[],used=[],rs=fsh(['fan','crit','neu']).slice(0,Math.random()<.5?2:3);
+ rs.forEach(r=>{const g=perGrp(r).filter(i=>i!==p.per&&!used.includes(i)),i=fpk(g.length?g:perGrp(r));used.push(i);
+  const P=PER[i],l=bk[r]&&bk[r].length?(Math.random()<.15&&P.cx?P.cx:bk[r]):P.cx;out.push({per:i,tx:fdFill(fpk(l),V),lk:Math.round(R(1,60)*R(1,5))})});
+ return out.sort((a,b)=>b.lk-a.lk)}
 const fdCm=p=>`<div class="cmx">${p.cm.map((c,j)=>{const P=PER[c.per];return `<div class="cm">${fdAvP(P)}<div class="cb"><div><b>${fesc(P.n)}</b> <span class="hd">@${fesc(P.h)}</span></div><div class="cx">${fdTxt(c.tx)}</div><button class="a${c.lkd?' on':''}" data-c="${j}">♥ <b>${fN(c.lk)}</b></button></div></div>`}).join('')}</div>`;
 function fdCmToggle(po,p){const x=po.querySelector('.cmx');if(x){x.remove();return}if(!p.cm){p.cm=fdGenCm(p);save()}
  po.querySelector('.pb').insertAdjacentHTML('beforeend',fdCm(p));
@@ -134,7 +298,11 @@ const RUM=[
  (p,t,d,v)=>`🔎 ${p.n} está en la lista corta de ${d.n}. El ${t.n} no lo soltaría por menos de ${v}. De momento, sin oferta formal.`,
  (p,t,d,v)=>`⚠️ Se mueve algo: ${d.n} prepara una propuesta por ${p.n}. Habrá novedades en los próximos días. #Fichajes`,
  (p,t,d,v)=>`🗣️ Fuentes cercanas al jugador: ${p.n} ve con buenos ojos escuchar a ${d.n}. El ${t.n} está avisado.`,
- (p,t,d,v)=>`✍️ Pasos adelante entre ${d.n} y ${t.n} por ${p.n}. Se habla de ${v}. Ojo a este tema. #Mercado`];
+ (p,t,d,v)=>`✍️ Pasos adelante entre ${d.n} y ${t.n} por ${p.n}. Se habla de ${v}. Ojo a este tema. #Mercado`,
+ (p,t,d,v)=>`📋 ${d.n} sigue de cerca a ${p.n} desde hace semanas. El ${t.n} no quiere venderlo, pero hay cláusulas de por medio. #Mercado`,
+ (p,t,d,v)=>`🤝 Primeros contactos entre el entorno de ${p.n} y ${d.n}. Todo muy en el inicio, pero el jugador no cierra la puerta.`,
+ (p,t,d,v)=>`💬 ${p.n} (${t.n}) estaría abierto a cambiar de aires. ${d.n} y otros dos clubes están atentos. Valoración: ${v}.`,
+ (p,t,d,v)=>`📉 Se enfría la operación por ${p.n}: ${d.n} considera que ${v} es demasiado y estudia alternativas. #Fichajes`];
 function fdRumor(l){const me=G.T[G.me],pl=fpool(Math.random()<.25?(l==1?2:1):l).filter(x=>x.t.id!=G.me).sort((a,b)=>(b.p.ovr+(b.p.age<=24?b.p.pot:b.p.ovr))-(a.p.ovr+(a.p.age<=24?a.p.pot:a.p.ovr))).slice(0,25);
  if(!pl.length)return;const x=fpk(pl),ds=G.T.filter(t=>t.lg==G.T[G.me].lg&&t.id!=x.t.id).sort((a,b)=>str(b).o-str(a).o).slice(0,8),d=fpk(ds);
  fdAdd('jorge',fpk(RUM)(x.p,x.t,d,fmv(mval(x.p))),{card:fdVal(x.p,x.t,Math.round(R(-4,12)))})}
@@ -202,27 +370,77 @@ function fdVibes(w,l,rs,LN,lht){const T=i=>G.T[i],me=T(G.me),sg=r=>`${T(r[2]).n}
  if(pe&&Math.random()<.5)fdAdd('sky',fpk([`⚖️ PENALTI | ${pe.n} (${T(pe.t).n}) transforma la pena máxima en el minuto ${pe.min} ante ${T(pe.v).n}.`,`⚖️ ACTA | Penalti transformado por ${pe.n} (${T(pe.t).n}) en el minuto ${pe.min}, frente al ${T(pe.v).n}.`]),{my:pe.t==G.me||pe.v==G.me});
  if(Math.random()<.7){const tb=tab(l);fdAdd('sky',`📊 CLASIFICACIÓN OFICIAL | Tras la jornada ${w+1} de la ${LN}: ${tb.slice(0,3).map((t,i)=>`${i+1}. ${t.n} (${t.pts})`).join(' · ')}. Zona baja: ${tb.slice(-REL).map(t=>t.n).join(', ')}.\n#${lht}`,{my:tb.slice(0,3).concat(tb.slice(-REL)).some(t=>t.id==G.me)})}
  if(tg&&Math.random()<.6){const m=wk.find(q=>q[0]==tg[2]&&q[1]==tg[3]);fdAdd('sky',`🏁 FINAL | ${sg(tg)}.${m&&(m[2].length+m[3].length)?' Goles: '+fdSc(m)+'.':''}\n#J${w+1} #${lht}`,{card:cd(tg),my:has(tg)})}}
-/* ---------- DECLARACIONES Y ENTREVISTAS (Marca, Sky Sports y FD Sports) ---------- */
+/* ---------- DECLARACIONES Y ENTREVISTAS (Marca, Sky Sports y FD Sports) ----------
+   Marcadores: {v} rival · {t} club del jugador · {m} míster · {as} asistente del gol · {min} minuto · {sc} resultado · {j} jornada
+   Tipos (k): w gol en victoria · e gol en empate · l derrota · mv MVP · cs portería a 0 · pe penalti · fa falta · co córner · late gol en el tramo final · ht hat-trick */
 const QV={
- w:['Estoy feliz por el gol, pero lo importante es el equipo. Hemos trabajado toda la semana para esto.','Cuando entra, te olvidas de todo. Se lo dedico a la afición y a mi familia.','Sabíamos que {v} iba a apretar, pero el míster nos preparó a la perfección.','Llevaba tiempo buscándolo. Ahora toca no bajar el pistón.','Aquí gana el vestuario, no uno solo. Hoy me ha tocado a mí.'],
- l:['Un golpe duro. Toca callar, trabajar y devolverle a la afición lo que merece.','No hay excusas contra {v}. Nos faltó intensidad y hay que reconocerlo.','Estamos tristes, pero el vestuario está unido. Esto se arregla trabajando.','Merecíamos más, pero el fútbol es así. Cabeza alta y a la siguiente.'],
- mv:['Estoy en un gran momento, pero no quiero relajarme ni un segundo.','Los números ayudan, pero lo que quiero son títulos con el {t}.','Estoy muy a gusto aquí. Mientras el míster confíe en mí, lo daré todo.','Sueño con llevar al {t} a lo más alto de esta liga.'],
- g:['Vamos jornada a jornada, sin mirar la tabla. Lo demás vendrá solo.','El míster nos pide paciencia con el proyecto y yo confío ciegamente.','Mi objetivo es seguir creciendo. Lo demás, que lo decidan los goles.']};
+ w:['Estoy contento por el gol, pero lo importante es el equipo. Hemos trabajado toda la semana para esto.','Sabíamos que {v} iba a apretar, pero {m} nos preparó el partido a la perfección.','Llevaba tiempo buscándolo. Ahora toca no bajar el pistón y pensar ya en la siguiente jornada.','Aquí gana el vestuario, no uno solo. Hoy me ha tocado a mí, mañana será otro.','Cuando entra, te olvidas de todo. Se lo dedico a la afición, que nos ha empujado hasta el final.','Hemos sido valientes. Salimos a ganar y el equipo lo ha hecho con mucha personalidad.'],
+ e:['Un punto sabe a poco, pero hemos competido. Hay que mejorar el último tercio.','Mi gol no sirve de mucho si no ganamos. Contra {v} merecíamos algo más.','El empate es justo por lo visto, pero hay que ser más contundentes cuando tenemos el partido de cara.','Marcar siempre es bonito, pero el equipo quería los tres puntos. Seguimos trabajando.'],
+ l:['Un golpe duro. Toca callar, trabajar y devolverle a la afición lo que merece.','No hay excusas contra {v}. Nos faltó intensidad y hay que reconocerlo.','Estamos tristes, pero el vestuario está unido. Esto se arregla trabajando.','Merecíamos más, pero el fútbol es así. Cabeza alta y a la siguiente.','Perder duele, pero lo peor sería esconderse. Hay que dar la cara, empezando por nosotros.'],
+ mv:['Estoy en un buen momento, pero no quiero relajarme ni un segundo.','Los números ayudan, pero lo que quiero son títulos con el {t}.','Estoy muy a gusto aquí. Mientras {m} confíe en mí, lo daré todo.','Sueño con llevar al {t} a lo más alto de esta liga.','Cuando el equipo funciona, el jugador sale ganando. Esto es mérito del grupo.'],
+ cs:['Dejar la portería a cero es mérito de todos: de los delanteros que presionan y de los defensas que cierran.','Contra {v} había que estar muy atentos. El cero nos da confianza para lo que viene.','Un portero vive de la tranquilidad que le da la defensa. Hoy hemos estado muy bien juntos.','El cero es bonito, pero no hay que confiarse. Seguimos trabajando los detalles.'],
+ pe:['Me puse delante del balón con calma. Lo entreno cada semana y el equipo confía en mí para ello.','Un penalti nunca es fácil. Lo importante es no pensar demasiado y golpear con decisión.','Lo hablamos en el vestuario: si hay penalti, lo tiro yo. Hoy tocó y salió bien.'],
+ fa:['Llevo semanas probando ese golpeo después de los entrenamientos. Hoy me salió tal como lo imaginaba.','Vi un hueco entre la barrera y el portero, y pensé que si salía bien, sería golazo. Y salió.','Las faltas se trabajan mucho. No siempre salen, pero cuando salen, se disfrutan el doble.'],
+ co:['El balón parado lo trabajamos toda la semana. {as} puso el centro justo donde pedimos y yo solo tuve que llegar.','Cuando una jugada ensayada sale bien, es la recompensa a muchas horas de vídeo y repeticiones.','Contra {v} sabíamos que el córner podía hacer daño. Lo habíamos estudiado.'],
+ late:['Insistimos hasta el final y eso se premia. Un gol en el minuto {min} te cambia la semana.','No pensé en nada, solo en estar en el sitio correcto. Después te das cuenta de lo que has hecho.','El equipo creyó hasta el último minuto. Esa mentalidad es la que queremos.'],
+ ht:['Con incredulidad. Esto es del equipo: sin los pases de mis compañeros no habría hecho nada.','Tres goles en un partido no se ven todos los días. Me llevo el balón a casa, pero mañana toca seguir trabajando.','Estoy muy contento, pero lo importante es que el equipo ha ganado. Los goles son una consecuencia.'],
+ g:['Vamos jornada a jornada, sin mirar la tabla. Lo demás vendrá solo.','{m} nos pide paciencia con el proyecto y yo confío plenamente.','Mi objetivo es seguir creciendo. Lo demás, que lo decidan los goles.']};
+const IQ={
+ w:[['Gol y victoria. ¿Cómo se vive desde dentro?','Con mucha alegría, pero con los pies en el suelo. Hemos trabajado toda la semana y se nota en el campo.'],['¿Qué ha marcado la diferencia ante {v}?','La intensidad sin balón. Cuando todos presionamos a la vez, el rival se queda sin ideas.'],['¿Qué mensaje le llega de la grada?','Que estamos juntos. Se nota cuando la gente aprieta en los minutos difíciles; eso nos da fuerzas.']],
+ e:[['Marcó, pero el equipo no ganó. ¿Qué sabor le queda?','Agridulce. Marcar siempre es bonito, pero queríamos los tres puntos. Hay que ser más fiables.'],['¿Dónde se escapó el partido?','En los detalles: un balón dividido, una segunda jugada. Son cosas pequeñas que deciden partidos.']],
+ l:[['¿Cómo está el vestuario tras la derrota?','Tocado, pero unido. Hay que asumir errores, reconocer al rival y trabajar para la siguiente.'],['¿Qué falló ante {v}?','Nos faltó ritmo y, cuando quisimos reaccionar, ya era tarde. Sin excusas.'],['¿Qué mensaje manda a la afición?','Compromiso. Se merecen más y vamos a dárselo.']],
+ mv:[['Gran momento de forma. ¿A qué lo atribuye?','Al trabajo diario, a la confianza de {m} y al apoyo del grupo. Cuando el equipo funciona, el jugador sale ganando.'],['¿Se ve peleando por títulos?','Mientras sigamos creciendo, sí. Sin obsesionarnos, partido a partido.'],['¿Qué le falta por mejorar?','Regularidad, decisión en los últimos metros, trabajo defensivo. Siempre se puede más.']],
+ cs:[['Portería a cero. ¿Cuánto vale ese cero?','Mucho. Es un trabajo de todos: delanteros que presionan, defensas que cierran, y yo solo tengo que estar atento.'],['¿Cómo se prepara un partido así?','Con vídeo, balón parado y mucha comunicación. El portero ordena, pero la defensa tiene que escuchar.']],
+ pe:[['¿Qué se siente al ponerse delante del balón en un penalti?','Mucha calma por fuera y mucho latido por dentro. Lo entreno cada semana y se nota.'],['¿Quién decidió que lo tirara usted?','Lo hablamos en el vestuario: si pasa algo, lo tiro yo. Hoy tocó y salió bien.']],
+ fa:[['Golazo de falta. ¿Lo tenía pensado?','Sí, llevo semanas probando ese golpeo después de entrenar. Hoy me salió como lo imaginaba.'],['¿Qué le dijo {m} antes del lanzamiento?','Que confiara en lo que había practicado. A veces basta con eso.']],
+ co:[['Gol a balón parado, ¿estaba ensayado?','Sí, lo trabajamos toda la semana. {as} puso el balón donde pedimos y yo solo tuve que llegar.'],['¿Cuánto trabajo hay detrás de una jugada así?','Más de lo que parece: vídeo, repeticiones, señales. Cuando sale, es la recompensa.']],
+ late:[['Gol en el minuto {min}. ¿Qué se le pasó por la cabeza?','Nada, la verdad. Solo quería estar en el sitio correcto. Después te das cuenta de lo que has hecho.'],['¿Cree que el equipo merecía los tres puntos?','Insistimos hasta el final y eso se premia. Los partidos duran hasta que el árbitro pita.']],
+ ht:[['Tres goles en un partido. ¿Cómo se asimila algo así?','Con incredulidad. Esto es del equipo: sin los pases de mis compañeros no habría hecho nada.'],['¿Se lleva el balón a casa?','Claro. Lo guardaré como recuerdo, aunque mañana ya hay que pensar en el siguiente partido.']]};
+const QC={
+ cl:['Felicito al {c}: ha estado mejor y no hay discusión. Nosotros tenemos que revisar cómo defendimos.','El {c} nos ha hecho daño en los momentos clave. Toca levantarse y trabajar.','No hay excusas: {m} ha preparado muy bien el partido y nosotros no hemos estado a la altura.','Perder duele, pero no vamos a mirar a otro lado. Hay cosas que corregir en nuestro juego.'],
+ cw:['Hemos sufrido, pero el equipo ha sabido competir. El {c} es un rival muy peligroso y lo hemos respetado.','Un triunfo valioso ante un equipo bien dirigido por {m}. Seguimos adelante.','Los tres puntos son para el vestuario, que se ha dejado la piel. El {c} no nos lo ha puesto fácil.'],
+ ce:['Un punto que sabe a poco, pero contra el {c} tampoco es mal resultado. Hemos competido.','El empate es justo. {m} tiene un equipo serio y que no regala nada.','Podíamos haber ganado, pero también perder. Nos llevamos un punto ante un rival difícil.'],
+ pv:['Será un partido exigente. El {c} tiene calidad y {m} sabe cómo plantear estos partidos.','Nos toca preparar bien el partido: el {c} es peligroso en transición y a balón parado.','Vamos con ilusión. Respeto al {c}, pero queremos imponer nuestro juego.'],
+ ot:['Hay que pedir perdón a la afición. Una derrota así no se puede repetir.','Los jugadores han dado la cara, pero hay que reconocer que el rival ha sido superior.','Un resultado así duele. Mañana toca trabajar mucho para levantar la cabeza.'],
+ bp:['Estamos muy contentos con el trabajo de {m}. Tiene todo nuestro respaldo.','El proyecto avanza. Queremos continuidad, y no solo por los resultados.'],
+ bz:['Confiamos en {m}, pero los resultados tienen que acompañar en las próximas jornadas.','Seguimos de cerca la evolución. Hay margen, pero no infinito.'],
+ bn:['Estamos preocupados. Los resultados no llegan y la directiva se reunirá para decidir.','No voy a cuestionar a nadie hoy, pero la situación exige una reacción inmediata.']};
 function fdQuote(w,l,rs,LN,lht,mv){const T=i=>G.T[i],pool=[];
+ const keeper=tm=>(tm.lu&&tm.lu.length?tm.lu.map(i=>tm.pl[i]):[]).find(p=>p&&p.pos=='P')||tm.pl.find(p=>p.pos=='P');
  fdWk(l).forEach(([h,a,s1,s2])=>[[h,a,s1,s2.length],[a,h,s2,s1.length]].forEach(([t,v,s,gc])=>{
-  if(s.length>gc)s.forEach(g=>pool.push({n:g[0],t,v,k:'w'}));
-  else if(s.length<gc){const tm=T(t),lu=(tm.lu&&tm.lu.length?tm.lu.map(i=>tm.pl[i]):tm.pl).filter(p=>p&&p.pos!='P').sort((x,y)=>y.ovr-x.ovr).slice(0,4);if(lu.length)pool.push({n:fpk(lu).n,t,v,k:'l'})}}));
+  const sc=`${T(h).n} ${s1.length}-${s2.length} ${T(a).n}`,df=s.length-gc,cn={};s.forEach(g=>cn[g[0]]=(cn[g[0]]||0)+1);
+  s.forEach(g=>{const ty=g[3]&&g[3]!='n'?g[3]:'',k=df<0?'l':cn[g[0]]>=3?'ht':ty=='pe'?'pe':ty=='fa'?'fa':ty=='co'?'co':g[1]>=85&&df>0&&df<=1?'late':df>0?'w':'e';
+   pool.push({n:g[0],t,v,k,min:g[1],as:g[2],sc})});
+  if(df<0){const tm=T(t),lu=(tm.lu&&tm.lu.length?tm.lu.map(i=>tm.pl[i]):tm.pl).filter(p=>p&&p.pos!='P').sort((x,y)=>y.ovr-x.ovr).slice(0,4);if(lu.length)pool.push({n:fpk(lu).n,t,v,k:'l',sc})}
+  if(gc==0){const kp=keeper(T(t));if(kp)pool.push({n:kp.n,t,v,k:'cs',sc})}}));
  if(mv)pool.push({n:mv.p.n,t:mv.t.id,v:null,k:'mv'});
  if(!pool.length)return;
  const used=new Set(),ac=fsh(['marca','sky','fd']),n=Math.random()<.15?2:1;
- for(let z=0;z<n;z++){const mine=pool.filter(x=>(x.t==G.me||x.v==G.me)&&!used.has(x.n)),fr=pool.filter(x=>!used.has(x.n));if(!fr.length)break;
+ for(let z=0;z<n;z++){const fr=pool.filter(x=>!used.has(x.n)),mine=fr.filter(x=>x.t==G.me||x.v==G.me);if(!fr.length)break;
   const x=mine.length&&Math.random()<.45?fpk(mine):fpk(fr);used.add(x.n);
-  const q=fpk(Math.random()<.15?QV.g:QV[x.k]).replace(/\{v\}/g,x.v!=null?T(x.v).n:'el rival').replace(/\{t\}/g,T(x.t).n),a=ac[z],tn=T(x.t).n,my=x.t==G.me||(x.v!=null&&x.v==G.me);
-  const tx=a=='marca'?fpk([`🎙️ ENTREVISTA | ${x.n} (${tn}) habla en exclusiva para MARCA: «${q}»`,`🗞️ ${x.n}, sin filtros en MARCA: «${q}»\n#${lht}`]):
-   a=='sky'?fpk([`🎤 DECLARACIONES | ${x.n} (${tn}) atiende a Sky Sports tras la jornada ${w+1}: «${q}»`,`🎤 ZONA MIXTA | ${x.n}: «${q}»\n#${lht}`]):
-   fpk([`👀 ${x.n.toUpperCase()} SE SINCERA: «${q}» 🔥\n#J${w+1}`,`🎙️ Palabras mayores de ${x.n} (${tn}): «${q}» 🗣️`]);
-  const o={my};if(IMG.iv.length)o.card={t:'ph',img:fpk(IMG.iv),h:'DECLARACIONES',n:x.n,cr:x.t,st:tn,rt:0};
+  const tn=T(x.t).n,mm=x.t==G.me&&Math.random()<.6?G.mgr:'el míster',
+   fill=s=>s.replace(/\{v\}/g,x.v!=null?T(x.v).n:'el rival').replace(/\{t\}/g,tn).replace(/\{m\}/g,mm).replace(/\{as\}/g,x.as?fdLn(x.as):'un compañero').replace(/\{min\}/g,x.min!=null?x.min:'').replace(/\{sc\}/g,x.sc||'el resultado').replace(/\{j\}/g,w+1),
+   a=ac[z],my=x.t==G.me||(x.v!=null&&x.v==G.me),q=fill(fpk(Math.random()<.12&&x.k!='cs'?QV.g:QV[x.k]||QV.w)),
+   af=x.sc?`tras el ${x.sc}`:`tras la jornada ${w+1}`;
+  let tx;
+  if(a=='marca'){const qa=IQ[x.k]&&Math.random()<.6?fpk(IQ[x.k]):null;
+   tx=qa?`🎙️ ENTREVISTA | ${x.n} (${tn}) para MARCA.\n— ${fill(qa[0])}\n— «${fill(qa[1])}»`:fpk([`🗞️ ${x.n}, sin filtros en MARCA: «${q}»\n#${lht}`,`🗞️ ${x.n} (${tn}) en MARCA: «${q}»`])}
+  else if(a=='sky')tx=fpk([`🎤 ZONA MIXTA | ${x.n} (${tn}) ${af}: «${q}»`,`🎤 DECLARACIONES | ${x.n} atiende a Sky Sports ${af}: «${q}»\n#${lht}`]);
+  else tx=x.k=='late'?`⏱️ ${x.n.toUpperCase()} Y SU GOL EN EL ${x.min}': «${q}»\n#J${w+1}`:x.k=='cs'?`🧤 ${x.n} sobre el cero ante ${x.v!=null?T(x.v).n:'el rival'}: «${q}»`:x.k=='l'?`😔 ${x.n} da la cara: «${q}»`:fpk([`👀 ${x.n.toUpperCase()} SE SINCERA: «${q}» 🔥\n#J${w+1}`,`🎙️ Palabras mayores de ${x.n} (${tn}): «${q}» 🗣️`,`🗣️ ${x.n} sin filtros: «${q}»`]);
+  const o={my,pn:x.n,pt:x.t,qk:x.k};if(IMG.iv.length)o.card={t:'ph',img:fpk(IMG.iv),h:'DECLARACIONES',n:x.n,cr:x.t,st:tn,rt:0};
   fdAdd(a,tx,o)}}
+/* entrenadores rivales, directiva y previas: declaraciones que reaccionan a tu resultado y a tu situación en el club */
+function fdPress(w,l,rs,LN,lht){const T=i=>G.T[i],me=T(G.me),mg=G.mgr,mr=rs.find(r=>r[2]==G.me||r[3]==G.me),
+ fill=(s,o)=>s.replace(/\{c\}/g,me.n).replace(/\{m\}/g,mg).replace(/\{o\}/g,o?o.n:''),ac=()=>fpk(['marca','sky']);
+ if(mr&&Math.random()<.5){const h=mr[2]==G.me,o=T(h?mr[3]:mr[2]),d=h?mr[4]-mr[5]:mr[5]-mr[4],sc=`${T(mr[2]).n} ${mr[4]}-${mr[5]} ${T(mr[3]).n}`,k=d>0?'cl':d<0?'cw':'ce';
+  fdAdd(ac(),`🎙️ RUEDA DE PRENSA | El técnico del ${o.n} tras el ${sc}: «${fill(fpk(QC[k]),o)}»`,{my:1,pt:o.id,qk:'coach'})}
+ if(Math.random()<.2){const k=G.conf>60?'bp':G.conf>=35?'bz':'bn';
+  fdAdd(ac(),`🎙️ PRESIDENTE | El presidente del ${me.n} sobre ${mg}: «${fill(fpk(QC[k]))}»`,{my:1,pt:G.me,qk:'bd'})}
+ const nf=((G.fx[l]||[])[w+1]||[]).find(x=>x.includes(G.me));
+ if(nf&&Math.random()<.45){const ro=T(nf[0]==G.me?nf[1]:nf[0]);
+  fdAdd(ac(),`⏭️ PREVIA | El técnico del ${ro.n} antes de medirse al ${me.n}: «${fill(fpk(QC.pv),ro)}»`,{my:1,pt:ro.id,qk:'pv'})}
+ const bg=rs.filter(r=>r!==mr&&Math.abs(r[4]-r[5])>=3).sort((a,b)=>Math.abs(b[4]-b[5])-Math.abs(a[4]-a[5]))[0];
+ if(bg&&Math.random()<.5){const lo=T(bg[4]>bg[5]?bg[3]:bg[2]);fdAdd('sky',`🎤 PALABRAS DEL TÉCNICO | ${lo.n} tras caer ${Math.max(bg[4],bg[5])}-${Math.min(bg[4],bg[5])}: «${fpk(QC.ot)}»`,{pt:lo.id,qk:'coach'})}}
 
 /* ---------- PORTERÍA A 0 (de vez en cuando, con ST4.png o ST4-2.png) ---------- */
 function fdCS(w,l,rs,LN,lht){if(Math.random()>.5)return;const T=i=>G.T[i],c=[];
@@ -242,8 +460,30 @@ function fdGM(w,l,LN,lht){fdGMtrack(w,l);if(w%4!=3||!G.gm)return;const x=G.gm,T=
  fdAdd('hertz',fpk([`⚽🚗 El GOL DEL MES, patrocinado por HERTZ | ${x.n} (${tn}) ante ${vn}, minuto ${x.min}'. ${d}${x.as?' Asistencia de '+fdLn(x.as)+'.':''}\n#GolDelMes #HERTZ`,`🏆 HERTZ patrocina el gol y el ganador es ${x.n} (${tn}) frente al ${vn} (J${x.w+1}). ${d}\n#GolDelMes #${lht}`]),
   {big:1,my:x.t==G.me||x.v==G.me,card:{t:'s',n:x.min+"'",l:`Gol del mes · ${x.n} · J${x.w+1}`,cr:x.t}});G.gm=null}
 
+/* ---------- SERGIO NAVARRO (periodista): tácticas, estados de forma, momentos y goles; no habla de fichajes ---------- */
+function fdSergio(w,l,rs,LN,lht,mv){const T=i=>G.T[i],me=T(G.me),mg=G.mgr,mr=rs.find(r=>r[2]==G.me||r[3]==G.me),c=[],my=[],
+ sg=r=>`${T(r[2]).n} ${r[4]}-${r[5]} ${T(r[3]).n}`,cd=r=>({t:'r',h:r[2],a:r[3],hg:r[4],ag:r[5]}),fm=v=>v.toFixed(1).replace('.',',');
+ if(mr){const h=mr[2]==G.me,o=T(h?mr[3]:mr[2]),gf=h?mr[4]:mr[5],gc=h?mr[5]:mr[4],d=gf-gc;
+  my.push(()=>fdAdd('sergio',fpk(d>=2?[`🧠 ANÁLISIS | ${sg(mr)}. El ${me.n} ganó el partido con ideas claras: presión tras pérdida, líneas juntas y mucha gente llegando al área.\n#${lht}`,`🔍 LA CLAVE | Más allá del ${gf}-${gc}, lo mejor del ${me.n} fue cómo recuperó el balón en campo rival. Así se castiga a ${o.n}.`]:
+   d==1?[`🧠 ANÁLISIS | ${sg(mr)}. Victoria corta que se explica por el orden: pocas concesiones y una defensa que no se descompuso. Los equipos que ganan así suelen sumar mucho a final de temporada.`,`🔍 LA CLAVE | El ${me.n} no brilló, pero supo gestionar los tiempos del partido ante ${o.n}. ${gc==0?'Portería a cero y mucha concentración.':'Sufrió, pero cerró bien las ayudas.'}`]:
+   d==0?[`🧠 ANÁLISIS | ${sg(mr)}. ${gf==0?'Partido muy cerrado: pocos espacios y mucha precaución por ambos lados.':'Partido abierto, con errores en las dos áreas.'} ${mg} tiene que ajustar ${gf==0?'el último pase':'las ayudas defensivas'}.`,`🔍 LA CLAVE | ${me.n} y ${o.n} se anularon en los sectores clave. Quien consiga cambiar el ritmo en la segunda parte decantará estos partidos.`]:
+   [`🧠 ANÁLISIS | ${sg(mr)}. El ${me.n} perdió el partido en las transiciones: demasiado espacio entre líneas y poca ayuda al lateral. Es corregible, pero ${mg} tiene trabajo esta semana.`,`🔍 LA CLAVE | ${o.n} supo dónde hacer daño al ${me.n}. ${d<=-2?'Cuando el partido se rompe, cuesta mucho volver a ordenarlo.':'Con pequeños detalles, el resultado pudo ser otro.'}`]),{card:cd(mr),my:1}))}
+ let bv=null,bd=null;
+ rs.forEach(r=>[r[2],r[3]].forEach(i=>{const v=fdSk(i,'v'),d=fdSk(i,'d');if(v>=3&&(!bv||v>bv.n))bv={i,n:v};if(d>=3&&(!bd||d>bd.n))bd={i,n:d}}));
+ if(bv)c.push(()=>fdAdd('sergio',`📈 ESTADO DE FORMA | ${T(bv.i).n} suma ${bv.n} victorias seguidas. ${fpk(['Lo llamativo no es solo el resultado, sino cómo gana: con orden y sin depender de una sola pieza.','Un equipo en racha gana también partidos que no merece. Este los está ganando de todas las formas.'])}\n#${lht}`,{card:{t:'s',n:bv.n,l:'victorias seguidas',cr:bv.i},my:bv.i==G.me}));
+ if(bd)c.push(()=>fdAdd('sergio',`📉 MALA RACHA | ${T(bd.i).n} encadena ${bd.n} derrotas seguidas. ${fpk(['El problema ya no es solo táctico: es de confianza.','Cuando el equipo duda, se nota en cada balón dividido y en cada segunda jugada.'])}`,{card:{t:'s',n:bd.n,l:'derrotas seguidas',cr:bd.i},my:bd.i==G.me}));
+ const tg=rs.slice().sort((a,b)=>(b[4]+b[5])-(a[4]+a[5]))[0],z=rs.find(r=>r[4]==0&&r[5]==0);
+ if(tg&&tg[4]+tg[5]>=5)c.push(()=>fdAdd('sergio',`⚽ GOLES | ${sg(tg)}. ${tg[4]+tg[5]} goles en un partido que se rompió pronto: defensas descolocadas y mucho espacio al contragolpe.`,{card:cd(tg),my:tg[2]==G.me||tg[3]==G.me}));
+ if(z)c.push(()=>fdAdd('sergio',`🔒 PARTIDO CERRADO | ${sg(z)}. Dos equipos que prefirieron no perder antes que arriesgar. En la ${LN} cada punto cuenta mucho.`,{card:cd(z),my:z[2]==G.me||z[3]==G.me}));
+ const late=[];fdWk(l).forEach(([h,a,s1,s2])=>{const hg=s1.length,ag=s2.length;if(Math.abs(hg-ag)!=1)return;const ws=hg>ag?s1:s2,g=ws.slice().sort((x,y)=>y[1]-x[1])[0];if(g&&g[1]>=87)late.push({n:g[0],t:hg>ag?h:a,min:g[1],sc:`${T(h).n} ${hg}-${ag} ${T(a).n}`})});
+ if(late.length)c.push(()=>{const x=late[0];fdAdd('sergio',`⏱️ MOMENTO | ${x.n} marca en el minuto ${x.min} y decide el ${x.sc}. Hay partidos que se ganan por insistencia, no por dominio.`,{my:x.t==G.me})});
+ if(mv)c.push(()=>fdAdd('sergio',`🔎 JUGADOR DEL MOMENTO | ${mv.p.n} (${mv.t.n}) está en un gran estado de forma: ${fm(mv.rt)} de nota en la jornada ${w+1}. Lo mejor: ${({D:'cómo ordena a los suyos sin balón',P:'la seguridad que da bajo palos',M:'cómo conecta las líneas',F:'su movimiento sin balón y su pegada'})[mv.p.pos]||'su regularidad'}.`,{my:mv.t.id==G.me}));
+ const gl=rs.reduce((q,r)=>q+r[4]+r[5],0),av=gl/rs.length;
+ c.push(()=>fdAdd('sergio',`📊 TENDENCIA | ${gl} goles en la jornada ${w+1} de la ${LN} (${fm(av)} por partido). ${av>=3?'Se juega a campo abierto y las defensas sufren.':av<2?'Mandan las defensas: los partidos se deciden por detalles.':'Equilibrio entre ataque y defensa: ninguna línea domina a las demás.'}`));
+ const n=Math.random()<.35?1:2,pk=[];if(my.length&&Math.random()<.75)pk.push(my[0]);fsh(c).forEach(f=>{if(pk.length<n)pk.push(f)});pk.forEach(f=>f())}
+
 function fdFD(w,l,rs){const LN=LGN[l],lht=fslug(LN),N=NWL[l],run=f=>{try{f()}catch(e){console.error(e)}};
- let mv=null;run(()=>{mv=fdIdeal(w,l,rs,LN)});run(()=>fdStars(w,l,LN,lht,mv));run(()=>fdQuote(w,l,rs,LN,lht,mv));run(()=>fdCS(w,l,rs,LN,lht));run(()=>fdGM(w,l,LN,lht));run(()=>fdVibes(w,l,rs,LN,lht));
+ let mv=null;run(()=>{mv=fdIdeal(w,l,rs,LN)});run(()=>fdStars(w,l,LN,lht,mv));run(()=>fdQuote(w,l,rs,LN,lht,mv));run(()=>fdPress(w,l,rs,LN,lht));run(()=>fdSergio(w,l,rs,LN,lht,mv));run(()=>fdCS(w,l,rs,LN,lht));run(()=>fdGM(w,l,LN,lht));run(()=>fdVibes(w,l,rs,LN,lht));
  if(w>=3&&(w+1)%5==0&&w<N-1)run(()=>fdPred(w,l,LN,lht));
  if(w%6==2)run(()=>fdDuel(w,l,LN));
  if(w%7==4)run(()=>fdYoung(w,l,LN));
@@ -264,7 +504,7 @@ function genFeed(w){
  if(mr){h=mr[2]==G.me;o=h?mr[3]:mr[2];gf=h?mr[4]:mr[5];gc=h?mr[5]:mr[4];d=gf-gc;
   const gs=G.last&&G.last.r[0]==w?G.last.sc.filter(s=>s[0]==G.me):[];if(gs.length){const c={};gs.forEach(s=>c[s[1]]=(c[s[1]]||0)+1);scorer=Object.keys(c).sort((a,b)=>c[b]-c[a])[0]}
   fdClub(G.me,`🏁 FINAL | ${sg(mr)}${gs.length?'\n⚽ '+gs.map(s=>s[1]+' '+s[2]+"'"+({pe:' (p)',fa:' (f)',co:' (c)'}[s[4]]||'')+(s[3]?' (as. '+s[3].split(' ').slice(1).join(' ')+')':'')).join(' · '):''}\n#J${w+1} #${slg}`,{card:card(mr),m:.7,big:d>=2,top:1})}
- if(mr&&Math.random()<.55){const sp=gs0(mr,w);fdClub(G.me,fpk(d>=1?[`🔥 ¡Qué noche! ${sp&&sp.ty=='pe'?'Desde los once metros '+fdLn(sp.n)+' no falla.':sp&&sp.ty=='fa'?'Golazo de falta de '+fdLn(sp.n)+'.':sp&&sp.ty=='co'?'Remate de '+fdLn(sp.n)+' tras un córner y a celebrarlo.':scorer?scorer+' en estado de gracia.':'Equipo enorme.'} Gracias por empujar hasta el final #${slg}`,`💪 Tres puntos más y la grada rugiendo. Vamos a por la siguiente 🏟️ #${slg}`,`✅ Trabajo hecho. Cada partido cuenta y este lo hemos sacado adelante ⚽ #${slg}`]:d==0?[`🤝 Punto sumado. Seguimos creciendo, gracias por el apoyo #${slg}`,`⚖️ Empate trabajado. Toca corregir detalles y mirar a la próxima #${slg}`]:[`😔 No era el resultado que queríamos. A levantarse: la afición merece más #${slg}`,`💙 Duele, pero seguimos juntos. A trabajar para la próxima #${slg}`]),{m:.3})}
+ if(mr&&Math.random()<.55){const sp=gs0(mr,w);fdClub(G.me,fpk(d>=1?[`🔥 ¡Qué noche! ${sp&&sp.ty=='pe'?'Desde los once metros '+fdLn(sp.n)+' no falla.':sp&&sp.ty=='fa'?'Golazo de falta de '+fdLn(sp.n)+'.':sp&&sp.ty=='co'?'Remate de '+fdLn(sp.n)+' tras un córner y a celebrarlo.':scorer?scorer+' en estado de gracia.':'Equipo enorme.'} Gracias por empujar hasta el final #${slg}`,`💪 Tres puntos más y la grada rugiendo. Vamos a por la siguiente 🏟️ #${slg}`,`✅ Trabajo hecho. Cada partido cuenta y este lo hemos sacado adelante ⚽ #${slg}`,`👏 Gran partido de ${scorer||'todo el equipo'}. Seguimos creciendo, afición. #${slg}`,`🏟️ Gracias por vuestro apoyo en la grada: esta victoria también es vuestra. #${slg}`]:d==0?[`🤝 Punto sumado. Seguimos creciendo, gracias por el apoyo #${slg}`,`⚖️ Empate trabajado. Toca corregir detalles y mirar a la próxima #${slg}`,`🤝 Un punto que nos toca analizar con calma. Gracias por no soltarnos. #${slg}`]:[`😔 No era el resultado que queríamos. A levantarse: la afición merece más #${slg}`,`💙 Duele, pero seguimos juntos. A trabajar para la próxima #${slg}`,`🔁 Toca analizar lo que ha pasado y volver más fuertes. Contamos con vosotros. #${slg}`]),{m:.3})}
  /* 2. resumen de la liga */
  const gl=rs.reduce((s,r)=>s+r[4]+r[5],0),lst=rs.slice().sort((a,b)=>(a===mr?-1:b===mr?1:(b[4]+b[5])-(a[4]+a[5]))).slice(0,5);
  fdAdd('l'+l,`📋 Resumen de la jornada ${w+1}: ${gl} goles en ${rs.length} partidos (${(gl/rs.length).toFixed(1).replace('.',',')} por encuentro). ${lead.n} lidera con ${lead.pts} puntos.\n#J${w+1} #${lht}`,{card:{t:'l',rows:lst.map(r=>[r[2],r[3],r[4],r[5]])}});
@@ -273,7 +513,7 @@ function genFeed(w){
  if(bm>=3)mk.push(()=>fdAdd('marca',`🔴 GOLEADA | ${T(wn(big)).n} pasa por encima de ${T(ls(big)).n} (${Math.max(big[4],big[5])}-${Math.min(big[4],big[5])}). ${fpk(['Contundencia total.','Una exhibición.','El rival no supo qué hacer.'])}\n#J${w+1}`,{card:card(big),big:1,my:big===mr}));
  const up=rs.filter(r=>r[4]!=r[5]).map(r=>({r,g:so(ls(r))-so(wn(r))})).filter(x=>x.g>=3).sort((a,b)=>b.g-a.g)[0];
  if(up)mk.push(()=>fdAdd('marca',`⚠️ SORPRESA | ${T(wn(up.r)).n} tumba a ${T(ls(up.r)).n}. ${fpk(['Nadie lo esperaba.','Resultado inesperado que mueve la tabla.','Los favoritos tropiezan.'])}`,{card:card(up.r),my:up.r===mr}));
- if(mr)mk.push(()=>fdAdd('marca',d>=2?`${me.n} golpea fuerte: ${sg(mr)}. ${mg} gana crédito en el banquillo.`:d==1?`${me.n} se lleva un triunfo ajustado ante ${T(o).n} y ${pos<=3?'se mantiene en la zona noble':'sigue escalando posiciones'}.`:d==0?`Tablas entre ${me.n} y ${T(o).n}. ${gf==0?'Poco fútbol y ninguna ocasión clara.':'Reparto de puntos con goles.'}`:`${me.n} cae ante ${T(o).n}${d<=-2?' y aumenta la presión sobre '+mg:''}.`,{my:1,card:card(mr)}));
+ if(mr)mk.push(()=>fdAdd('marca',fpk(d>=2?[`${me.n} golpea fuerte: ${sg(mr)}. ${mg} gana crédito en el banquillo.`,`${me.n} no da opción a ${T(o).n} (${sg(mr)}).${scorer?' '+scorer+' lidera la fiesta.':''}`,`Exhibición del ${me.n} ${h?'en casa':'a domicilio'}: ${sg(mr)}. ${pos<=3?'Ya mira a los de arriba.':'La tabla empieza a moverse.'}`]:d==1?[`${me.n} se lleva un triunfo ajustado ante ${T(o).n} y ${pos<=3?'se mantiene en la zona noble':'sigue escalando posiciones'}.`,`Victoria de oficio del ${me.n} ante ${T(o).n}: ${sg(mr)}. ${mg} suma y sigue.`]:d==0?[`Tablas entre ${me.n} y ${T(o).n}. ${gf==0?'Poco fútbol y ninguna ocasión clara.':'Reparto de puntos con goles.'}`,`${me.n} y ${T(o).n} se reparten los puntos (${sg(mr)}). ${mg} se queda con sensaciones contradictorias.`]:[`${me.n} cae ante ${T(o).n}${d<=-2?' y aumenta la presión sobre '+mg:''}.`,`${T(o).n} castiga al ${me.n} (${sg(mr)}). ${d<=-2?'Pitos y dudas en el banquillo.':'Se complica la semana para '+mg+'.'}`]),{my:1,card:card(mr)}));
  if(G.conf<35)mk.push(()=>fdAdd('marca',`🔥 Mal ambiente en ${me.n}: la directiva ya sopesa el futuro de ${mg} en el banquillo.`,{my:1}));
  else if(G.conf>82)mk.push(()=>fdAdd('marca',`💪 El crédito de ${mg} está por las nubes en el ${me.n}: la directiva quiere blindarlo.`,{my:1}));
  const fa=xi(me).reduce((s,p)=>s+(p.fa|0),0)/11;
@@ -322,9 +562,10 @@ function feedStart(first){const me=G.T[G.me],l=me.lg,LN=LGN[l],tb=G.T.filter(t=>
  fdAdd('marca',rk==1?`🔝 ${me.n} parte como el equipo a batir en la ${LN}. La presión, desde el primer día, es toda suya.`:`🔝 ${fav.n} parte como favorito en la ${LN}, pero ${me.n} (${rk}º por plantilla) quiere dar la sorpresa.`,{my:1});
  fdAdd('opta',`📊 Según nuestro modelo, ${fav.n} es el favorito (media ${Math.round(str(fav).o)}). ${me.n} aparece ${rk}º de ${tb.length} por nivel de plantilla.`,{card:{t:'s',n:Math.round(str(me).o),l:`media del ${me.n}`,cr:G.me},my:1});
  const x=fpool(l).sort((a,b)=>mval(b.p)-mval(a.p))[0];if(x)fdAdd('tm',`💶 El jugador más valioso de la ${LN} ${G.season}: ${x.p.n} (${x.t.n}).`,{card:fdVal(x.p,x.t,0),my:x.t.id==G.me});
+ fdAdd('sergio',`🧠 CLAVES DE LA TEMPORADA | En la ${LN} ${G.season} pesarán la presión tras pérdida y la solidez en balón parado. ${me.n} ${rk<=3?'tiene argumentos para pelear arriba si mantiene el equilibrio entre ataque y defensa':'tendrá que ganar en los detalles para meterse en la pelea'}.\n#${fslug(LN)}`,{my:1});
  fdRumor(l);
  fdFan(G.me,fpk(['¡Ya huele a fútbol! Este año va a ser grande 💪','Nuevo año, nueva ilusión. Abonos renovados y a por todas #'+slg,'Que empiece ya. Estamos listos para animar hasta el final ❤️']),{my:1,v:4});
- try{const V=perV(null);perPost(fpk(perGrp('fan')),null,V,1);perPost(fpk(perGrp('hater')),null,V,1);if(Math.random()<.7)perPost(fpk(perGrp('tonto')),null,V,0)}catch(e){console.error(e)}
+ try{const V=perV(null);perPost(fpk(perGrp('fan')),null,V,1);perPost(fpk(perGrp('crit')),null,V,1);if(Math.random()<.7)perPost(fpk(perGrp('neu')),null,V,0)}catch(e){console.error(e)}
  G.feed.sort((a,b)=>a.i-b.i);save()}
 function feedSeason(s){const me=G.T[G.me],slg=fslug(me.n),id=n=>{const t=G.T.find(t=>t.n==n);return t?t.id:null},ch=id(s.champ);
  FW=-2;FT=Math.floor(R(500,560));G.gm=null;G.fdm={};
