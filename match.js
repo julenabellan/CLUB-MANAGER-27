@@ -318,9 +318,9 @@ function bcCss(){if(document.getElementById('bcsty'))return;const st=document.cr
 #bc .bc-cc{left:50%;top:50%;width:26%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%}
 #bc .bc-bx{left:26%;right:26%;height:14%}#bc .bc-bx.t{top:-2px;border-top:0}#bc .bc-bx.b{bottom:-2px;border-bottom:0}
 #bc .bc-pl{position:absolute;z-index:2;width:var(--w,21%);transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:4px;animation:bcPop .45s var(--d) cubic-bezier(.2,1.5,.4,1) both}
-#bc .bc-pl u{text-decoration:none;display:grid;place-items:center;width:clamp(40px,12vw,56px);aspect-ratio:1;border-radius:50%;background:var(--c);border:2.5px solid #fff;font:700 clamp(20px,6vw,28px)/1 'Barlow Condensed',sans-serif;box-shadow:0 4px 12px rgba(0,0,0,.6)}
-#bc .bc-pl span{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:rgba(5,9,18,.92);border-left:3px solid var(--hi);padding:2px 8px;font:700 clamp(14px,4.2vw,19px)/1.3 'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.03em;transform:skewX(-8deg)}
-#bc .bc-pl em{font-style:normal;color:var(--hi);margin-right:5px}
+#bc .bc-pl u{position:relative;text-decoration:none;display:grid;place-items:center;width:clamp(40px,12vw,56px);aspect-ratio:1;border-radius:50%;background:var(--c);border:2.5px solid #fff;font:700 clamp(20px,6vw,28px)/1 'Barlow Condensed',sans-serif;box-shadow:0 4px 12px rgba(0,0,0,.6)}
+#bc .bc-pl span{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:rgba(5,9,18,.92);border-left:3px solid var(--hi);padding:2px 4px;font:700 clamp(12px,3.6vw,16px)/1.25 'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:0;transform:skewX(-8deg)}
+#bc .bc-pl em{position:absolute;top:-9px;right:-15px;font:700 11px/1.35 'Barlow Condensed',sans-serif;font-style:normal;color:var(--hi);background:#050912;border:1px solid var(--hi);border-radius:8px;padding:0 4px;transform:skewX(0)}
 @keyframes bcPop{from{opacity:0;transform:translate(-50%,-30%) scale(.2)}to{opacity:1;transform:translate(-50%,-50%)}}
 #bc .bc-bn{display:flex;flex-wrap:wrap;align-items:center;gap:3px 12px;margin:0 14px 12px;padding:7px 12px;background:rgba(255,255,255,.07);border-top:2px solid var(--c);font-size:14px;text-transform:uppercase;letter-spacing:.04em;animation:bcUp .5s .9s both}
 #bc .bc-bn b{color:var(--hi);letter-spacing:.14em}
@@ -409,7 +409,8 @@ function bcCcCss(){if(document.getElementById('bccsty'))return;const st=document
 #bc.bcx .bc-pit i{border-color:rgba(0,240,224,.45)}
 #bc.bcx .bc-pl u{border-radius:14px;border-color:var(--gd)}
 #bc.bcx .bc-pl span{border-left:0;border-bottom:2px solid var(--gd);transform:none;background:rgba(2,6,26,.92);font-weight:700}
-#bc.bcx .bc-pl em{color:var(--gd)}
+#bc.bcx .bc-pl em{color:var(--gd);border-color:var(--gd);font-family:inherit}
+#bc.bcx .bc-pl span{font-size:clamp(10px,3vw,13px)}
 #bc.bcx .bc-bn{border-top-color:var(--gd)}#bc.bcx .bc-bn b{color:var(--gd)}
 /* saque inicial */
 #bc.bcx .bc-ko b{font-style:normal;letter-spacing:.1em;font-weight:800;font-size:clamp(28px,8vw,52px);color:#fff;text-shadow:0 0 26px var(--hi)}
@@ -426,6 +427,9 @@ function bcCC(h,a){try{const c=G.cc,k=c.k-1,s=CCS[k];
   return{st:'gr',g:'ABCDEFGH'[g],rows:Object.values(t).map(x=>({...x,dg:x.gf-x.gc})).sort((x,y)=>y.pts-x.pts||y.dg-x.dg||y.gf-x.gf||x.id-y.id)}}
  if(s.leg&&s.st!='fi'){const T=s.st=='po'?c.po:c.ko[s.st],t=T.find(x=>(x.a==h&&x.b==a)||(x.a==a&&x.b==h));if(t&&t.l[0])return{st:'ko',h:t.a,a:t.b,l:t.l[0]}}
 }catch(e){}return null}
+
+/* reduce la letra de los nombres de la alineación que no caben en su recuadro */
+function bcFit(r){r.querySelectorAll('.bc-pl span').forEach(e=>{let f=parseFloat(getComputedStyle(e).fontSize)||14;while(e.scrollWidth>e.clientWidth+1&&f>9){f-=.5;e.style.fontSize=f+'px'}})}
 
 function bcIntro(m,start){
  bcCss();
@@ -451,7 +455,7 @@ function bcIntro(m,start){
   return `<div class="bc-tt">${lgl(lg,56)}<div><small>${lg==3?'Champions Cup':'Liga '+lg}${jr}</small><b>Clasificación</b></div></div><div class="bc-tb"><div class="bc-th"><span></span><span></span><span>Equipo</span><span>PJ</span><span>DG</span><span>PTS</span></div>${body}</div>`};
  const LU=s=>{const t=T[s],rw=bcRows(t),N=bcNums(t),R=rw.length;
   const pl=rw.map((r,k)=>r.map((li,j)=>{const p=t.pl[t.lu[li]],n=r.length,lo=n==2?28:n==3?19:n==4?14:11,sp=n>1?(100-2*lo)/(n-1):40,x=n>1?lo+j*sp:50,y=R>1?9+k*82/(R-1):50,w=Math.min(34,sp*1.06);
-   return `<div class="bc-pl" style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%;--w:${w.toFixed(1)}%;--d:${(.25+(R-1-k)*.14+j*.05).toFixed(2)}s"><u>${N[li]}</u><span><em>${Math.round(ef(p))}</em>${esc(sn(p.n))}</span></div>`}).join('')).join('');
+   return `<div class="bc-pl" style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%;--w:${w.toFixed(1)}%;--d:${(.25+(R-1-k)*.14+j*.05).toFixed(2)}s"><u>${N[li]}<em>${Math.round(ef(p))}</em></u><span>${esc(sn(p.n))}</span></div>`}).join('')).join('');
   const bn=(t.bn||[]).slice(0,8).map(i=>t.pl[i]).filter(Boolean).map(p=>`<span>${esc(sn(p.n))}</span>`).join('');
   return `<div class="bc-lu" style="--c:${COL[s]}"><div class="bc-hd"><span class="bc-hcr">${crest(ids[s],54)}</span><div><small>${s?'Visitante':'Local'} · Alineación</small><b>${esc(t.n)}</b></div><div class="bc-fm">${fm(t)}</div></div>
    <div class="bc-pit"><i class="bc-hl"></i><i class="bc-cc"></i><i class="bc-bx t"></i><i class="bc-bx b"></i>${pl}</div><div class="bc-bn"><b>Banquillo</b>${bn}</div></div>`};
@@ -465,7 +469,7 @@ function bcIntro(m,start){
  const kd=e=>{if(e.key=='Enter'||e.key==' '||e.key=='ArrowRight'){e.preventDefault();nx()}else if(e.key=='Escape')end()};
  function end(){if(fin)return;fin=1;clearTimeout(tm);clearTimeout(sw);document.removeEventListener('keydown',kd);try{start()}finally{o.classList.add('out');setTimeout(()=>o.remove(),480)}}
  function go(k){if(fin)return;clearTimeout(tm);if(k>=sc.length)return end();lt=Date.now();
-  const put=()=>{st.innerHTML='<div class="bc-sc">'+sc[k].h()+'</div>';pg.forEach((e,j)=>{e.className=j<k?'d':j==k?'on':'';e.style.setProperty('--t',sc[k].d+'ms')})};
+  const put=()=>{st.innerHTML='<div class="bc-sc">'+sc[k].h()+'</div>';bcFit(st);pg.forEach((e,j)=>{e.className=j<k?'d':j==k?'on':'';e.style.setProperty('--t',sc[k].d+'ms')})};
   if(!k)put();else{wp.classList.remove('go');void wp.offsetWidth;wp.classList.add('go');sw=setTimeout(()=>{if(!fin)put()},230)}
   cur=k;tm=setTimeout(()=>go(k+1),sc[k].d+(k?230:0))}
  let cur=0;const nx=()=>{if(Date.now()-lt>300)go(cur+1)};
