@@ -28,7 +28,8 @@ function ccGrInit(){const c=G.cc;if(c.gr)return;
  const q=ids(1).concat(c.po.map(t=>t.w)),so=q.map(i=>({i,o:str(G.T[i]).o})).sort((x,y)=>y.o-x.o).map(x=>x.i),pots=[0,1,2,3].map(p=>so.slice(p*8,p*8+8));
  let gr=null;for(let n=0;n<500&&!gr;n++)gr=ccDraw(pots,true);if(!gr)gr=ccDraw(pots,false);
  c.gr={g:gr,fx:gr.map(t=>rounds(t))};
- try{ccPost('marca',`🏆 Sorteo de la Champions Cup: ya están los 8 grupos de la fase de grupos. ${G.T[G.me].n} jugará en el grupo ${CCL[gr.findIndex(g=>g.includes(G.me))]||'—'}.`,{top:1})}catch(e){}}
+ try{ccPost('marca',`🏆 Sorteo de la Champions Cup: ya están los 8 grupos de la fase de grupos. ${G.T[G.me].n} jugará en el grupo ${CCL[gr.findIndex(g=>g.includes(G.me))]||'—'}.`,{top:1})}catch(e){}
+ try{if(typeof fdCupDraw=='function')fdCupDraw()}catch(e){console.error(e)}}
 function ccGT(g){const c=G.cc,t={};c.gr.g[g].forEach(i=>t[i]={id:i,pj:0,w:0,d:0,l:0,gf:0,gc:0,pts:0});
  c.res.filter(r=>r.st=='gr'&&r.g==g).forEach(r=>[[r.h,r.hg,r.ag],[r.a,r.ag,r.hg]].forEach(([i,f,e])=>{const x=t[i];x.pj++;x.gf+=f;x.gc+=e;if(f>e){x.w++;x.pts+=3}else if(f==e){x.d++;x.pts++}else x.l++}));
  return Object.values(t).sort((x,y)=>y.pts-x.pts||(y.gf-y.gc)-(x.gf-x.gc)||y.gf-x.gf||x.id-y.id)}
@@ -114,7 +115,8 @@ function ccNews(k,mine,rs){try{const c=G.cc,s=CCS[k],T=nm;
  if(b&&b.hg+b.ag>=5&&!(mine&&b.h==mine.r[2]&&b.a==mine.r[3]))ccPost('opta',`📐 Champions Cup · ${s.lb}: goleada en ${T(b.h)} ${b.hg}-${b.ag} ${T(b.a)}.`);
  if(k==1)ccPost('marca',`🏆 Termina la ronda previa de la Champions Cup: 12 equipos de la ${LGN[2]} se unen a los 20 de la ${LGN[1]}.`);
  if(k==7){const q=c.gr.g.map((_,g)=>ccGT(g)[0].id);ccPost('marca',`🏆 Fin de la fase de grupos de la Champions Cup. Primeros de grupo: ${q.map(T).join(', ')}.`)}
- if(s.st=='fi')ccPost('marca',`🏆 ¡${T(c.w)} es campeón de la Champions Cup ${G.season}!`,{big:1,top:1})}catch(e){console.error(e)}}
+ if(s.st=='fi')ccPost('marca',`🏆 ¡${T(c.w)} es campeón de la Champions Cup ${G.season}!`,{big:1,top:1});
+ if(typeof fdCup=='function')fdCup(k,mine,rs)}catch(e){console.error(e)}}/* fdCup (social.js): publicaciones de Sky, FD, Sergio, Marca, afición y la propia competición */
 /* ---- pantallas ---- */
 const ccSeg=l=>`<p class="seg s3">${[1,2,3].map(i=>`<button data-l="${i}" class="${l==i?'on':''}">${lgl(i,i==3?44:40)}<span>${LGN[i]}</span></button>`).join('')}</p>`;
 function ccTieRow(t){const me=t.a==G.me||t.b==G.me,f=x=>x?x[0]+'-'+x[1]:'–',two=t.l.length==2,ok=t.l.every(x=>x),mid=ok?(t.ag?t.ag[0]+' - '+t.ag[1]:f(t.l[0])):(t.l[0]?f(t.l[0]):'vs'),

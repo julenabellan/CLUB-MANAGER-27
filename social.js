@@ -1,7 +1,7 @@
 /* ===== Redes sociales del universo Superstar (estilo X / Twitter) =====
    v2: declaraciones y entrevistas por tipo de gol/situación, prensa rival y directiva, personas reales con roles (fan/crit/neu) y comentarios que reaccionan al tema de cada publicación.
    Cada jornada se generan publicaciones de prensa, datos, mercado, ligas, clubes y aficionados.
-   Imágenes esperadas en /img: MARCA.png, JORGE.png, OPTA.png, TRANSFER.png, FD.png, SKY.png, HERTZ.png, SERGIO.png, LOGO 1A.png, LOGO 2A.png,
+   Imágenes esperadas en /img: MARCA.png, JORGE.png, OPTA.png, TRANSFER.png, FD.png, SKY.png, HERTZ.png, SERGIO.png, CC.png, LOGO 1A.png, LOGO 2A.png,
    ST1..ST3.png (MVP, jugador del mes, hat-trick), ST4.png y ST4-2.png (portería a 0) */
 const ACC={
  marca:{n:'MARCA',h:'marca',img:'MARCA.png',m:1.6,f:'4,8 M',c:'prensa'},
@@ -13,7 +13,8 @@ const ACC={
  fd:{n:'FD SPORTS',h:'FDSports',img:'FD.png',m:1.5,f:'7,8 M',c:'fd'},
  sky:{n:'Sky Sports',h:'SkySports',img:'SKY.png',m:1.7,f:'9,4 M',c:'sky'},
  hertz:{n:'HERTZ',h:'hertz',img:'HERTZ.png',m:1.3,f:'5,2 M',c:'prensa'},
- sergio:{n:'Sergio Navarro',h:'SergioNavarro',img:'SERGIO.png',m:1.0,f:'1,4 M',c:'prensa'}};
+ sergio:{n:'Sergio Navarro',h:'SergioNavarro',img:'SERGIO.png',m:1.0,f:'1,4 M',c:'prensa'},
+ cup:{n:'Champions Cup',h:'ChampionsCup',img:'CC.png',m:1.2,f:'5,9 M',c:'prensa'}};
 /* imágenes stock de los eventos nuevos (si una no existe, la tarjeta se muestra sin foto) */
 const IMG={cs:['ST4.png','ST4-2.png'],iv:[]};
 const FF=[['all','Todo'],['my','Mi club'],['prensa','Noticias'],['fich','Fichajes'],['datos','Datos'],['club','Clubes'],['fan','Afición']];
@@ -161,6 +162,9 @@ const fdAvP=P=>`<span class="av br per"><i>${fesc(P.n[0])}</i><img src="img/${P.
 /* Comentarios: cada publicación se clasifica por tema (fdTopic) y las respuestas salen del banco REP[tema.matiz] según el rol de quien comenta.
    Marcadores: {pn} jugador de la publicación · {tm} su club · {s} resultado · {rv} rival · {c} tu club · {m} míster · {nx} próximo rival · {pos} puesto · {t} hashtag */
 const REP={
+ cc:{fan:['Noches de Champions Cup: esto es lo que da sentido a la temporada. #{t}','Qué ambiente se respira con esta competición. Vamos {c} 💪','La Champions Cup engancha. Que no se acabe nunca.'],
+  crit:['Mucho ruido, pero en esta competición el que falla, se va. No valen los despistes.','Bonito, pero con ese nivel defensivo no pasamos de ronda, {m}.'],
+  neu:['Cada ronda se gana en los detalles: balón parado y gestión de la ventaja.','Competición muy distinta a la liga: hay que saber jugar los dos partidos.']},
  'res.w3':{fan:['Qué manera de jugar. Se ha visto presión, ritmo y gol. #{t}','Los hemos pasado por encima. Esto se celebra en casa y en el bar 🍻','Hace una semana nadie decía esto. Que siga la racha, {m}.'],
   crit:['Muy bien, pero ojo: contra {rv} era fácil que pasara. La prueba de verdad vendrá con rivales más fuertes.','Goleada merecida. Aun así, me quedo con lo que hay que mejorar atrás.'],
   neu:['{s} cuenta una historia clara: dominio total. La pregunta es si se puede repetir.','Partido redondo. Lo que más me ha gustado: el equipo no ha dejado de correr ni con el partido resuelto.']},
@@ -272,6 +276,7 @@ function fdTopic(p){const tx=p.tx||'',c=p.card||{},h=c.h||'';
  if(p.qk)return{t:'iv.'+(QMAP[p.qk]||'w')};
  if(p.a=='sergio')return{t:'an'};
  if(p.per!=null||p.k=='fan'){const s=p.sn||'z';return{t:'op.'+(s=='w3'||s=='w'?'p':s=='l'||s=='l3'?'n':'z')}}
+ if(/Champions Cup|CHAMPIONS CUP|#ChampionsCup/.test(tx))return{t:'cc'};
  if(c.t=='ph'){if(/HAT/.test(h))return{t:'ht'};if(/MVP/.test(h))return{t:'mvp'};if(/MES/.test(h))return{t:'jm'};if(/PORTER/.test(h))return{t:'cs'}}
  if(/GOL DEL MES/.test(tx))return{t:'gm'};
  if(c.t=='xi')return{t:'xi'};if(c.t=='pr')return{t:'pr'};if(c.t=='cp')return{t:'cp'};if(c.t=='yr')return{t:'yr'};if(c.t=='rc')return{t:'rc'};
@@ -580,6 +585,114 @@ function feedSeason(s){const me=G.T[G.me],slg=fslug(me.n),id=n=>{const t=G.T.fin
  G.feed.sort((a,b)=>a.i-b.i);feedStart(0)}
 function fdInit(){if(G.fans==null)G.fans=60;if(G.seen==null)G.seen=0;if(!G.feed){G.feed=[];G.fs=0;feedStart(1)}}
 
+/* ===================== CHAMPIONS CUP EN REDES =====================
+   Lo llaman cc.js (ccNews -> fdCup, ccGrInit -> fdCupDraw). Sin fotos stock. Cuentas: Champions Cup (la propia competición), Sky (serio y oficial),
+   FD SPORTS (viral), MARCA, Sergio Navarro (análisis), afición y personas. Orden de creación: gente -> competición/prensa/Sergio -> FD -> Sky
+   (así Sky sale arriba y la gente al final). Tarjetas nuevas: 'cg' (tabla de grupo) y 'cx' (cruces). */
+const CCF={
+ w3:['{s}. Noche de Champions Cup para enmarcar. Esto es otro nivel 🔥 #{t}','{rv} no ha tenido ni una opción. {m}, qué equipo. #{t} #ChampionsCup','Así se juega esta competición: sin miedo y con hambre. {s} 👏'],
+ w:['Victoria en la Champions Cup y a seguir soñando. {s}. #{t}','{s}. Se sufrió, pero aquí se viene a ganar. #ChampionsCup','Una más para la grada. Gracias, equipo, por darnos noches así. #{t}'],
+ e:['{s}. Empate en la Champions Cup: nada decidido todavía. #{t}','Ni bien ni mal. Toca esperar y creer. #ChampionsCup','{s}. Se pudo ganar, pero seguimos vivos. Cabeza arriba, {m}.'],
+ l:['{s}. Duele, pero esto no se acaba aquí. Queda mucho por pelear. #{t}','Mala noche en la Champions Cup. Que sirva para reaccionar, {m}.','{rv} se lleva el partido. Toca levantarse, que la grada no se va.'],
+ l3:['{s}. Noche negra en la Champions Cup. Que nadie baje los brazos, pero hay que hablar. #{t}','Hoy no hemos estado. Esto se arregla trabajando, no quejándonos. #ChampionsCup','{s}. Qué dolor. Sin excusas, {m}.']};
+const CCQ={
+ q:['¡Pasamos! Seguimos vivos en la Champions Cup y la grada lo merece 🙌 #{t}','Clasificados. Ahora a disfrutar y a soñar con más. #ChampionsCup #{t}','¡Qué alegría! A por la siguiente ronda, {m}. #{t}'],
+ x:['Se acabó el sueño en la Champions Cup. Orgullo de equipo, a pesar de todo. #{t}','Eliminados. Duele, pero volveremos más fuertes, {c}. #ChampionsCup','Gracias por la ilusión, equipo. Que el año que viene sea el nuestro. #{t}'],
+ w:['¡¡CAMPEONES DE LA CHAMPIONS CUP!! No me lo creo, abrazos a todos 😭🏆 #{t}','Lo hemos hecho. Campeones. Esto no se olvida jamás 🏆 #{t} #ChampionsCup','Lloro como un niño. ¡CAMPEONES! 🏆 Gracias, {m}. #{t}']};
+const CCPR={
+ fan:{w:['Noche de Champions Cup y pasillo de felicidad en casa. ¡Vamos, {c}! 🙌','Qué manera de ganar. {s}. Esto es lo que quiero ver cuando se juega a todo o nada.'],
+  e:['Un empate que deja todo abierto. Yo sigo creyendo, {c}.','No ha sido el resultado soñado, pero seguimos vivos. #ChampionsCup'],
+  l:['Hoy duele, pero hay más partidos y más ganas. {c}, ánimo.','Derrota en la Champions Cup. Cabeza arriba, que mañana salimos igual.']},
+ crit:{w:['Ganar está bien, pero en la Champions Cup se castiga cada error. {m}, que no se relaje nadie.','{s}. Bien, aunque el equipo concede mucho para una competición así.'],
+  e:['Empate que sabe a poco. Aquí hay que apretar más.','Faltó colmillo. En esta competición eso se paga.'],
+  l:['{s}. No se puede competir así en la Champions Cup, {m}.','Una derrota así en esta competición pasa factura. Hay que replantearse cosas.']},
+ neu:{w:['Victoria que marca el tono: en la Champions Cup, controlar los tiempos vale más que dominar.','{s}. Buen partido en conjunto, aunque la próxima ronda será otro cantar.'],
+  e:['Resultado abierto. Lo decidirá la gestión de los detalles.','Empate equilibrado: dos equipos que han preferido no arriesgar demasiado.'],
+  l:['Derrota con matices: se puede revertir, depende de cómo se afronte lo que viene.','{s}. Más que el resultado, importa cómo se gestione el golpe.']}};
+const CCQV={w:['Es una competición especial. Hay que disfrutar este momento y seguir trabajando.','Los partidos de Champions Cup se viven distinto: cada detalle cuenta, y hoy salió bien.','Estamos muy contentos, pero lo que viene será aún más exigente.'],
+ e:['Queda todo abierto. Seguimos creyendo y vamos a dar la cara.','No es lo que buscábamos, pero esto no está perdido.'],
+ l:['Duele, pero hay que levantarse rápido. Esta competición castiga el menor despiste.','No ha salido, pero hay que seguir. Asumimos la derrota y toca corregir.']};
+const CCQC={w:['Hemos competido con inteligencia. En la Champions Cup cada detalle suma y hoy estuvimos finos.','Hay que celebrarlo con cabeza: queda mucho por delante.'],
+ e:['Un resultado que nos deja vivos. Ahora toca descansar y preparar bien lo que viene.','Pudimos hacer más, pero no es un mal punto.'],
+ l:['Hay que felicitar al rival. Nosotros tenemos que aprender y mirar adelante.','No hemos estado a nuestro nivel. Toca reflexionar sin dramatizar.']};
+function ccFan(c,r,v){const d=r[2]==c?r[4]-r[5]:r[5]-r[4],k=d>=3?'w3':d>0?'w':d==0?'e':d<=-3?'l3':'l',mine=c==G.me,o=G.T[r[2]==c?r[3]:r[2]],
+ s=`${G.T[r[2]].n} ${r[4]}-${r[5]} ${G.T[r[3]].n}`;
+ return fdFan(c,fdFill(fpk(CCF[k]),{s,rv:o.n,m:mine?G.mgr:'míster',t:fslug(G.T[c].n),c:G.T[c].n}),{my:mine,v:v|0,sn:k})}
+const ccRows=(a,n)=>a.length>n?a.slice(0,n).join(' · ')+` y ${a.length-n} más`:a.join(' · ');
+function fdCup(k,mine,rs){
+ const c=G.cc,s=CCS[k],me=G.me,T=i=>G.T[i],st=s.st,run=f=>{try{f()}catch(e){console.error(e)}},N=i=>T(i).n,mn=N(me),mg=G.mgr,HT='#ChampionsCup',
+  sg=r=>`${N(r.h)} ${r.hg}-${r.ag} ${N(r.a)}`,cr=r=>({t:'r',h:r.h,a:r.a,hg:r.hg,ag:r.ag}),mr=rs.find(r=>r.h==me||r.a==me),P=ccPath(),
+  ties=st=='gr'?null:(st=='po'?c.po:c.ko[st]),last=st!='gr'&&(s.leg||st=='fi'),done=last?ties.filter(t=>t.w!=null):[],my=ties&&ties.find(t=>t.a==me||t.b==me),
+  gi=c.gr?c.gr.g.findIndex(g=>g.includes(me)):-1,gl=rs.reduce((a,r)=>a+r.hg+r.ag,0),
+  tx=t=>`${N(t.a)} ${t.ag[0]}-${t.ag[1]} ${N(t.b)}${t.pen?` (pen. ${t.pen[0]}-${t.pen[1]})`:t.et?' (tras prórroga)':''}`,
+  nxt={po:'la fase de grupos',gr:'octavos',r16:'cuartos',qf:'semifinales',sf:'la final'}[st],ida=st!='gr'&&!last,
+  av=(gl/rs.length).toFixed(1).replace('.',','),mg2=r=>Math.abs(r.hg-r.ag);
+ FW=G.week>0?G.week-1:-1;if(!(FT>=0))FT=500;
+ let o=null,d=0,fin=null;
+ if(mr){o=mr.h==me?mr.a:mr.h;d=mr.h==me?mr.hg-mr.ag:mr.ag-mr.hg;
+  fin=last?(my&&my.w!=null?(my.w==me?(st=='fi'?'w':'q'):'x'):null):k==7?(P.s=='e'?'x':'q'):null}
+ const ot=rs.filter(r=>r!==mr&&r.hg!=r.ag).map(r=>{const w=r.hg>r.ag?r.h:r.a,l=r.hg>r.ag?r.a:r.h;return{r,w,l,gap:str(T(l)).o-str(T(w)).o}}).sort((x,y)=>y.gap-x.gap)[0],
+  up=ot&&(ot.gap>=7||T(ot.w).lg>T(ot.l).lg)?ot:null,bg=rs.slice().sort((x,y)=>mg2(y)-mg2(x))[0],tg=rs.slice().sort((x,y)=>(y.hg+y.ag)-(x.hg+x.ag))[0],pens=done.filter(t=>t.pen&&t.a!=me&&t.b!=me);
+ /* 1. gente: afición y personas */
+ if(mr){const r=[undefined,3,mr.h,mr.a,mr.hg,mr.ag];run(()=>ccFan(me,r,0));if(Math.random()<.6)run(()=>ccFan(o,r,1));
+  if(fin){const V={m:mg,c:mn,t:fslug(mn)};run(()=>fdFan(me,fdFill(fpk(CCQ[fin]),V),{my:1,v:2,sn:fin=='x'?'l3':'w3'}))}
+  run(()=>{const V=perV({s:sg(mr),rv:N(o),d}),ko=d>0?'w':d==0?'e':'l',used=[],sn=d>=3?'w3':d>0?'w':d==0?'e':d<=-3?'l3':'l',
+   go=(role,p)=>{if(Math.random()>p)return;const g=perGrp(role).filter(i=>!used.includes(i));if(!g.length)return;const i=fpk(g);used.push(i);fdAdd(null,fdFill(fpk(CCPR[role][ko]),V),{k:'per',c:'fan',per:i,my:1,m:.06,sn})};
+   go('crit',d<0?.7:.4);go('fan',.6);go('neu',.4)})}
+ if(up&&Math.random()<.7)run(()=>fdFan(up.w,fpk([`¡NOCHE HISTÓRICA! Hemos tumbado al ${N(up.l)} en la Champions Cup (${up.r.hg}-${up.r.ag}). Esto no se olvida 🙌 #${fslug(N(up.w))}`,`${sg(up.r)}. Nadie daba un duro por nosotros y mirad. Orgullo de equipo. #ChampionsCup`]),{v:1,sn:'w3'}));
+ /* 2. la competición, MARCA y Sergio */
+ const rows=rs.slice().sort((a,b)=>(a===mr?-1:b===mr?1:(b.hg+b.ag)-(a.hg+a.ag))).slice(0,5).map(r=>[r.h,r.a,r.hg,r.ag]);
+ run(()=>fdAdd('cup',rs.length==1?`🏆 ${s.lb.toUpperCase()} | ${sg(rs[0])}. ${N(rs[0].hg>rs[0].ag?rs[0].h:rs[0].a)} gana la Champions Cup ${G.season}${rs[0].hg==rs[0].ag?' en los penaltis':''}.\n${HT}`:fpk([`🏆 ${s.lb.toUpperCase()} | ${gl} goles en ${rs.length} partidos (${av} por encuentro).\n${HT}`,`📋 CHAMPIONS CUP | Así ha quedado la jornada: ${rs.length} partidos y ${gl} goles.${mr?' '+(d>0?mn+' suma una victoria importante.':d<0?mn+' cae y se complica.':mn+' empata.'):''}\n${HT}`]),{card:{t:'l',rows},my:mr?1:0,top:1}));
+ if(st=='gr')run(()=>{const ld=c.gr.g.map((_,g)=>CCL[g]+': '+N(ccGT(g)[0].id));if(Math.random()<.8)fdAdd('cup',`🥇 LÍDERES | Tras la jornada ${s.md+1}, encabezan sus grupos: ${ld.join(' · ')}.\n${HT}`)});
+ if(done.length&&st!='fi')run(()=>fdAdd('cup',`✅ CLASIFICADOS | ${ccRows(done.map(t=>N(t.w)),12)} pasan a ${nxt}.\n${HT}`,{top:1}));
+ if(fin&&fin!='w')run(()=>fdAdd('marca',fin=='q'?fpk([`🔝 ${mn} sigue adelante en la Champions Cup${my?': '+tx(my):''}. ${mg} gana crédito en el banquillo.`,`✅ ${mn} pasa a ${nxt} de la Champions Cup. ${fpk(['La ilusión crece en la ciudad.','Premio al trabajo de las últimas semanas.'])}`]):fpk([`❌ ${mn} se despide de la Champions Cup${my?': '+tx(my):' en la fase de grupos'}. ${fpk(['Dura caída para '+mg+'.','Duele, pero la temporada sigue.'])}`,`💔 Final del sueño para el ${mn} en la Champions Cup. ${fpk(['Faltó un poquito más.','La directiva tomará nota.'])}`]),{my:1,big:1,top:1}));
+ if(mr&&mg2(mr)>=3&&Math.random()<.7)run(()=>fdAdd('marca',d>0?fpk([`💥 ${mn} arrasa en la Champions Cup: ${sg(mr)}. ${mg} lanza un aviso al resto.`,`🔥 Exhibición del ${mn} ante ${N(o)} (${sg(mr)}). Los favoritos ya miran de reojo.`]):fpk([`😬 Varapalo para el ${mn} en la Champions Cup: ${sg(mr)}. ${mg}, en el punto de mira.`,`🚨 ${N(o)} pasa por encima del ${mn} (${sg(mr)}). Pitos y dudas.`]),{my:1,card:cr(mr)}));
+ if(mr&&Math.random()<.8)run(()=>fdAdd('sergio',fpk(d>=2?[`🧠 ANÁLISIS | ${sg(mr)} en la Champions Cup. ${mn} ganó el partido con ideas claras: presión alta, ritmo y mucha gente llegando al área.\n${HT}`,`🔍 LA CLAVE | Más allá del marcador, lo mejor del ${mn} fue la intensidad de los primeros veinte minutos. ${N(o)} nunca encontró cómo salir.`]:d==1?[`🧠 ANÁLISIS | ${sg(mr)}. En la Champions Cup se premia el orden: ${mn} supo cerrar espacios y golpear cuando tocaba.`,`🔍 LA CLAVE | Victoria corta que se explica por el equilibrio: pocas concesiones y paciencia con el balón.`]:d==0?[`🧠 ANÁLISIS | ${sg(mr)}. Dos equipos que prefirieron no arriesgar. ${ida?'La eliminatoria queda completamente abierta.':'Un punto que se valorará al final del grupo.'}`,`🔍 LA CLAVE | ${mn} tuvo el balón, pero ${N(o)} defendió bien su área. Faltó el último pase.`]:[`🧠 ANÁLISIS | ${sg(mr)}. ${mn} perdió el partido en las transiciones: demasiado espacio entre líneas y poca ayuda a los laterales. Es corregible, pero ${mg} tiene trabajo.`,`🔍 LA CLAVE | ${N(o)} fue más agresivo en los duelos y más paciente en la salida. En la Champions Cup esos detalles se pagan.`])+(ida&&d!=0?' '+fpk(['La vuelta lo cambia todo.','Queda otra mitad de eliminatoria.']):''),{my:1,card:cr(mr)}));
+ if(k==7)run(()=>{const g=c.res.filter(r=>r.st=='gr'),t=g.reduce((a,r)=>a+r.hg+r.ag,0),m=(t/g.length).toFixed(1).replace('.',',');fdAdd('sergio',`📊 BALANCE DE GRUPOS | ${g.length} partidos y ${t} goles (${m} por partido) en la fase de grupos de la Champions Cup. ${t/g.length>=3?'Se jugó a campo abierto y las defensas sufrieron.':'Mandaron los detalles y el orden defensivo.'}`)});
+ /* 3. FD SPORTS (viral) */
+ if(bg&&mg2(bg)>=3&&Math.random()<.85)run(()=>fdAdd('fd',fpk([`🤯 PERO QUÉ HA PASADO EN LA CHAMPIONS CUP... ${sg(bg)}. ${N(bg.hg>bg.ag?bg.a:bg.h)} se va a casa con la cabeza gacha 😬\n${HT}`,`💥 MASACRE | ${N(bg.hg>bg.ag?bg.h:bg.a)} le pasa por encima a ${N(bg.hg>bg.ag?bg.a:bg.h)}: ${Math.max(bg.hg,bg.ag)}-${Math.min(bg.hg,bg.ag)}. ¡Imposible no verlo!`,`🚨 LOCURA EN LA CHAMPIONS CUP: ${sg(bg)}. Se va a hablar de esto toda la semana 🔥`]),{card:cr(bg),my:bg===mr?1:0,big:1}));
+ if(tg&&tg!==bg&&tg.hg+tg.ag>=6&&Math.random()<.8)run(()=>fdAdd('fd',`🍿 FESTIVAL DE GOLES | ${sg(tg)}. ${tg.hg+tg.ag} goles y los porteros pidiendo auxilio 🆘\n${HT}`,{card:cr(tg),my:tg===mr?1:0}));
+ if(up&&Math.random()<.85)run(()=>fdAdd('fd',fpk([`😱 ¡SORPRESÓN EN LA CHAMPIONS CUP! ${N(up.w)} tumba a ${N(up.l)} (${up.r.hg}-${up.r.ag}). Los favoritos, en shock 🫣\n${HT}`,`🚨 ¡NADIE LO VIO VENIR! ${N(up.w)} se carga a ${N(up.l)} y la Champions Cup arde 🔥`]),{card:cr(up.r),my:up.r===mr?1:0}));
+ pens.slice(0,2).forEach(t=>run(()=>fdAdd('fd',fpk([`🥶 ¡TANDA DE LOCOS! ${N(t.w)} sobrevive en los penaltis (${Math.max(...t.pen)}-${Math.min(...t.pen)}) ante ${N(t.w==t.a?t.b:t.a)}. Infarto total 😮‍💨\n${HT}`,`😰 PENALTIS EN LA CHAMPIONS CUP: ${tx(t)}. Los nervios mandaron y ${N(t.w)} pasa de ronda.`]),{big:1})));
+ if(mine&&mine.sc){const q={};mine.sc.forEach(x=>{if(x[0]==me||x[0]==o){const kk=x[0]+'|'+x[1];q[kk]=(q[kk]||0)+1}});const h=Object.keys(q).find(z=>q[z]>=3);
+  if(h){const [tm,pn]=h.split('|');run(()=>fdAdd('fd',`🎩🔥 ¡¡HAT-TRICK EN LA CHAMPIONS CUP!! ${pn} (${N(+tm)}) la lía con ${q[h]} goles ante ${N(+tm==me?o:me)}. ¡Nivel BESTIAL! 😱\n${HT}`,{card:cr(mr),my:1,big:1}))}}
+ if(fin=='w')run(()=>fdAdd('fd',fpk([`🏆🔥 ¡¡${mn.toUpperCase()} CAMPEÓN DE LA CHAMPIONS CUP!! Final: ${sg(mr)}. HISTÓRICO 🤯`,`👑 ¡¡SOMOS CAMPEONES!! ${mn} levanta la Champions Cup ${G.season} y la locura es total 🏆🚀`]),{card:cr(mr),my:1,big:1,top:1}));
+ else if(st=='fi'&&c.w!=null)run(()=>fdAdd('fd',`🏆🔥 ¡${N(c.w)} CAMPEÓN DE LA CHAMPIONS CUP ${G.season}! ${sg(rs[0])}. ¡Qué final! 🤯\n${HT}`,{big:1,top:1,card:rs[0]?cr(rs[0]):null}));
+ /* declaraciones */
+ if(mr&&Math.random()<.5)run(()=>{const ac=fpk(['sky','marca']),kv=d>0?'w':d==0?'e':'l',sc=mine&&mine.sc?mine.sc.filter(x=>x[0]==me):[];
+  if(sc.length&&Math.random()<.6){const cn={};sc.forEach(x=>cn[x[1]]=(cn[x[1]]||0)+1);const pn=Object.keys(cn).sort((a,b)=>cn[b]-cn[a])[0];
+   fdAdd(ac,ac=='sky'?`🎤 ZONA MIXTA | ${pn} (${mn}) tras el ${sg(mr)} en la Champions Cup: «${fpk(CCQV[kv])}»`:`🗞️ ${pn} (${mn}) en MARCA tras la Champions Cup: «${fpk(CCQV[kv])}»`,{my:1,pn,pt:me,qk:kv})}
+  else{const rk=d<0?'w':d==0?'e':'l';fdAdd(ac,`🎙️ RUEDA DE PRENSA | El técnico del ${N(o)} tras el ${sg(mr)} en la Champions Cup: «${fpk(CCQC[rk])}»`,{my:1,pn:null,pt:o,qk:'coach'})}});
+ /* 4. Sky Sports (serio y oficial) */
+ if(st=='gr'&&gi>=0&&Math.random()<.9)run(()=>{const t=ccGT(gi);fdAdd('sky',`📊 GRUPO ${CCL[gi]} | Clasificación tras la jornada ${s.md+1}: ${t.map((x,i)=>`${i+1}. ${N(x.id)} (${x.pts})`).join(' · ')}.\n${HT}`,{my:1,card:{t:'cg',h:'GRUPO '+CCL[gi],s:'Jornada '+(s.md+1),r:t.map(x=>[x.id,x.pts,x.gf-x.gc,x.pj])}})});
+ if(st!='gr'&&st!='fi'&&mr&&Math.random()<.9)run(()=>fdAdd('sky',`🏁 ${s.lb.toUpperCase()} | ${sg(mr)}.${last&&my&&my.w!=null?' Global: '+tx(my)+'.':ida?' La vuelta se juega más adelante.':''}\n${HT}`,{my:1,card:cr(mr)}));
+ if(done.length&&st!='fi')run(()=>fdAdd('sky',`📋 ${CCST[st].toUpperCase()} | Resultados globales: ${ccRows(done.map(tx),6)}.\n${HT}`,{my:done.some(t=>t.a==me||t.b==me)}));
+ if(k==7)run(()=>{const q=c.gr.g.map((_,g)=>{const t=ccGT(g);return CCL[g]+': '+N(t[0].id)+' y '+N(t[1].id)});fdAdd('sky',`📄 PARTE OFICIAL | Fase de grupos completada. Clasificados para octavos — ${q.join(' · ')}.\n${HT}`,{top:1})});
+ if(fin=='w')run(()=>fdAdd('sky',`🏆 CAMPEÓN | ${mn} se proclama campeón de la Champions Cup ${G.season} tras vencer en la final (${sg(mr)}).\n${HT}`,{my:1,big:1,top:1,card:cr(mr)}));
+ else if(st=='fi'&&c.w!=null)run(()=>fdAdd('sky',`🏆 CAMPEÓN | ${N(c.w)} gana la Champions Cup ${G.season}.${rs[0]?' Resultado de la final: '+sg(rs[0])+(rs[0].hg==rs[0].ag?' (pen.)':'')+'.':''}\n${HT}`,{big:1,top:1,card:rs[0]?cr(rs[0]):null}));
+ /* sorteo de cruces al acabar cada ronda */
+ const dr={7:'r16',9:'qf',11:'sf',13:'fi'}[k];if(dr)run(()=>ccKoDraw(dr))}
+/* cruces de la siguiente ronda: gente -> competición/Sergio -> FD -> Sky */
+function ccKoDraw(st){const c=G.cc,me=G.me,T=i=>G.T[i],N=i=>T(i).n,mn=N(me),HT='#ChampionsCup',ts=ccTies(st),nm2={r16:'Octavos',qf:'Cuartos',sf:'Semifinales',fi:'Final'}[st],mt=ts.find(t=>t.a==me||t.b==me),
+ o=mt?(mt.a==me?mt.b:mt.a):null,og=i=>str(T(i)).o;
+ if(mt){const V={m:G.mgr,c:mn,t:fslug(mn)};fdFan(me,fdFill(fpk([`Nos toca el ${N(o)} en ${nm2.toLowerCase()} de la Champions Cup. ¡A por ellos! #{t}`,`${N(o)} en ${nm2.toLowerCase()}. Complicado, pero con esta grada todo es posible. #{t} #ChampionsCup`,`Ya sabemos rival: ${N(o)}. Vamos, {c}, a soñar. #{t}`]),V),{my:1,v:3,sn:'w'})}
+ fdAdd('cup',st=='fi'?`🎲 LA FINAL | ${N(ts[0].a)} y ${N(ts[0].b)} se jugarán la Champions Cup ${G.season} a partido único en campo neutral.\n${HT}`:`🎲 CRUCES | Así quedan ${{r16:'los octavos',qf:'los cuartos',sf:'las semifinales'}[st]} de la Champions Cup. Ida y vuelta, y si sigue el empate: prórroga y penaltis.\n${HT}`,{card:{t:'cx',rows:ts.map(t=>[t.a,t.b])},top:1,my:mt?1:0});
+ if(mt)fdAdd('sergio',`🧠 EL CRUCE | ${mn} contra ${N(o)} en ${nm2.toLowerCase()}. ${og(me)>=og(o)+3?mn+' parte con ligera ventaja, pero en una eliminatoria cualquier despiste lo cambia todo.':og(o)>=og(me)+3?N(o)+' llega como favorito, aunque el '+mn+' tiene argumentos para hacerle daño si juega con orden.':'Dos equipos muy igualados: lo decidirán los detalles y el balón parado.'}`,{my:1});
+ const ck=ts.slice().sort((a,b)=>(og(b.a)+og(b.b))-(og(a.a)+og(a.b)))[0];
+ if(ck&&Math.random()<.85)fdAdd('fd',`😮 CHOQUE DE TITANES ${st=='fi'?'EN LA FINAL':'EN '+nm2.toUpperCase()} | ${N(ck.a)} vs ${N(ck.b)}. ¡Esto va a ser UNA BESTIA! 🔥\n${HT}`,{my:ck===mt?1:0});
+ if(mt)fdAdd('sky',`📋 ${nm2.toUpperCase()} | ${mn} se medirá al ${N(o)}. ${st=='fi'?'Final a partido único en campo neutral.':'La ida se jugará '+(mt.a==me?'en casa':'a domicilio')+'.'}\n${HT}`,{my:1,card:{t:'cx',rows:[[mt.a,mt.b]]}})}
+/* sorteo de grupos (lo llama ccGrInit) */
+function fdCupDraw(){const c=G.cc,gr=c&&c.gr;if(!gr)return;const me=G.me,T=i=>G.T[i],N=i=>T(i).n,mn=N(me),HT='#ChampionsCup',gi=gr.g.findIndex(g=>g.includes(me)),og=i=>str(T(i)).o;
+ FW=G.week>0?G.week-1:-1;if(!(FT>=0))FT=500;
+ const run=f=>{try{f()}catch(e){console.error(e)}},card=g=>({t:'cg',h:'GRUPO '+CCL[g],s:'Sorteo',r:gr.g[g].slice().sort((a,b)=>og(b)-og(a)).map(i=>[i,0,0,0])}),
+  av=gr.g.map(g=>g.reduce((a,i)=>a+og(i),0)/g.length),dg=av.indexOf(Math.max(...av));
+ if(gi>=0){const rv=gr.g[gi].filter(i=>i!=me).sort((a,b)=>og(b)-og(a)),V={m:G.mgr,c:mn,t:fslug(mn)};
+  run(()=>fdFan(me,fdFill(fpk([`Grupo ${CCL[gi]} de la Champions Cup: ${rv.map(N).join(', ')}. Toca sufrir, pero así se hace grande este escudo #{t}`,`Ya tenemos grupo. ${N(rv[0])} será el rival más duro, pero aquí nadie nos asusta. #{t} #ChampionsCup`]),V),{my:1,v:3,sn:'w'}));
+  run(()=>fdAdd('cup',`🎲 SORTEO | Ya están los 8 grupos de la Champions Cup. ${mn} compartirá el Grupo ${CCL[gi]} con ${rv.map(N).join(', ')}.\n${HT}`,{card:card(gi),top:1,my:1}));
+  run(()=>{const mi=gr.g[gi].slice().sort((a,b)=>og(b)-og(a)).indexOf(me)+1;fdAdd('sergio',`🧠 EL GRUPO DEL ${mn.toUpperCase()} | ${mi==1?'Es el equipo de mayor nivel del grupo, pero eso no garantiza nada: la fase se decide en los partidos fuera.':mi==4?'Es el menos favorito del grupo, aunque en una liguilla corta cualquier sorpresa abre la puerta.':'Un grupo muy abierto: '+N(rv[0])+' parte como el rival a vigilar, y los dos partidos directos pueden decidir quién pasa.'}`,{my:1})})}
+ run(()=>fdAdd('fd',fpk([`😈 ¡¡EL GRUPO ${CCL[dg]} ES UNA BESTIA!! ${gr.g[dg].map(N).join(', ')}. Aquí nadie se salva 🔥\n${HT}`,`🔥 GRUPO DE LA MUERTE | ${CCL[dg]}: ${gr.g[dg].map(N).join(' · ')}. ¡Qué locura!`]),{card:card(dg),my:dg==gi?1:0,big:1}));
+ if(gi>=0)run(()=>fdAdd('sky',`📋 SORTEO OFICIAL | Grupo ${CCL[gi]} de la Champions Cup: ${gr.g[gi].map(N).join(' · ')}.\n${HT}`,{my:1,card:card(gi)}))}
+
 /* ---------- pintado ---------- */
 /* (fdKey ya existe en extras.js: aquí uso fdAK) alterna cuentas dentro de cada jornada (nunca repite cuenta seguida si hay alternativa) y mantiene siempre las jornadas más nuevas arriba */
 const fdAK=p=>p.a||(p.per!=null?'per'+p.per:p.k=='club'?'club'+p.cr:'fan'+p.cr);
@@ -590,7 +703,7 @@ function fdAlt(a){const out=[];let i=0;
   i=j}
  return out}
 const fdList=f=>{if(f=='all')return fdAlt(G.feed.filter(fdCur).reverse());const a=G.feed.filter(fdRec).reverse();return f=='my'?a.filter(p=>p.my):a.filter(p=>p.c==f)};
-const fdAv=a=>`<span class="av br${/^(LOGO|FD|SKY|HERTZ)/.test(a.img)?' lg':''}"><i>${fesc(a.n[0])}</i><img src="img/${encodeURIComponent(a.img)}" alt="" onerror="this.parentNode.classList.add('nf');this.remove()"></span>`;
+const fdAv=a=>`<span class="av br${/^(LOGO|FD|SKY|HERTZ|CC)/.test(a.img)?' lg':''}"><i>${fesc(a.n[0])}</i><img src="img/${encodeURIComponent(a.img)}" alt="" onerror="this.parentNode.classList.add('nf');this.remove()"></span>`;
 const VF='<svg class="vf" viewBox="0 0 24 24" aria-label="Cuenta verificada"><circle cx="12" cy="12" r="11"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 function fdAcc(p){if(p.a){const a=ACC[p.a];return{n:a.n,h:a.h,v:1,av:fdAv(a)}}
  if(p.per!=null&&PER[p.per]){const P=PER[p.per];return{n:P.n,h:P.h,v:0,av:`<span class="av br per"><i>${fesc(P.n[0])}</i><img src="img/${P.img}" alt="" onerror="this.parentNode.classList.add('nf');this.remove()"></span>`}}
@@ -609,6 +722,8 @@ function fdEmb(c){if(!c)return'';
   return `<div class="qc fd-c"><div class="fd-hd"><b>CARA A CARA</b><span>Delanteros</span></div><div class="fd-du"><div>${crest(A.cr,38)}<b>${fesc(A.n)}</b><small>${A.age} años</small></div><span class="vs">VS</span><div>${crest(B.cr,38)}<b>${fesc(B.n)}</b><small>${B.age} años</small></div></div><div class="fd-bd">${row('Media','ovr',id)}${row('Goles','g',id)}${row('Asistencias','a',id)}${row('Valor de mercado','v',fmv)}</div></div>`}
  if(c.t=='yr')return `<div class="qc fd-c">${fdHd(c)}<div class="fd-bd">${c.r.map((x,i)=>`<div class="fd-yr"><span class="fd-n">${i+1}</span>${crest(x[0],26)}<div><b>${fesc(x[1])}</b><small>${PN[x[2]]} · ${x[3]} años</small></div><span class="pt">${x[4]} <em>→ ${x[5]}</em><i><u style="width:${fdC(x[5],0,100)}%"></u></i></span></div>`).join('')}</div></div>`;
  if(c.t=='rc')return `<div class="qc fd-c">${fdHd(c)}<div class="fd-bd">${c.r.map(x=>`<div class="fd-rc${x.nw?' nw':''}"><span class="fd-v">${fesc(x.v)}</span><div><b>${fesc(x.k)}${x.nw?' <em>NUEVO</em>':''}</b><small>${x.cr!=null&&G.T[x.cr]?crest(x.cr,16):''}<span>${fesc(x.n)} · ${x.s}</span></small></div></div>`).join('')}</div></div>`;
+ if(c.t=='cg'){const m=Math.max(1,...c.r.map(x=>x[1]));return `<div class="qc fd-c">${fdHd(c)}<div class="fd-bd">${c.r.map((x,i)=>`<div class="fd-pr"><span class="fd-n">${i+1}</span>${crest(x[0],24)}<b>${nm(x[0])}</b><span class="fd-bar"><i style="width:${Math.max(3,Math.round(100*x[1]/m))}%"></i></span><em>${x[2]>0?'+':''}${x[2]}</em><u>${x[1]} pts</u></div>`).join('')}</div></div>`}
+ if(c.t=='cx')return `<div class="qc ql">${c.rows.map(r=>`<div class="rc"><span class="tn">${crest(r[0],22)}<small>${nm(r[0])}</small></span><b>vs</b><span class="tn r"><small>${nm(r[1])}</small>${crest(r[1],22)}</span></div>`).join('')}</div>`;
  return''}
 const fdTxt=s=>fesc(s).replace(/(#[\p{L}\p{N}_]+)/gu,'<span class="ht">$1</span>').replace(/\n/g,'<br>');
 function fdPost(p,seen){const a=fdAcc(p),wl=p.w==-1?'Pretemporada':p.w==-2?'Fin de temporada':'J'+(p.w+1);
