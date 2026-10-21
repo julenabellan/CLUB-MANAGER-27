@@ -213,7 +213,8 @@ function mailAnalyst(me,pos){
  ch.forEach(x=>{ak[x.key]=k;mailAdd('n',x.sub,x.body)})}
 /* ===== Champions Cup: avisos en cuanto se hace cada sorteo (previa, grupos, octavos, cuartos, semifinales, final) ===== */
 function mailCC(me){try{if(typeof CCS=='undefined'||typeof ccEns!='function')return;const c=ccEns();if(!c||c.skip)return;
- if(typeof ccPrev=='function')ccPrev();
+ /* simula ya lo pendiente de la Champions (los sorteos se hacen al acabar cada ronda) para avisar en el momento, sin esperar a la pantalla de inicio */
+ if(typeof ccDue=='function')ccDue();else if(typeof ccPrev=='function')ccPrev();
  const dn=G.ccm||(G.ccm={}),nms=a=>a.length>1?a.slice(0,-1).join(', ')+' y '+a[a.length-1]:a[0]||'',
  jr=st=>{const s=CCS.find(x=>x.st==st);return s?s.an+1:0},
  once=st=>{const k=G.season+':'+st;if(dn[k])return false;dn[k]=1;return true};

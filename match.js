@@ -97,7 +97,7 @@ if(!document.getElementById('lvhd')){const st=document.createElement('style');st
 #lv .lvmid .lvmin{background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.28);box-shadow:0 2px 6px rgba(0,0,0,.3);letter-spacing:.05em}
 #lv .lvtm .cr{filter:drop-shadow(0 3px 7px rgba(0,0,0,.5))}
 #lv .lvtm b{text-shadow:0 2px 4px rgba(0,0,0,.45);text-transform:uppercase;letter-spacing:.03em}`;document.head.appendChild(st)}
-const o=document.createElement('div');o.id='lv';if(m.cc)o.classList.add('cc');tcSet(o,ids);o.style.setProperty('--lc',({1:'#e8484d',2:'#3fb4ff',3:'#1e63e9'})[m.cc?3:m.r[1]]||'#e8484d');
+const o=document.createElement('div');o.id='lv';if(m.cc)o.classList.add('cc');tcSet(o,ids);o.style.setProperty('--lc',({1:'#ff2433',2:'#3fb4ff',3:'#1e63e9'})[m.cc?3:m.r[1]]||'#ff2433');
 const cr=(i,s)=>crest(i,s),crv=s=>s==1-mine?`<span class="rvc" data-rv="${ids[s]}" role="button" tabindex="0" title="Ver alineación de ${T[s].n}">${cr(ids[s],54)}</span>`:cr(ids[s],54);
 o.innerHTML=`<div class="lvc"><div class="lvtop"><img class="lvbg" src="${lgi(m.r[1])}" alt="" onerror="this.style.display='none'"><div class="lvtm">${crv(0)}${form5(ids[0],m.r[0])}<b>${T[0].n}</b></div>
 <div class="lvmid"><div>${lgl(m.r[1],96)}</div><div class="sc" id="lvs">0 - 0</div><div class="lvmin" id="lvm">0'</div></div>
