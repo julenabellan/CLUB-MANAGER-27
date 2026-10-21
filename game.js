@@ -9,7 +9,7 @@ const PN={P:'POR',D:'DEF',M:'MED',F:'DEL'},FORM={'4-3-3':[1,4,3,3],'4-3-3 (1)':[
 const FPD={P:'POR',D:'CT',M:'MC',F:'DC'},FGR=s=>s=='POR'?'P':'CT LD LI'.includes(s)?'D':s=='EI'||s=='ED'||s=='DC'?'F':'M',
 FSL={'4-3-3':'LI CT CT LD|MC MCD MC|EI DC ED','4-3-3 (1)':'LI CT CT LD|MCD MC MCD|EI DC ED','4-3-3 (2)':'LI CT CT LD|MP MC MP|EI DC ED','4-4-2':'LI CT CT LD|II MC MC ID|DC DC','4-4-2 (1)':'LI CT CT LD|II MCD MP ID|DC DC','4-4-2 (2)':'LI CT CT LD|II MCD MCD ID|DC DC','3-5-2':'CT CT CT|II MC MCD MC ID|DC DC','3-5-2 (1)':'CT CT CT|II MCD MC MCD ID|DC DC','3-5-2 (2)':'CT CT CT|II MP MC MP ID|DC DC','4-5-1':'LI CT CT LD|II MC MP MC ID|DC','4-5-1 (1)':'LI CT CT LD|II MCD MC MCD ID|DC','4-5-1 (2)':'LI CT CT LD|II MP MC MP ID|DC','5-3-2':'LI CT CT CT LD|MC MCD MC|DC DC','5-3-2 (1)':'LI CT CT CT LD|MCD MC MCD|DC DC','5-3-2 (2)':'LI CT CT CT LD|MP MC MP|DC DC','3-4-3':'CT CT CT|II MC MC ID|EI DC ED','3-4-3 (1)':'CT CT CT|II MCD MCD ID|EI DC ED','3-4-3 (2)':'CT CT CT|II MC MP ID|EI DC ED','5-4-1':'LI CT CT CT LD|II MC MC ID|DC','5-4-1 (1)':'LI CT CT CT LD|II MCD MCD ID|DC','5-4-1 (2)':'LI CT CT CT LD|II MC MP ID|DC','5-2-3':'LI CT CT CT LD|MCD MC|EI DC ED','5-2-3 (1)':'LI CT CT CT LD|MCD MCD|EI DC ED','5-2-3 (2)':'LI CT CT CT LD|MC MP|EI DC ED','4-2-3-1':'LI CT CT LD|MCD MCD II MP ID|DC','4-1-4-1':'LI CT CT LD|MCD II MC MC ID|DC','4-3-1-2':'LI CT CT LD|MCD MC MC MP|DC DC'},
 VG=.96,BA=.92,BI=.88,
-COMPAT={CT:{LD:VG,LI:VG,MCD:BI},LD:{CT:VG,ID:BA},LI:{CT:VG,II:BA},MCD:{CT:BI,MC:VG},MC:{MCD:VG,MP:VG,II:BA,ID:BA},MP:{MC:1,DC:VG,EI:BI,ED:BI,II:BI,ID:BI},II:{MP:BA,EI:VG},ID:{MP:BA,ED:VG},EI:{II:VG,DC:VG},ED:{ID:VG,DC:VG},DC:{EI:BA,ED:BA,MP:BI,MCD:BI}},
+COMPAT={CT:{LD:VG,LI:VG,MCD:BI},LD:{LI:1,CT:VG,ID:BA},LI:{LD:1,CT:VG,II:BA},MCD:{CT:BI,MC:VG},MC:{MCD:VG,MP:VG,II:BA,ID:BA},MP:{MC:1,DC:VG,EI:BI,ED:BI,II:BI,ID:BI},II:{MP:BA,EI:VG},ID:{MP:BA,ED:VG},EI:{II:VG,DC:VG},ED:{ID:VG,DC:VG},DC:{EI:BA,ED:BA,MP:BI,MCD:BI}},
 fslots=f=>['POR'].concat(...FSL[f].split('|').map(x=>x.split(' '))),
 fit=(p,s)=>{const f=p.fp||FPD[p.pos];if(s=='POR'||f=='POR')return f==s?1:.4;if(f==s)return 1;if(p.alt&&p.alt.includes(s))return .98;const c=COMPAT[f];return c&&c[s]||.8},
 PL=p=>p.fp||PN[p.pos],
@@ -109,10 +109,10 @@ const sc=(h,a)=>`<div class="sc">${h} - ${a}</div>`;
 const nxt=()=>G.fx[G.T[G.me].lg][G.week].find(m=>m.includes(G.me));
 /* ===== Mensajes (bandeja tipo correo) ===== */
 const MAIL_ASST=['Álvaro Beltrán','Marcos Ibáñez','Sergio Calvo','Iván Soler','Raúl Montero'],
-MAIL_AN=['Carmen Vidal','Pablo Reyes','Julián Sanz','Irene Cortés'],
+MAIL_AN=['Hugo Prieto','Pablo Reyes','Julián Sanz','Daniel Ortega'],
 MAIL_ROLE={POR:'portero',CT:'central',LD:'lateral derecho',LI:'lateral izquierdo',MCD:'pivote',MC:'mediocentro',MP:'mediapunta',II:'interior izquierdo',ID:'interior derecho',EI:'extremo izquierdo',ED:'extremo derecho',DC:'delantero centro'},
-MAIL_FR={a:['Cuerpo técnico','#2f7de1','Segundo entrenador','🧢'],d:['Directiva','#8a4fd6','Directiva','💼'],s:['Secretaría técnica','#d98a00','Secretario técnico','🔎'],m:['Servicio médico','#d6403f','Servicio médico','🩺'],p:['Prensa','#0f9d8a','Periódico deportivo','📰'],f:['Afición','#e0457b','Peñas del club','📣'],c:['Cantera','#5a9a1f','Directora de cantera','🌱'],l:['Competición','#6b7a86','Comité de competición','🏛️'],r:['Representantes','#b5651d','Agente de jugadores','🤝'],e:['Patrocinio','#c2a100','Patrocinador principal','💶'],n:['Análisis','#7a5cf0','Analista táctico','📊']},
-mailWho=k=>({a:MAIL_ASST[(G.asst|0)%MAIL_ASST.length],d:'Presidente del club',s:'Secretaría técnica',m:'Dr. Navarro',p:'El Balón Diario',f:'Peñas del club',c:'Marta Quintero',l:'Comité de competición',r:'Rivas Sports Agency',e:'Patrocinador principal',n:MAIL_AN[(G.asst|0)%MAIL_AN.length]}[k]||'Club'),
+MAIL_FR={a:['Cuerpo técnico','#2f7de1','Segundo entrenador','🧢'],d:['Directiva','#8a4fd6','Directiva','💼'],s:['Secretaría técnica','#d98a00','Secretario técnico','🔎'],m:['Servicio médico','#d6403f','Servicio médico','🩺'],p:['Prensa','#0f9d8a','Periódico deportivo','📰'],f:['Afición','#e0457b','Peñas del club','📣'],c:['Cantera','#5a9a1f','Directora de cantera','🌱'],l:['Competición','#6b7a86','Comité de competición','🏛️'],r:['Representantes','#b5651d','Agente de jugadores','🤝'],e:['Patrocinio','#c2a100','Patrocinador principal','💶'],n:['Análisis','#7a5cf0','Analista táctico','📊'],k:['Champions Cup','#1e63e9','Organización de la Champions Cup','🏆']},
+mailWho=k=>({a:MAIL_ASST[(G.asst|0)%MAIL_ASST.length],d:'Presidente del club',s:'Secretaría técnica',m:'Dr. Navarro',p:'El Balón Diario',f:'Peñas del club',c:'Marta Quintero',l:'Comité de competición',r:'Rivas Sports Agency',e:'Patrocinador principal',n:MAIL_AN[(G.asst|0)%MAIL_AN.length],k:'Champions Cup'}[k]||'Club'),
 mailAdd=(k,sub,body)=>{G.mail.unshift({id:G.mailN++,k,s:sub,b:body,t:G.season+' · '+(G.week?'Jornada '+G.week:'Pretemporada'),rd:0,st:0});if(G.mail.length>80){const q=G.mail.map(x=>x.st|0).lastIndexOf(0);if(q>=0)G.mail.splice(q,1)}},
 mailUnread=()=>(G.mail||[]).filter(x=>!x.rd).length,
 mailPick=a=>a[Math.floor(Math.random()*a.length)];
@@ -123,7 +123,7 @@ function mailTick(){
   mailAdd('f','Bienvenido a la grada',`Las peñas de ${G.T[G.me].n} queremos que sepa que aquí se apoya al equipo en las buenas y en las malas. Pídanos ruido y se lo daremos.\n\nEsperamos verle pronto en el estadio, míster.`);
   mailAdd('p','Presentación del nuevo míster',`${G.T[G.me].n} tiene nuevo entrenador y la prensa ya especula con el once. Le pediremos unas palabras tras la primera jornada.\n\nGracias de antemano por su tiempo.`);
   mailAdd('n','Informes de análisis',`Míster, soy ${mailWho('n')}, analista táctico del club. Cada jornada le haré llegar mi lectura de cómo rinden sus jugadores, qué zonas del equipo funcionan mejor y qué debe vigilar de los rivales.\n\nSi detecto a alguien en un gran momento, o en un mal bache, será de los primeros en saberlo.`);pfUpd(G.T[G.me]);save();return}
- const k=G.season*100+G.week;if(G.mk===k)return;const nw=G.season!=Math.floor(G.mk/100);G.mk=k;
+ const k=G.season*100+G.week;if(G.mk===k){const n0=G.mailN;mailCC(G.T[G.me]);if(G.mailN!=n0)save();return}const nw=G.season!=Math.floor(G.mk/100);G.mk=k;
  try{
   const me=G.T[G.me],pos=myPos();pfUpd(me);
   if(nw){const s=G.sum;mailAdd('d',`Nueva temporada ${G.season}`,`Arranca una nueva etapa en ${me.n}.${s?` La temporada pasada terminamos ${s.pos}º y se cumplieron ${s.met} de ${s.tot} objetivos.`:''} Revise los nuevos objetivos en la Oficina.\n\nLa plantilla ha envejecido un año: conviene echar un vistazo a quién rinde y quién empieza a notar el paso del tiempo.`);
@@ -137,6 +137,7 @@ function mailTick(){
    let nx=null;try{nx=nxt()}catch(e){}if(nx){const o=nx[0]==G.me?nx[1]:nx[0];body+=`\n\nPróximo rival: ${nm(o)} (media ${Math.round(str(G.T[o]).o)} frente a nuestra ${Math.round(str(me).o)}).`}
    mailAdd('a',sub,body)}
   mailAnalyst(me,pos);
+  mailCC(me);
   if(G.week>0&&G.week%5==0){if(G.conf<35)mailAdd('d','Preocupación en la directiva',`La confianza del club en su trabajo ha bajado (${Math.round(G.conf)}%). Necesitamos resultados ya. Recuerde que si llega a cero, tendremos que tomar decisiones.`);
    else if(G.conf>=75)mailAdd('d','Satisfacción con su gestión',`Estamos muy contentos con el rumbo del equipo (confianza ${Math.round(G.conf)}%). Siga así.`);
    else mailAdd('d','Seguimiento de la directiva',`Seguimos de cerca el rendimiento del equipo. Confianza actual: ${Math.round(G.conf)}%. Los objetivos de temporada siguen vigentes.`)}
@@ -154,6 +155,17 @@ function mailTick(){
    if(W>0&&W%4==1){const y=me.pl.filter(p=>(p.yc|0)>=4);if(y.length)mailAdd('a','Aviso de tarjetas',`Míster, ${y.map(p=>p.n).join(', ')} acumula${y.length>1?'n':''} ya ${y.length>1?'muchas amarillas':'4 amarillas'}. Conviene tenerlo en cuenta al decidir la alineación y el estilo de juego.`)}
    if(W>0&&W%8==3)mailAdd('e','Reunión con el patrocinador',mailPick([`Estamos satisfechos con la visibilidad que nos da ${me.n}. Si el equipo mantiene el nivel, hablaremos de ampliar el acuerdo.`,`Nuestra campaña con ${me.n} funciona muy bien. Le agradeceríamos alguna acción con la plantilla antes de fin de temporada.`])+`\n\nUn saludo cordial, departamento de marketing.`);
    if(W>0&&W%9==0){const t=me.pl.slice().sort((a,b)=>b.ovr-a.ovr)[0];if(t)mailAdd('r',`Interés por ${t.n}`,`Buenos días, míster. Varios clubes se han interesado por ${t.n}. Su representante quiere saber qué papel tendrá en su proyecto y si el club piensa en su futuro.\n\nQuedamos a su disposición.`)}
+   try{const m=nxt();if(m&&W>0){const o=m[0]==G.me?m[1]:m[0],T=G.T[o],rp=T.lg==me.lg?tab(me.lg).findIndex(t=>t.id==o)+1:0,df=str(T).o-str(me).o;
+    if((rp>0&&rp<=3)||df>4){const fm=(T.form||'4-4-2').split(' ')[0],es=fm[0]=='5'?'muy cerrados atrás, a la espera del contragolpe':fm[0]=='3'?'con tres centrales y laterales largos que se suman al ataque':fm=='4-3-3'||fm=='4-2-3-1'?'con extremos abiertos y mucha presión arriba':fm=='4-4-2'?'con dos líneas de cuatro muy ordenadas':'con un bloque equilibrado y buena circulación',
+     tp=T.pl.slice().sort((a,b)=>(b.g|0)-(a.g|0))[0];
+     mailAdd('a','Aviso: partido importante ante '+nm(o),`Míster, el próximo rival, ${nm(o)}, es de los grandes${rp?' (ocupa la '+rp+'ª plaza)':''}. Esperamos que salgan con un ${fm}, ${es}.${tp&&(tp.g|0)>=2?' Ojo con '+tp.n+', que ya lleva '+tp.g+' goles.':''}\n\n${mailPick(['Conviene preparar bien la alineación y llegar con el equipo fresco.','Un partido así se decide en los detalles: balón parado y concentración.','Le recomiendo revisar el once y la táctica con tiempo.'])}`);
+     if(Math.random()<.6)mailAdd('f','¡Gran partido a la vista!',`Míster, la afición ya habla de nada más que del duelo ante ${nm(o)}. ${mailPick(['Las entradas casi están agotadas.','Prepararemos un gran recibimiento al autobús.','Estaremos en la grada empujando hasta el final.'])}`)}}}catch(e){}
+   if(W>0&&W%6==1)mailAdd('s','Radar de la secretaría técnica',mailPick([`Míster, seguimos con atención a jóvenes talentos de otros equipos. Si necesita reforzar alguna posición, estamos a su disposición.`,`Hemos revisado varios perfiles interesantes para la próxima ventana. Cuando quiera, le pasamos el informe.`])+`\n\nUn saludo.`);
+   if(W>0&&W%5==2)mailAdd('a','Ambiente en el vestuario',mailPick([`Míster, el grupo trabaja con buen ánimo esta semana. Los entrenamientos han tenido mucha intensidad.`,`Le cuento cómo vemos al vestuario: hay compenetración y ganas de seguir sumando.`,`Los jugadores están muy receptivos a sus instrucciones. Se nota el compromiso del grupo.`])+`\n\nCualquier cambio que quiera hacer, estamos a su disposición.`);
+   if(W>0&&W%7==3)mailAdd('p','Rueda de prensa pendiente',mailPick([`Míster, los medios quieren conocer su opinión sobre el momento del equipo. Esperamos unas declaraciones suyas antes del próximo partido.`,`La prensa local sigue de cerca a ${me.n}. Una breve intervención suya ayudaría a calmar el ambiente.`])+`\n\nGracias por su colaboración.`);
+   if(W>0&&W%6==5)mailAdd('d','Visita de la directiva al entrenamiento',`Míster, algunos miembros del consejo pasarán por la ciudad deportiva esta semana. ${mailPick(['Les gustaría saludar a la plantilla.','Quieren ver de cerca cómo trabaja el equipo.'])}\n\nEs una buena oportunidad para trasladarles sus necesidades.`);
+   if(W>0&&W%8==6)mailAdd('f','Mensaje de los socios',`Míster, los socios de ${me.n} le hacen llegar su cariño. ${mailPick(['Nos gusta cómo juega el equipo.','Seguimos con el equipo allá donde vaya.','Nos vemos en la grada.'])}\n\n¡Aúpa ${me.n}!`);
+   if(W>0&&W%10==4)mailAdd('m','Consejos de recuperación',`Míster, recuerde que descansar bien es tan importante como entrenar. ${mailPick(['Recomendamos sesiones suaves tras los partidos más exigentes.','Una buena hidratación y el descanso reducen mucho el riesgo de lesión.'])}\n\nEstamos pendientes de cualquier molestia.`);
    if(W==Math.floor(NW/2))mailAdd('l','Mitad de temporada',`Se alcanza el ecuador de ${LGN[me.lg]}. ${me.n} ocupa la ${pos}ª posición. ${zona}`);
    if(NW>6&&W==NW-3)mailAdd('l','Recta final de la liga',`Quedan tres jornadas en ${LGN[me.lg]}. ${me.n} es ${pos}º. Cada punto cuenta a partir de ahora.`)}
  }catch(e){}
@@ -199,6 +211,24 @@ function mailAnalyst(me,pos){
   add('riv','Informe del rival: '+nm(o),`Míster, así vemos a ${nm(o)}: ${fo?`sus últimos resultados son ${fo}. `:''}${tp&&(tp.g|0)>=3?`Su hombre peligroso es ${tp.n}, con ${tp.g} goles. `:''}Su once tiene una media de ${Math.round(str(T).o)} frente a nuestra ${Math.round(str(me).o)}.\n\n${df>4?'Somos favoritos sobre el papel, pero no hay que relajarse.':df<-4?'Sobre el papel son superiores: habrá que competir cada balón.':'Se presenta un partido muy igualado.'}`,3)}}catch(e){}
  if(!c.length)return;c.sort(()=>Math.random()-.5);const ch=[c[0]],t0=c[0].key.slice(0,3),sec=c.find(x=>x.key.slice(0,3)!=t0);if(sec&&Math.random()<.4)ch.push(sec);
  ch.forEach(x=>{ak[x.key]=k;mailAdd('n',x.sub,x.body)})}
+/* ===== Champions Cup: avisos en cuanto se hace cada sorteo (previa, grupos, octavos, cuartos, semifinales, final) ===== */
+function mailCC(me){try{if(typeof CCS=='undefined'||typeof ccEns!='function')return;const c=ccEns();if(!c||c.skip)return;
+ if(typeof ccPrev=='function')ccPrev();
+ const dn=G.ccm||(G.ccm={}),nms=a=>a.length>1?a.slice(0,-1).join(', ')+' y '+a[a.length-1]:a[0]||'',
+ jr=st=>{const s=CCS.find(x=>x.st==st);return s?s.an+1:0},
+ once=st=>{const k=G.season+':'+st;if(dn[k])return false;dn[k]=1;return true};
+ /* ronda previa */
+ if(!dn[G.season+':po']&&Array.isArray(c.po)){const t=c.po.find(x=>x&&(x.a==G.me||x.b==G.me));if(t&&once('po')){const o=t.a==G.me?t.b:t.a,df=Math.round(str(G.T[o]).o-str(me).o);
+  mailAdd('k','Sorteo de la ronda previa',`Se ha sorteado la ronda previa de la Champions Cup: ${me.n} se medirá a ${nm(o)} a doble partido. La ida se juega en la jornada ${jr('po')}.\n\n${df>4?'Sobre el papel son superiores, pero en una eliminatoria todo puede pasar.':df<-4?'Llegamos como favoritos, aunque no conviene relajarse.':'Se presenta una eliminatoria muy igualada.'}\n\nSuperarla nos da el pasaporte a la fase de grupos.`)}}
+ /* fase de grupos */
+ if(c.gr&&c.gr.g&&!dn[G.season+':gr']){const gi=c.gr.g.findIndex(x=>x.includes(G.me));if(gi>=0&&once('gr')){const ot=c.gr.g[gi].filter(i=>i!=G.me).map(nm);
+  mailAdd('k','Sorteo de la fase de grupos',`Se ha celebrado el sorteo de la Champions Cup y ${me.n} jugará en el Grupo ${'ABCDEFGH'[gi]}.\n\nSus rivales serán ${nms(ot)}.\n\nLa fase de grupos arranca en la jornada ${jr('gr')}. ${mailPick(['Los dos primeros de cada grupo pasan a octavos. Cada punto cuenta.','Será clave empezar bien: el margen de error en un grupo es mínimo.'])}`)}}
+ /* eliminatorias: se avisa al hacerse el sorteo, aunque falten jornadas para jugarlo */
+ if(typeof ccKo=='function')[['r16','Octavos de final','los octavos de final'],['qf','Cuartos de final','los cuartos de final'],['sf','Semifinales','las semifinales'],['fi','Final','la final']].forEach(([st,tt,ro])=>{
+  if(dn[G.season+':'+st])return;let T=null;try{T=ccKo(st)}catch(e){}if(!Array.isArray(T))return;const t=T.find(x=>x&&x.a!=null&&x.b!=null&&(x.a==G.me||x.b==G.me));if(!t)return;if(!once(st))return;
+  const o=t.a==G.me?t.b:t.a,df=Math.round(str(G.T[o]).o-str(me).o),ida=t.a==G.me?'en casa':'a domicilio';
+  mailAdd('k',st=='fi'?'¡Llegamos a la final!':'Sorteo: '+tt,st=='fi'?`${me.n} está en la final de la Champions Cup y se medirá a ${nm(o)} en campo neutral, en la jornada ${jr('fi')}.\n\n${df>4?'Son superiores sobre el papel, pero una final se juega al detalle.':df<-4?'Llegamos como favoritos, aunque en una final no hay nada ganado.':'Se presenta una final muy igualada.'}`:`Se ha sorteado ${ro} de la Champions Cup: ${me.n} se medirá a ${nm(o)} a doble partido. La ida se juega ${ida} en la jornada ${jr(st)}.\n\n${df>4?'Sobre el papel son superiores, pero en una eliminatoria todo puede pasar.':df<-4?'Llegamos como favoritos, aunque no conviene relajarse.':'Se presenta una eliminatoria muy igualada.'}`)})
+}catch(e){}}
 const MAIL_GO={ali:['Revisar alineación','sq','ali'],obj:['Ver objetivos','obj','obj'],est:['Estado del club','obj','est'],tab:['Ver clasificación','tab'],soc:['Ir a Redes','soc'],sq:['Ver plantilla','sq']},
 MAIL_AC={d:'obj',a:'ali',s:'sq',m:'ali',p:'tab',f:'soc',c:'sq',l:'tab',r:'sq',e:'est',n:'ali'},
 mailT=x=>(x.t.split(' · ')[1]||x.t).replace('Jornada ','J').replace('Pretemporada','Pretemp.'),

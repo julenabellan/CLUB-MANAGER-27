@@ -97,7 +97,7 @@ if(!document.getElementById('lvhd')){const st=document.createElement('style');st
 #lv .lvmid .lvmin{background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.28);box-shadow:0 2px 6px rgba(0,0,0,.3);letter-spacing:.05em}
 #lv .lvtm .cr{filter:drop-shadow(0 3px 7px rgba(0,0,0,.5))}
 #lv .lvtm b{text-shadow:0 2px 4px rgba(0,0,0,.45);text-transform:uppercase;letter-spacing:.03em}`;document.head.appendChild(st)}
-const o=document.createElement('div');o.id='lv';if(m.cc)o.classList.add('cc');tcSet(o,ids);o.style.setProperty('--lc',({1:'#d62828',2:'#3fb4ff',3:'#1e63e9'})[m.cc?3:m.r[1]]||'#d62828');
+const o=document.createElement('div');o.id='lv';if(m.cc)o.classList.add('cc');tcSet(o,ids);o.style.setProperty('--lc',({1:'#e8484d',2:'#3fb4ff',3:'#1e63e9'})[m.cc?3:m.r[1]]||'#e8484d');
 const cr=(i,s)=>crest(i,s),crv=s=>s==1-mine?`<span class="rvc" data-rv="${ids[s]}" role="button" tabindex="0" title="Ver alineación de ${T[s].n}">${cr(ids[s],54)}</span>`:cr(ids[s],54);
 o.innerHTML=`<div class="lvc"><div class="lvtop"><img class="lvbg" src="${lgi(m.r[1])}" alt="" onerror="this.style.display='none'"><div class="lvtm">${crv(0)}${form5(ids[0],m.r[0])}<b>${T[0].n}</b></div>
 <div class="lvmid"><div>${lgl(m.r[1],96)}</div><div class="sc" id="lvs">0 - 0</div><div class="lvmin" id="lvm">0'</div></div>
@@ -127,7 +127,7 @@ function fire(e){if(e.k=='sub'){pause=hold(.35);const ix=rl.indexOf(e.ia);if(ix>
   say(e.min,e.s,`🔄 Cambio en ${T[e.s].n}: sale <b>${sn(e.out)}</b>, entra <b>${sn(e.inn)}</b>`,'sub');return}
  const t=fill(deck[e.k=='goal'?gk(e):e.k](),e);
  if(e.k=='goal'){sc[e.s]++;sh[e.s]++;pause=hold(1.8);bd(e.s,e.wf).g++;gl[e.s].push(`${e.min}' ${e.who}${e.as?' <i>(as. '+e.as+')</i>':''}`);q('#lg'+e.s).innerHTML=gl[e.s].join('<br>');
-  say(e.min,e.s,`${ICON.goal} ${t}`,'g'+(e.s==mine?' gm':''));q('#lvs').classList.remove('flash');void q('#lvs').offsetWidth;q('#lvs').classList.add('flash');const tp=q('.lvtop');tp.classList.remove('gl0','gl1');void tp.offsetWidth;tp.classList.add('gl'+e.s)}
+  say(e.min,e.s,`${ICON.goal} ${t}`,'g'+(e.s==mine?' gm':''));q('#lvs').classList.remove('flash');void q('#lvs').offsetWidth;q('#lvs').classList.add('flash');const tp=q('.lvtop');tp.classList.remove('gl0','gl1')}
  else{if(SHOT.includes(e.k))sh[e.s]++;if(e.k=='corner')co[e.s]++;if(e.k=='foul')fo[e.s]++;if(e.k=='fapre')fo[1-e.s]++;if(e.k=='card'){yc[e.s]++;bd(e.s,e.wf).y=1}pause=hold(.35);say(e.min,e.s,`${e.k=='card'?'<i class="cdk"></i>':ICON[e.k]} ${t}`,e.k=='card'?'y':'')}}
 /* ---- resumen final ---- */
 function recap(){
