@@ -144,7 +144,7 @@ input,select{background:var(--pn2);color:var(--tx)}
 .hm>.fdp{grid-column:1;grid-row:1}
 .side{grid-column:2;grid-row:1;display:flex;flex-direction:column;gap:12px}
 .hm .pn,.side>.pn,.sd .pn{margin-bottom:0}
-@media(max-width:900px){.hm{display:flex;flex-direction:column}.side{display:contents}.nx{order:1}.es{order:2}.fdp{order:3}.tp{order:4}}
+@media(max-width:900px){.hm{display:flex;flex-direction:column}.side{display:contents}.nx{order:1}.mbb{order:1}.es{order:2}.fdp{order:3}.tp{order:4}}
 nav button{position:relative}
 .bd{display:inline-block;transform:skewX(14deg);margin-left:8px;min-width:20px;padding:0 6px;border-radius:999px;background:var(--hi);color:#000;font:700 13px/20px 'Barlow Condensed',sans-serif;letter-spacing:0;text-align:center;box-shadow:0 0 12px color-mix(in srgb,var(--hi) 70%,transparent)}
 /* estado del club */
